@@ -6,9 +6,12 @@
 #pragma config WDT = OFF        // Watchdog Timer desativado
 #pragma config LVP = OFF        // Low Voltage Programming desativado
 #pragma config BOREN = OFF      // Brown-out Reset desativado
-
+#pragma config IESO = OFF      // Desliga a troca automática entre clock interno e externo
+#pragma config MCLRE = ON     // Resetar o microchip
+#pragma config PBADEN = OFF // RB0?RB4 iniciam como digitais
 #define _XTAL_FREQ 20000000     // Frequência do oscilador (20 MHz)
 #define BOTAO PORTBbits.RB0     // Entrada digital a ser monitorada
+#define LED LATAbits.LATA0;  
 
 // Estrutura para Data e Hora
 typedef struct {
@@ -22,6 +25,8 @@ typedef struct {
 
 // Inicializa com uma data/hora base (Ex: 07/09/2026 12:00:00)
 volatile RealTimeClock rtc = {0, 0, 12, 7, 9, 2026};
+
+volatile uint32_t tempo_ms_total = 0;
 volatile uint16_t ms_contador = 0;
 
 uint16_t endereco_eeprom = 0x000; 
@@ -44,7 +49,7 @@ void EEPROM_WriteByte(uint16_t endereco, uint8_t dado) {
     EECON1bits.WR = 1;    // Inicia gravação
     
     INTCONbits.GIE = gie_state; // Restaura interrupções
-    
+      
     while(EECON1bits.WR); // Aguarda fim da escrita (~4ms)
     EECON1bits.WREN = 0;  // Trava escrita por segurança
 }
@@ -58,6 +63,7 @@ void __interrupt() ISR(void) {
         TMR0L = 0x78;
         
         ms_contador++;
+        tempo_ms_total++;
         if (ms_contador >= 1000) {
             ms_contador = 0;
             rtc.segundo++;
@@ -105,6 +111,9 @@ void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms) {
 void main(void) {
     ADCON1 = 0x0F;          // Pinos como digitais
     TRISBbits.TRISB0 = 1;   // RB0 como entrada
+    TRISAbits.TRISA0 = 0; // RA0 saída
+               
+        LATAbits.LATA0 = 0; /*LED começa apagado*/
     
     // Timer0: Modo 16-bits, Fosc/4, Prescaler 1:1
     T0CON = 0b10001000;     
@@ -118,6 +127,8 @@ void main(void) {
     uint8_t estado_anterior = 0;
     RealTimeClock momento_inicio;
     uint32_t ms_inicio_evento = 0;
+    
+      
 
     while(1) {
         uint8_t estado_atual = BOTAO;
@@ -129,15 +140,17 @@ void main(void) {
                 momento_inicio = rtc; // Copia a data/hora atual
                 // Salva timestamp em ms absoluto para calcular duração
                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+                LATAbits.LATA0 = 1; //Acende LED
             }
         }
-        
+    
         // Borda de descida (Entrada voltou para nível BAIXO)
         else if (estado_atual == 0 && estado_anterior == 1) {
             __delay_ms(20); // Debounce
             if (BOTAO == 0) {
                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
+                LATAbits.LATA0 = 0;  //Apagar LED
                 
                 // Grava o registro completo na EEPROM
                 salvar_evento_eeprom(momento_inicio, duracao_total);

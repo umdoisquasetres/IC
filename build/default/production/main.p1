@@ -1,6 +1,6 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"14 main.c
-[; ;main.c: 14: volatile RealTimeClock rtc = {0, 0, 12, 7, 9, 2026};
+"17 main.c
+[; ;main.c: 17: volatile uint16_t ms_contador = 0;
 [s S1092 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `us 1 ]
 [n S1092 . segundo minuto hora dia mes ano ]
 "28850 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
@@ -76,6 +76,36 @@ Version 4.0 HI-TECH Software Intermediate Code
 "27162
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 27162: extern volatile TRISBbits_t TRISBbits __attribute__((address(0xF93)));
 [v _TRISBbits `VS870 ~T0 @X0 0 e@3987 ]
+"26919
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26919:     struct {
+[s S865 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S865 . TRISA0 TRISA1 TRISA2 TRISA3 TRISA4 TRISA5 TRISA6 TRISA7 ]
+"26929
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26929:     struct {
+[s S866 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S866 . RA0 RA1 RA2 RA3 RA4 RA5 RA6 RA7 ]
+"26918
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26918: typedef union {
+[u S864 `S865 1 `S866 1 ]
+[n S864 . . . ]
+"26940
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26940: extern volatile TRISAbits_t TRISAbits __attribute__((address(0xF92)));
+[v _TRISAbits `VS864 ~T0 @X0 0 e@3986 ]
+"26414
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26414:     struct {
+[s S850 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S850 . LATA0 LATA1 LATA2 LATA3 LATA4 LATA5 LATA6 LATA7 ]
+"26424
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26424:     struct {
+[s S851 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S851 . LA0 LA1 LA2 LA3 LA4 LA5 LA6 LA7 ]
+"26413
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26413: typedef union {
+[u S849 `S850 1 `S851 1 ]
+[n S849 . . . ]
+"26435
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 26435: extern volatile LATAbits_t LATAbits __attribute__((address(0xF89)));
+[v _LATAbits `VS849 ~T0 @X0 0 e@3977 ]
 "31686
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 31686: extern volatile unsigned char T0CON __attribute__((address(0xFD5)));
 [v _T0CON `Vuc ~T0 @X0 0 e@4053 ]
@@ -1364,8 +1394,17 @@ Version 4.0 HI-TECH Software Intermediate Code
 "8
 [; ;main.c: 8:     uint8_t dia;
 [p x BOREN  =  OFF       ]
-"24
-[; ;main.c: 24: 
+"9
+[; ;main.c: 9:     uint8_t mes;
+[p x IESO  =  OFF       ]
+"10
+[; ;main.c: 10:     uint16_t ano;
+[p x MCLRE  =  ON      ]
+"11
+[; ;main.c: 11: } RealTimeClock;
+[p x PBADEN  =  OFF  ]
+"27
+[; ;main.c: 27:     EECON1bits.EEPGD = 0;
 [v _rtc `VS1092 ~T0 @X0 1 e ]
 [i _rtc
 :U ..
@@ -1379,347 +1418,365 @@ Version 4.0 HI-TECH Software Intermediate Code
 ..
 ..
 ]
-"25
-[; ;main.c: 25:     EECON1bits.EEPGD = 0;
+"29
+[; ;main.c: 29:     EECON1bits.WREN = 1;
+[v _tempo_ms_total `Vul ~T0 @X0 1 e ]
+[i _tempo_ms_total
+-> -> -> 0 `i `l `ul
+]
+"30
+[; ;main.c: 30: 
 [v _ms_contador `Vus ~T0 @X0 1 e ]
 [i _ms_contador
 -> -> 0 `i `us
 ]
-"27
-[; ;main.c: 27:     EECON1bits.WREN = 1;
+"32
+[; ;main.c: 32:     INTCONbits.GIE = 0;
 [v _endereco_eeprom `us ~T0 @X0 1 e ]
 [i _endereco_eeprom
 -> -> 0 `i `us
 ]
-"30
-[; ;main.c: 30:     INTCONbits.GIE = 0;
+"35
+[; ;main.c: 35:     EECON2 = 0xAA;
 [v _EEPROM_WriteByte `(v ~T0 @X0 1 ef2`us`uc ]
 {
 [e :U _EEPROM_WriteByte ]
 [v _endereco `us ~T0 @X0 1 r1 ]
 [v _dado `uc ~T0 @X0 1 r2 ]
 [f ]
-"31
-[; ;main.c: 31: 
-[e = _EEADRH -> & >> -> _endereco `ui -> 8 `i -> -> 3 `i `ui `uc ]
-"32
-[; ;main.c: 32:     EECON2 = 0x55;
-[e = _EEADR -> & -> _endereco `ui -> -> 255 `i `ui `uc ]
-"33
-[; ;main.c: 33:     EECON2 = 0xAA;
-[e = _EEDATA _dado ]
-"35
-[; ;main.c: 35: 
-[e = . . _EECON1bits 0 7 -> -> 0 `i `uc ]
 "36
-[; ;main.c: 36:     INTCONbits.GIE = gie_state;
-[e = . . _EECON1bits 0 6 -> -> 0 `i `uc ]
+[; ;main.c: 36:     EECON1bits.WR = 1;
+[e = _EEADRH -> & >> -> _endereco `ui -> 8 `i -> -> 3 `i `ui `uc ]
 "37
 [; ;main.c: 37: 
+[e = _EEADR -> & -> _endereco `ui -> -> 255 `i `ui `uc ]
+"38
+[; ;main.c: 38:     INTCONbits.GIE = gie_state;
+[e = _EEDATA _dado ]
+"40
+[; ;main.c: 40:     while(EECON1bits.WR);
+[e = . . _EECON1bits 0 7 -> -> 0 `i `uc ]
+"41
+[; ;main.c: 41:     EECON1bits.WREN = 0;
+[e = . . _EECON1bits 0 6 -> -> 0 `i `uc ]
+"42
+[; ;main.c: 42: }
 [e = . . _EECON1bits 0 2 -> -> 1 `i `uc ]
-"39
-[; ;main.c: 39:     EECON1bits.WREN = 0;
+"44
+[; ;main.c: 44: 
 [v _gie_state `uc ~T0 @X0 1 a ]
 [e = _gie_state . . _INTCONbits 1 7 ]
-"40
-[; ;main.c: 40: }
+"45
+[; ;main.c: 45: void __attribute__((picinterrupt(("")))) ISR(void) {
 [e = . . _INTCONbits 1 7 -> -> 0 `i `uc ]
-"42
-[; ;main.c: 42: 
+"47
+[; ;main.c: 47:         INTCONbits.TMR0IF = 0;
 [e = _EECON2 -> -> 85 `i `uc ]
-"43
-[; ;main.c: 43: void __attribute__((picinterrupt(("")))) ISR(void) {
-[e = _EECON2 -> -> 170 `i `uc ]
-"44
-[; ;main.c: 44:     if (INTCONbits.TMR0IF) {
-[e = . . _EECON1bits 0 1 -> -> 1 `i `uc ]
-"46
-[; ;main.c: 46: 
-[e = . . _INTCONbits 1 7 _gie_state ]
 "48
-[; ;main.c: 48:         TMR0L = 0x78;
+[; ;main.c: 48: 
+[e = _EECON2 -> -> 170 `i `uc ]
+"49
+[; ;main.c: 49:         TMR0H = 0xEC;
+[e = . . _EECON1bits 0 1 -> -> 1 `i `uc ]
+"51
+[; ;main.c: 51: 
+[e = . . _INTCONbits 1 7 _gie_state ]
+"53
+[; ;main.c: 53:         tempo_ms_total++;
 [e $U 1094  ]
 [e :U 1095 ]
 [e :U 1094 ]
 [e $ != -> . . _EECON1bits 0 1 `i -> 0 `i 1095  ]
 [e :U 1096 ]
-"49
-[; ;main.c: 49: 
+"54
+[; ;main.c: 54:         if (ms_contador >= 1000) {
 [e = . . _EECON1bits 0 2 -> -> 0 `i `uc ]
-"50
-[; ;main.c: 50:         ms_contador++;
+"55
+[; ;main.c: 55:             ms_contador = 0;
 [e :UE 1093 ]
 }
 [v $root$_ISR `(v ~T0 @X0 0 e ]
-"53
-[; ;main.c: 53:             rtc.segundo++;
+"58
+[; ;main.c: 58:                 rtc.segundo = 0;
 [v _ISR `(v ~T48 @X0 1 ef ]
 {
 [e :U _ISR ]
 [f ]
-"54
-[; ;main.c: 54:             if (rtc.segundo >= 60) {
+"59
+[; ;main.c: 59:                 rtc.minuto++;
 [e $ ! != -> . . _INTCONbits 0 2 `i -> 0 `i 1098  ]
 {
-"55
-[; ;main.c: 55:                 rtc.segundo = 0;
-[e = . . _INTCONbits 0 2 -> -> 0 `i `uc ]
-"57
-[; ;main.c: 57:                 if (rtc.minuto >= 60) {
-[e = _TMR0H -> -> 236 `i `uc ]
-"58
-[; ;main.c: 58:                     rtc.minuto = 0;
-[e = _TMR0L -> -> 120 `i `uc ]
 "60
-[; ;main.c: 60:                     if (rtc.hora >= 24) {
+[; ;main.c: 60:                 if (rtc.minuto >= 60) {
+[e = . . _INTCONbits 0 2 -> -> 0 `i `uc ]
+"62
+[; ;main.c: 62:                     rtc.hora++;
+[e = _TMR0H -> -> 236 `i `uc ]
+"63
+[; ;main.c: 63:                     if (rtc.hora >= 24) {
+[e = _TMR0L -> -> 120 `i `uc ]
+"65
+[; ;main.c: 65:                         rtc.dia++;
 [e ++ _ms_contador -> -> 1 `i `Vus ]
-"61
-[; ;main.c: 61:                         rtc.hora = 0;
+"66
+[; ;main.c: 66:                         if (rtc.dia > 30) {
+[e ++ _tempo_ms_total -> -> 1 `i `Vul ]
+"67
+[; ;main.c: 67:                             rtc.dia = 1;
 [e $ ! >= -> _ms_contador `ui -> -> 1000 `i `ui 1099  ]
 {
-"62
-[; ;main.c: 62:                         rtc.dia++;
+"68
+[; ;main.c: 68:                             rtc.mes++;
 [e = _ms_contador -> -> 0 `i `us ]
-"63
-[; ;main.c: 63:                         if (rtc.dia > 30) {
+"69
+[; ;main.c: 69:                             if (rtc.mes > 12) {
 [e ++ . _rtc 0 -> -> 1 `i `Vuc ]
-"64
-[; ;main.c: 64:                             rtc.dia = 1;
+"70
+[; ;main.c: 70:                                 rtc.mes = 1;
 [e $ ! >= -> . _rtc 0 `i -> 60 `i 1100  ]
 {
-"65
-[; ;main.c: 65:                             rtc.mes++;
+"71
+[; ;main.c: 71:                                 rtc.ano++;
 [e = . _rtc 0 -> -> 0 `i `uc ]
-"66
-[; ;main.c: 66:                             if (rtc.mes > 12) {
+"72
+[; ;main.c: 72:                             }
 [e ++ . _rtc 1 -> -> 1 `i `Vuc ]
-"67
-[; ;main.c: 67:                                 rtc.mes = 1;
+"73
+[; ;main.c: 73:                         }
 [e $ ! >= -> . _rtc 1 `i -> 60 `i 1101  ]
 {
-"68
-[; ;main.c: 68:                                 rtc.ano++;
+"74
+[; ;main.c: 74:                     }
 [e = . _rtc 1 -> -> 0 `i `uc ]
-"69
-[; ;main.c: 69:                             }
+"75
+[; ;main.c: 75:                 }
 [e ++ . _rtc 2 -> -> 1 `i `Vuc ]
-"70
-[; ;main.c: 70:                         }
+"76
+[; ;main.c: 76:             }
 [e $ ! >= -> . _rtc 2 `i -> 24 `i 1102  ]
 {
-"71
-[; ;main.c: 71:                     }
+"77
+[; ;main.c: 77:         }
 [e = . _rtc 2 -> -> 0 `i `uc ]
-"72
-[; ;main.c: 72:                 }
+"78
+[; ;main.c: 78:     }
 [e ++ . _rtc 3 -> -> 1 `i `Vuc ]
-"73
-[; ;main.c: 73:             }
+"79
+[; ;main.c: 79: }
 [e $ ! > -> . _rtc 3 `i -> 30 `i 1103  ]
 {
-"74
-[; ;main.c: 74:         }
-[e = . _rtc 3 -> -> 1 `i `uc ]
-"75
-[; ;main.c: 75:     }
-[e ++ . _rtc 4 -> -> 1 `i `Vuc ]
-"76
-[; ;main.c: 76: }
-[e $ ! > -> . _rtc 4 `i -> 12 `i 1104  ]
-{
-"77
-[; ;main.c: 77: 
-[e = . _rtc 4 -> -> 1 `i `uc ]
-"78
-[; ;main.c: 78: 
-[e ++ . _rtc 5 -> -> 1 `i `Vus ]
-"79
-[; ;main.c: 79: void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms) {
-}
-[e :U 1104 ]
 "80
-[; ;main.c: 80:     if (endereco_eeprom > 1016) return;
-}
-[e :U 1103 ]
+[; ;main.c: 80: 
+[e = . _rtc 3 -> -> 1 `i `uc ]
 "81
 [; ;main.c: 81: 
+[e ++ . _rtc 4 -> -> 1 `i `Vuc ]
+"82
+[; ;main.c: 82: void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms) {
+[e $ ! > -> . _rtc 4 `i -> 12 `i 1104  ]
+{
+"83
+[; ;main.c: 83:     if (endereco_eeprom > 1016) return;
+[e = . _rtc 4 -> -> 1 `i `uc ]
+"84
+[; ;main.c: 84: 
+[e ++ . _rtc 5 -> -> 1 `i `Vus ]
+"85
+[; ;main.c: 85:     EEPROM_WriteByte(endereco_eeprom++, inicio.dia);
+}
+[e :U 1104 ]
+"86
+[; ;main.c: 86:     EEPROM_WriteByte(endereco_eeprom++, inicio.mes);
+}
+[e :U 1103 ]
+"87
+[; ;main.c: 87:     EEPROM_WriteByte(endereco_eeprom++, (uint8_t)(inicio.ano - 2000));
 }
 [e :U 1102 ]
-"82
-[; ;main.c: 82:     EEPROM_WriteByte(endereco_eeprom++, inicio.dia);
+"88
+[; ;main.c: 88:     EEPROM_WriteByte(endereco_eeprom++, inicio.hora);
 }
 [e :U 1101 ]
-"83
-[; ;main.c: 83:     EEPROM_WriteByte(endereco_eeprom++, inicio.mes);
+"89
+[; ;main.c: 89:     EEPROM_WriteByte(endereco_eeprom++, inicio.minuto);
 }
 [e :U 1100 ]
-"84
-[; ;main.c: 84:     EEPROM_WriteByte(endereco_eeprom++, (uint8_t)(inicio.ano - 2000));
+"90
+[; ;main.c: 90:     EEPROM_WriteByte(endereco_eeprom++, inicio.segundo);
 }
 [e :U 1099 ]
-"85
-[; ;main.c: 85:     EEPROM_WriteByte(endereco_eeprom++, inicio.hora);
+"91
+[; ;main.c: 91: 
 }
 [e :U 1098 ]
-"86
-[; ;main.c: 86:     EEPROM_WriteByte(endereco_eeprom++, inicio.minuto);
+"92
+[; ;main.c: 92: 
 [e :UE 1097 ]
 }
-"89
-[; ;main.c: 89: 
+"95
+[; ;main.c: 95:     EEPROM_WriteByte(endereco_eeprom++, duracao_sec & 0xFF);
 [v _salvar_evento_eeprom `(v ~T0 @X0 1 ef2`S1092`ul ]
 {
 [e :U _salvar_evento_eeprom ]
 [v _inicio `S1092 ~T0 @X0 1 r1 ]
 [v _duracao_ms `ul ~T0 @X0 1 r2 ]
 [f ]
-"90
-[; ;main.c: 90:     uint16_t duracao_sec = (uint16_t)(duracao_ms / 1000);
+"96
+[; ;main.c: 96: }
 [e $ ! > -> _endereco_eeprom `ui -> -> 1016 `i `ui 1106  ]
 [e $UE 1105  ]
 [e :U 1106 ]
-"92
-[; ;main.c: 92:     EEPROM_WriteByte(endereco_eeprom++, duracao_sec & 0xFF);
+"98
+[; ;main.c: 98: void main(void) {
 [e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 3 ]
-"93
-[; ;main.c: 93: }
+"99
+[; ;main.c: 99:     ADCON1 = 0x0F;
 [e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 4 ]
-"94
-[; ;main.c: 94: 
-[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us -> - -> . _inicio 5 `ui -> -> 2000 `i `ui `uc ]
-"95
-[; ;main.c: 95: void main(void) {
-[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 2 ]
-"96
-[; ;main.c: 96:     ADCON1 = 0x0F;
-[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 1 ]
-"97
-[; ;main.c: 97:     TRISBbits.TRISB0 = 1;
-[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 0 ]
 "100
-[; ;main.c: 100:     T0CON = 0b10001000;
+[; ;main.c: 100:     TRISBbits.TRISB0 = 1;
+[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us -> - -> . _inicio 5 `ui -> -> 2000 `i `ui `uc ]
+"101
+[; ;main.c: 101:     TRISAbits.TRISA0 = 0;
+[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 2 ]
+"102
+[; ;main.c: 102: 
+[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 1 ]
+"103
+[; ;main.c: 103:         LATAbits.LATA0 = 0;
+[e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us . _inicio 0 ]
+"106
+[; ;main.c: 106:     T0CON = 0b10001000;
 [v _duracao_sec `us ~T0 @X0 1 a ]
 [e = _duracao_sec -> / _duracao_ms -> -> -> 1000 `i `l `ul `us ]
-"101
-[; ;main.c: 101:     TMR0H = 0xEC;
+"107
+[; ;main.c: 107:     TMR0H = 0xEC;
 [e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us -> & >> -> _duracao_sec `ui -> 8 `i -> -> 255 `i `ui `uc ]
-"102
-[; ;main.c: 102:     TMR0L = 0x78;
+"108
+[; ;main.c: 108:     TMR0L = 0x78;
 [e ( _EEPROM_WriteByte (2 , ++ _endereco_eeprom -> -> 1 `i `us -> & -> _duracao_sec `ui -> -> 255 `i `ui `uc ]
-"103
-[; ;main.c: 103: 
+"109
+[; ;main.c: 109: 
 [e :UE 1105 ]
 }
 [v $root$_main `(v ~T0 @X0 0 e ]
-"105
-[; ;main.c: 105:     INTCONbits.TMR0IE = 1;
+"111
+[; ;main.c: 111:     INTCONbits.TMR0IE = 1;
 [v _main `(v ~T0 @X0 1 ef ]
 {
 [e :U _main ]
 [f ]
-"106
-[; ;main.c: 106:     INTCONbits.GIE = 1;
-[e = _ADCON1 -> -> 15 `i `uc ]
-"107
-[; ;main.c: 107: 
-[e = . . _TRISBbits 0 0 -> -> 1 `i `uc ]
-"110
-[; ;main.c: 110:     uint32_t ms_inicio_evento = 0;
-[e = _T0CON -> -> 136 `i `uc ]
-"111
-[; ;main.c: 111: 
-[e = _TMR0H -> -> 236 `i `uc ]
 "112
-[; ;main.c: 112:     while(1) {
-[e = _TMR0L -> -> 120 `i `uc ]
+[; ;main.c: 112:     INTCONbits.GIE = 1;
+[e = _ADCON1 -> -> 15 `i `uc ]
+"113
+[; ;main.c: 113: 
+[e = . . _TRISBbits 0 0 -> -> 1 `i `uc ]
 "114
-[; ;main.c: 114: 
-[e = . . _INTCONbits 0 2 -> -> 0 `i `uc ]
-"115
-[; ;main.c: 115: 
-[e = . . _INTCONbits 0 5 -> -> 1 `i `uc ]
+[; ;main.c: 114:     uint8_t estado_anterior = 0;
+[e = . . _TRISAbits 0 0 -> -> 0 `i `uc ]
 "116
-[; ;main.c: 116:         if (estado_atual == 1 && estado_anterior == 0) {
+[; ;main.c: 116:     uint32_t ms_inicio_evento = 0;
+[e = . . _LATAbits 0 0 -> -> 0 `i `uc ]
+"119
+[; ;main.c: 119: 
+[e = _T0CON -> -> 136 `i `uc ]
+"120
+[; ;main.c: 120:     while(1) {
+[e = _TMR0H -> -> 236 `i `uc ]
+"121
+[; ;main.c: 121:         uint8_t estado_atual = PORTBbits.RB0;
+[e = _TMR0L -> -> 120 `i `uc ]
+"123
+[; ;main.c: 123: 
+[e = . . _INTCONbits 0 2 -> -> 0 `i `uc ]
+"124
+[; ;main.c: 124:         if (estado_atual == 1 && estado_anterior == 0) {
+[e = . . _INTCONbits 0 5 -> -> 1 `i `uc ]
+"125
+[; ;main.c: 125:             _delay((unsigned long)((20)*(20000000/4000.0)));
 [e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
-"118
-[; ;main.c: 118:             if (PORTBbits.RB0 == 1) {
+"127
+[; ;main.c: 127:                 momento_inicio = rtc;
 [v _estado_anterior `uc ~T0 @X0 1 a ]
 [e = _estado_anterior -> -> 0 `i `uc ]
-"119
-[; ;main.c: 119:                 momento_inicio = rtc;
+"128
+[; ;main.c: 128: 
 [v _momento_inicio `S1092 ~T0 @X0 1 a ]
-"120
-[; ;main.c: 120: 
+"129
+[; ;main.c: 129:                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
 [v _ms_inicio_evento `ul ~T0 @X0 1 a ]
 [e = _ms_inicio_evento -> -> -> 0 `i `l `ul ]
-"122
-[; ;main.c: 122:             }
+"133
+[; ;main.c: 133: 
 [e :U 1109 ]
 {
-"123
-[; ;main.c: 123:         }
+"134
+[; ;main.c: 134: 
 [v _estado_atual `uc ~T0 @X0 1 a ]
 [e = _estado_atual . . _PORTBbits 0 0 ]
-"126
-[; ;main.c: 126:         else if (estado_atual == 0 && estado_anterior == 1) {
+"137
+[; ;main.c: 137:             if (PORTBbits.RB0 == 0) {
 [e $ ! && == -> _estado_atual `i -> 1 `i == -> _estado_anterior `i -> 0 `i 1111  ]
 {
-"127
-[; ;main.c: 127:             _delay((unsigned long)((20)*(20000000/4000.0)));
+"138
+[; ;main.c: 138:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
 [e ( __delay (1 -> * -> -> 20 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
-"128
-[; ;main.c: 128:             if (PORTBbits.RB0 == 0) {
+"139
+[; ;main.c: 139:                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
 [e $ ! == -> . . _PORTBbits 0 0 `i -> 1 `i 1112  ]
 {
-"129
-[; ;main.c: 129:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+"140
+[; ;main.c: 140:                 LATAbits.LATA0 = 0;
 [e = _momento_inicio _rtc ]
-"131
-[; ;main.c: 131: 
+"142
+[; ;main.c: 142: 
 [e = _ms_inicio_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul -> -> * -> . _rtc 0 `i -> 1000 `i `l `ul -> _ms_contador `ul ]
-"132
-[; ;main.c: 132: 
+"143
+[; ;main.c: 143:                 salvar_evento_eeprom(momento_inicio, duracao_total);
+[e = . . _LATAbits 0 0 -> -> 1 `i `uc ]
+"144
+[; ;main.c: 144:             }
 }
 [e :U 1112 ]
-"133
-[; ;main.c: 133:                 salvar_evento_eeprom(momento_inicio, duracao_total);
+"145
+[; ;main.c: 145:         }
 }
 [e $U 1113  ]
-"136
-[; ;main.c: 136: 
+"148
+[; ;main.c: 148:     }
 [e :U 1111 ]
 [e $ ! && == -> _estado_atual `i -> 0 `i == -> _estado_anterior `i -> 1 `i 1114  ]
 {
-"137
-[; ;main.c: 137:         estado_anterior = estado_atual;
+"149
+[; ;main.c: 149: }
 [e ( __delay (1 -> * -> -> 20 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
-"138
-[; ;main.c: 138:     }
+"150
 [e $ ! == -> . . _PORTBbits 0 0 `i -> 0 `i 1115  ]
 {
-"139
-[; ;main.c: 139: }
+"151
 [v _ms_fim_evento `ul ~T0 @X0 1 a ]
 [e = _ms_fim_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul -> -> * -> . _rtc 0 `i -> 1000 `i `l `ul -> _ms_contador `ul ]
-"140
+"152
 [v _duracao_total `ul ~T0 @X0 1 a ]
 [e = _duracao_total - _ms_fim_evento _ms_inicio_evento ]
-"143
+"153
+[e = . . _LATAbits 0 0 -> -> 0 `i `uc ]
+"156
 [e ( _salvar_evento_eeprom (2 , _momento_inicio _duracao_total ]
-"144
+"157
 }
 [e :U 1115 ]
-"145
+"158
 }
 [e :U 1114 ]
 [e :U 1113 ]
-"147
+"160
 [e = _estado_anterior _estado_atual ]
-"148
+"161
 }
 [e :U 1108 ]
 [e $U 1109  ]
 [e :U 1110 ]
-"149
+"162
 [e :UE 1107 ]
 }

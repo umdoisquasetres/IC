@@ -18078,6 +18078,9 @@ unsigned char __t3rd16on(void);
 #pragma config WDT = OFF
 #pragma config LVP = OFF
 #pragma config BOREN = OFF
+#pragma config IESO = OFF
+#pragma config MCLRE = ON
+#pragma config PBADEN = OFF
 
 
 
@@ -18094,6 +18097,8 @@ typedef struct {
 
 
 volatile RealTimeClock rtc = {0, 0, 12, 7, 9, 2026};
+
+volatile uint32_t tempo_ms_total = 0;
 volatile uint16_t ms_contador = 0;
 
 uint16_t endereco_eeprom = 0x000;
@@ -18130,6 +18135,7 @@ void __attribute__((picinterrupt(("")))) ISR(void) {
         TMR0L = 0x78;
 
         ms_contador++;
+        tempo_ms_total++;
         if (ms_contador >= 1000) {
             ms_contador = 0;
             rtc.segundo++;
@@ -18177,6 +18183,9 @@ void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms) {
 void main(void) {
     ADCON1 = 0x0F;
     TRISBbits.TRISB0 = 1;
+    TRISAbits.TRISA0 = 0;
+
+        LATAbits.LATA0 = 0;
 
 
     T0CON = 0b10001000;
@@ -18191,6 +18200,8 @@ void main(void) {
     RealTimeClock momento_inicio;
     uint32_t ms_inicio_evento = 0;
 
+
+
     while(1) {
         uint8_t estado_atual = PORTBbits.RB0;
 
@@ -18201,6 +18212,7 @@ void main(void) {
                 momento_inicio = rtc;
 
                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+                LATAbits.LATA0 = 1;
             }
         }
 
@@ -18210,6 +18222,7 @@ void main(void) {
             if (PORTBbits.RB0 == 0) {
                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
+                LATAbits.LATA0 = 0;
 
 
                 salvar_evento_eeprom(momento_inicio, duracao_total);

@@ -63,13 +63,13 @@
 [v ___lmul __lmul `(ul  1 e 4 0 ]
 "91 C:\Program Files\Microchip\xc8\v3.10\pic\sources\c99\common\Umul64.c
 [v ___omul __omul `(uo  1 e 8 0 ]
-"30 C:\Users\deoli\MPLABXProjects\IC.X\main.c
+"35 C:\Users\deoli\MPLABXProjects\IC.X\main.c
 [v _EEPROM_WriteByte EEPROM_WriteByte `(v  1 e 1 0 ]
-"53
+"58
 [v _ISR ISR `IIH(v  1 e 1 0 ]
-"89
+"95
 [v _salvar_evento_eeprom salvar_evento_eeprom `(v  1 e 1 0 ]
-"105
+"111
 [v _main main `(v  1 e 1 0 ]
 [s S124 . 1 `uc 1 RB0 1 0 :1:0 
 `uc 1 RB1 1 0 :1:1 
@@ -81,7 +81,7 @@
 `uc 1 RB7 1 0 :1:7 
 ]
 "25752 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
-[s S165 . 1 `uc 1 INT0 1 0 :1:0 
+[s S245 . 1 `uc 1 INT0 1 0 :1:0 
 `uc 1 INT1 1 0 :1:1 
 `uc 1 INT2 1 0 :1:2 
 `uc 1 CANRX 1 0 :1:3 
@@ -90,7 +90,7 @@
 `uc 1 KBI2 1 0 :1:6 
 `uc 1 KBI3 1 0 :1:7 
 ]
-[s S174 . 1 `uc 1 AN10 1 0 :1:0 
+[s S254 . 1 `uc 1 AN10 1 0 :1:0 
 `uc 1 AN8 1 0 :1:1 
 `uc 1 CANTX 1 0 :1:2 
 `uc 1 . 1 0 :1:3 
@@ -99,13 +99,55 @@
 `uc 1 PGC 1 0 :1:6 
 `uc 1 PGD 1 0 :1:7 
 ]
-[s S183 . 1 `uc 1 FLT0 1 0 :1:0 
+[s S263 . 1 `uc 1 FLT0 1 0 :1:0 
 ]
-[s S185 . 1 `uc 1 . 1 0 :3:0 
+[s S265 . 1 `uc 1 . 1 0 :3:0 
 `uc 1 CCP2_PA2 1 0 :1:3 
 ]
-[u S188 . 1 `S124 1 . 1 0 `S165 1 . 1 0 `S174 1 . 1 0 `S183 1 . 1 0 `S185 1 . 1 0 ]
-[v _PORTBbits PORTBbits `VES188  1 e 1 @3969 ]
+[u S268 . 1 `S124 1 . 1 0 `S245 1 . 1 0 `S254 1 . 1 0 `S263 1 . 1 0 `S265 1 . 1 0 ]
+[v _PORTBbits PORTBbits `VES268  1 e 1 @3969 ]
+[s S195 . 1 `uc 1 LATA0 1 0 :1:0 
+`uc 1 LATA1 1 0 :1:1 
+`uc 1 LATA2 1 0 :1:2 
+`uc 1 LATA3 1 0 :1:3 
+`uc 1 LATA4 1 0 :1:4 
+`uc 1 LATA5 1 0 :1:5 
+`uc 1 LATA6 1 0 :1:6 
+`uc 1 LATA7 1 0 :1:7 
+]
+"26435
+[s S204 . 1 `uc 1 LA0 1 0 :1:0 
+`uc 1 LA1 1 0 :1:1 
+`uc 1 LA2 1 0 :1:2 
+`uc 1 LA3 1 0 :1:3 
+`uc 1 LA4 1 0 :1:4 
+`uc 1 LA5 1 0 :1:5 
+`uc 1 LA6 1 0 :1:6 
+`uc 1 LA7 1 0 :1:7 
+]
+[u S213 . 1 `S195 1 . 1 0 `S204 1 . 1 0 ]
+[v _LATAbits LATAbits `VES213  1 e 1 @3977 ]
+[s S155 . 1 `uc 1 TRISA0 1 0 :1:0 
+`uc 1 TRISA1 1 0 :1:1 
+`uc 1 TRISA2 1 0 :1:2 
+`uc 1 TRISA3 1 0 :1:3 
+`uc 1 TRISA4 1 0 :1:4 
+`uc 1 TRISA5 1 0 :1:5 
+`uc 1 TRISA6 1 0 :1:6 
+`uc 1 TRISA7 1 0 :1:7 
+]
+"26940
+[s S164 . 1 `uc 1 RA0 1 0 :1:0 
+`uc 1 RA1 1 0 :1:1 
+`uc 1 RA2 1 0 :1:2 
+`uc 1 RA3 1 0 :1:3 
+`uc 1 RA4 1 0 :1:4 
+`uc 1 RA5 1 0 :1:5 
+`uc 1 RA6 1 0 :1:6 
+`uc 1 RA7 1 0 :1:7 
+]
+[u S173 . 1 `S155 1 . 1 0 `S164 1 . 1 0 ]
+[v _TRISAbits TRISAbits `VES173  1 e 1 @3986 ]
 [s S115 . 1 `uc 1 TRISB0 1 0 :1:0 
 `uc 1 TRISB1 1 0 :1:1 
 `uc 1 TRISB2 1 0 :1:2 
@@ -175,39 +217,41 @@
 [u S84 . 1 `S62 1 . 1 0 `S71 1 . 1 0 `S80 1 . 1 0 ]
 [v _INTCONbits INTCONbits `VES84  1 e 1 @4082 ]
 [s S24 . 7 `uc 1 segundo 1 0 `uc 1 minuto 1 1 `uc 1 hora 1 2 `uc 1 dia 1 3 `uc 1 mes 1 4 `us 1 ano 2 5 ]
-"24 C:\Users\deoli\MPLABXProjects\IC.X\main.c
+"27 C:\Users\deoli\MPLABXProjects\IC.X\main.c
 [v _rtc rtc `VES24  1 e 7 0 ]
-"25
+"29
+[v _tempo_ms_total tempo_ms_total `VEul  1 e 4 0 ]
+"30
 [v _ms_contador ms_contador `VEus  1 e 2 0 ]
-"27
+"32
 [v _endereco_eeprom endereco_eeprom `us  1 e 2 0 ]
-"105
+"111
 [v _main main `(v  1 e 1 0 ]
 {
-"140
+"152
 [v main@duracao_total duracao_total `ul  1 a 4 57 ]
-"139
+"151
 [v main@ms_fim_evento ms_fim_evento `ul  1 a 4 53 ]
-"123
+"134
 [v main@estado_atual estado_atual `uc  1 a 1 66 ]
-"119
+"128
 [v main@momento_inicio momento_inicio `S24  1 a 7 46 ]
-"120
+"129
 [v main@ms_inicio_evento ms_inicio_evento `ul  1 a 4 61 ]
-"118
+"127
 [v main@estado_anterior estado_anterior `uc  1 a 1 65 ]
-"149
+"162
 } 0
-"89
+"95
 [v _salvar_evento_eeprom salvar_evento_eeprom `(v  1 e 1 0 ]
 {
-"100
+"106
 [v salvar_evento_eeprom@duracao_sec duracao_sec `us  1 a 2 24 ]
 [s S24 . 7 `uc 1 segundo 1 0 `uc 1 minuto 1 1 `uc 1 hora 1 2 `uc 1 dia 1 3 `uc 1 mes 1 4 `us 1 ano 2 5 ]
-"89
+"95
 [v salvar_evento_eeprom@inicio inicio `S24  1 p 7 13 ]
 [v salvar_evento_eeprom@duracao_ms duracao_ms `ul  1 p 4 20 ]
-"103
+"109
 } 0
 "7 C:\Program Files\Microchip\xc8\v3.10\pic\sources\c99\common\__lldiv.c
 [v ___lldiv __lldiv `(ul  1 e 4 0 ]
@@ -221,15 +265,15 @@
 [v ___lldiv@divisor divisor `ul  1 p 4 4 ]
 "30
 } 0
-"30 C:\Users\deoli\MPLABXProjects\IC.X\main.c
+"35 C:\Users\deoli\MPLABXProjects\IC.X\main.c
 [v _EEPROM_WriteByte EEPROM_WriteByte `(v  1 e 1 0 ]
 {
-"39
+"44
 [v EEPROM_WriteByte@gie_state gie_state `uc  1 a 1 3 ]
-"30
+"35
 [v EEPROM_WriteByte@endereco endereco `us  1 p 2 0 ]
 [v EEPROM_WriteByte@dado dado `uc  1 p 1 2 ]
-"50
+"55
 } 0
 "15 C:\Program Files\Microchip\xc8\v3.10\pic\sources\c99\common\Umul32.c
 [v ___lmul __lmul `(ul  1 e 4 0 ]
@@ -241,8 +285,8 @@
 [v ___lmul@multiplicand multiplicand `ul  1 p 4 4 ]
 "129
 } 0
-"53 C:\Users\deoli\MPLABXProjects\IC.X\main.c
+"58 C:\Users\deoli\MPLABXProjects\IC.X\main.c
 [v _ISR ISR `IIH(v  1 e 1 0 ]
 {
-"86
+"92
 } 0

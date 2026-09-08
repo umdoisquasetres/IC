@@ -1,7 +1,7 @@
 
 
 Microchip MPLAB XC8 Assembler V3.10 build 20250813170317 
-                                                                                               Mon Sep  7 16:40:37 2026
+                                                                                               Mon Sep  7 23:47:22 2026
 
 Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1 
      1                           	processor	18F4685
@@ -524,1322 +524,1358 @@ Microchip MPLAB XC8 C Compiler v3.10 (Free license) build 20250813170317 Og1
    510   000FFF                     TOSU            equ	4095	;# 
    511                           
    512                           	psect	idataCOMRAM
-   513   001506                     __pidataCOMRAM:
+   513   001512                     __pidataCOMRAM:
    514                           	callstack 0
    515                           
    516                           ;initializer for _rtc
-   517   001506  00                 	db	0
-   518   001507  00                 	db	0
-   519   001508  0C                 	db	12
-   520   001509  07                 	db	7
-   521   00150A  09                 	db	9
-   522   00150B  07EA               	dw	2026
+   517   001512  00                 	db	0
+   518   001513  00                 	db	0
+   519   001514  0C                 	db	12
+   520   001515  07                 	db	7
+   521   001516  09                 	db	9
+   522   001517  07EA               	dw	2026
    523   000F81                     _PORTBbits      set	3969
    524   000FD5                     _T0CON          set	4053
-   525   000F93                     _TRISBbits      set	3987
-   526   000FC1                     _ADCON1         set	4033
-   527   000FD6                     _TMR0L          set	4054
-   528   000FD7                     _TMR0H          set	4055
-   529   000FA7                     _EECON2         set	4007
-   530   000FF2                     _INTCONbits     set	4082
-   531   000FA6                     _EECON1bits     set	4006
-   532   000FA8                     _EEDATA         set	4008
-   533   000FA9                     _EEADR          set	4009
-   534   000FAA                     _EEADRH         set	4010
-   535                           
-   536                           ; #config settings
+   525   000F89                     _LATAbits       set	3977
+   526   000F92                     _TRISAbits      set	3986
+   527   000F93                     _TRISBbits      set	3987
+   528   000FC1                     _ADCON1         set	4033
+   529   000FD6                     _TMR0L          set	4054
+   530   000FD7                     _TMR0H          set	4055
+   531   000FA7                     _EECON2         set	4007
+   532   000FF2                     _INTCONbits     set	4082
+   533   000FA6                     _EECON1bits     set	4006
+   534   000FA8                     _EEDATA         set	4008
+   535   000FA9                     _EEADR          set	4009
+   536   000FAA                     _EEADRH         set	4010
    537                           
-   538                           	psect	cinit
-   539   0014D4                     __pcinit:
-   540                           	callstack 0
-   541   0014D4                     start_initialization:
+   538                           ; #config settings
+   539                           
+   540                           	psect	cinit
+   541   0014DC                     __pcinit:
    542                           	callstack 0
-   543   0014D4                     __initialization:
+   543   0014DC                     start_initialization:
    544                           	callstack 0
-   545                           
-   546                           ; Initialize objects allocated to COMRAM (7 bytes)
-   547                           ; load TBLPTR registers with __pidataCOMRAM
-   548   0014D4  0E06               	movlw	low __pidataCOMRAM
-   549   0014D6  6EF6               	movwf	tblptrl,c
-   550   0014D8  0E15               	movlw	high __pidataCOMRAM
-   551   0014DA  6EF7               	movwf	tblptrh,c
-   552   0014DC  0E00               	movlw	low (__pidataCOMRAM shr (0+16))
-   553   0014DE  6EF8               	movwf	tblptru,c
-   554   0014E0  EE00  F045         	lfsr	0,__pdataCOMRAM
-   555   0014E4  EE10 F007          	lfsr	1,7
-   556   0014E8                     copy_data0:
-   557   0014E8  0009               	tblrd		*+
-   558   0014EA  CFF5 FFEE          	movff	tablat,postinc0
-   559   0014EE  50E5               	movf	postdec1,w,c
-   560   0014F0  50E1               	movf	fsr1l,w,c
-   561   0014F2  E1FA               	bnz	copy_data0
-   562                           
-   563                           ; Clear objects allocated to COMRAM (4 bytes)
-   564   0014F4  6A4F               	clrf	(__pbssCOMRAM+3)& (0+255),c
-   565   0014F6  6A4E               	clrf	(__pbssCOMRAM+2)& (0+255),c
-   566   0014F8  6A4D               	clrf	(__pbssCOMRAM+1)& (0+255),c
-   567   0014FA  6A4C               	clrf	__pbssCOMRAM& (0+255),c
-   568   0014FC                     end_of_initialization:
-   569                           	callstack 0
-   570   0014FC                     __end_of__initialization:
-   571                           	callstack 0
-   572   0014FC  9001               	bcf	int$flags,0,c	;clear compiler interrupt flag (level 1)
-   573   0014FE  9201               	bcf	int$flags,1,c	;clear compiler interrupt flag (level 2)
-   574   001500  0100               	movlb	0
-   575   001502  EF01  F008         	goto	_main	;jump to C main() function
-   576                           
-   577                           	psect	bssCOMRAM
-   578   00004C                     __pbssCOMRAM:
-   579                           	callstack 0
-   580   00004C                     _endereco_eeprom:
-   581                           	callstack 0
-   582   00004C                     	ds	2
-   583   00004E                     _ms_contador:
-   584                           	callstack 0
-   585   00004E                     	ds	2
-   586                           
-   587                           	psect	dataCOMRAM
-   588   000045                     __pdataCOMRAM:
-   589                           	callstack 0
-   590   000045                     _rtc:
+   545   0014DC                     __initialization:
+   546                           	callstack 0
+   547                           
+   548                           ; Initialize objects allocated to COMRAM (7 bytes)
+   549                           ; load TBLPTR registers with __pidataCOMRAM
+   550   0014DC  0E12               	movlw	low __pidataCOMRAM
+   551   0014DE  6EF6               	movwf	tblptrl,c
+   552   0014E0  0E15               	movlw	high __pidataCOMRAM
+   553   0014E2  6EF7               	movwf	tblptrh,c
+   554   0014E4  0E00               	movlw	low (__pidataCOMRAM shr (0+16))
+   555   0014E6  6EF8               	movwf	tblptru,c
+   556   0014E8  EE00  F04D         	lfsr	0,__pdataCOMRAM
+   557   0014EC  EE10 F007          	lfsr	1,7
+   558   0014F0                     copy_data0:
+   559   0014F0  0009               	tblrd		*+
+   560   0014F2  CFF5 FFEE          	movff	tablat,postinc0
+   561   0014F6  50E5               	movf	postdec1,w,c
+   562   0014F8  50E1               	movf	fsr1l,w,c
+   563   0014FA  E1FA               	bnz	copy_data0
+   564                           
+   565                           ; Clear objects allocated to COMRAM (8 bytes)
+   566   0014FC  EE00  F045         	lfsr	0,__pbssCOMRAM
+   567   001500  0E08               	movlw	8
+   568   001502                     clear_0:
+   569   001502  6AEE               	clrf	postinc0,c
+   570   001504  06E8               	decf	wreg,f,c
+   571   001506  E1FD               	bnz	clear_0
+   572   001508                     end_of_initialization:
+   573                           	callstack 0
+   574   001508                     __end_of__initialization:
+   575                           	callstack 0
+   576   001508  9001               	bcf	int$flags,0,c	;clear compiler interrupt flag (level 1)
+   577   00150A  9201               	bcf	int$flags,1,c	;clear compiler interrupt flag (level 2)
+   578   00150C  0100               	movlb	0
+   579   00150E  EF01  F008         	goto	_main	;jump to C main() function
+   580                           
+   581                           	psect	bssCOMRAM
+   582   000045                     __pbssCOMRAM:
+   583                           	callstack 0
+   584   000045                     _tempo_ms_total:
+   585                           	callstack 0
+   586   000045                     	ds	4
+   587   000049                     _endereco_eeprom:
+   588                           	callstack 0
+   589   000049                     	ds	2
+   590   00004B                     _ms_contador:
    591                           	callstack 0
-   592   000045                     	ds	7
+   592   00004B                     	ds	2
    593                           
-   594                           	psect	cstackCOMRAM
-   595   000002                     __pcstackCOMRAM:
+   594                           	psect	dataCOMRAM
+   595   00004D                     __pdataCOMRAM:
    596                           	callstack 0
-   597   000002                     ?___lmul:
+   597   00004D                     _rtc:
    598                           	callstack 0
-   599   000002                     ?___lldiv:
-   600                           	callstack 0
-   601   000002                     EEPROM_WriteByte@endereco:
-   602                           	callstack 0
-   603   000002                     ___lmul@multiplier:
-   604                           	callstack 0
-   605   000002                     ___lldiv@dividend:
-   606                           	callstack 0
-   607   000002                     
-   608                           ; 1 bytes @ 0x0
-   609   000002                     	ds	2
-   610   000004                     EEPROM_WriteByte@dado:
+   599   00004D                     	ds	7
+   600                           
+   601                           	psect	cstackCOMRAM
+   602   000002                     __pcstackCOMRAM:
+   603                           	callstack 0
+   604   000002                     ?___lmul:
+   605                           	callstack 0
+   606   000002                     ?___lldiv:
+   607                           	callstack 0
+   608   000002                     EEPROM_WriteByte@endereco:
+   609                           	callstack 0
+   610   000002                     ___lmul@multiplier:
    611                           	callstack 0
-   612                           
-   613                           ; 1 bytes @ 0x2
-   614   000004                     	ds	1
-   615   000005                     EEPROM_WriteByte@gie_state:
-   616                           	callstack 0
-   617   000005                     
-   618                           ; 1 bytes @ 0x3
-   619   000005                     	ds	1
-   620   000006                     ___lmul@multiplicand:
-   621                           	callstack 0
-   622   000006                     ___lldiv@divisor:
+   612   000002                     ___lldiv@dividend:
+   613                           	callstack 0
+   614   000002                     
+   615                           ; 1 bytes @ 0x0
+   616   000002                     	ds	2
+   617   000004                     EEPROM_WriteByte@dado:
+   618                           	callstack 0
+   619                           
+   620                           ; 1 bytes @ 0x2
+   621   000004                     	ds	1
+   622   000005                     EEPROM_WriteByte@gie_state:
    623                           	callstack 0
-   624                           
-   625                           ; 4 bytes @ 0x4
-   626   000006                     	ds	4
-   627   00000A                     ___lmul@product:
+   624   000005                     
+   625                           ; 1 bytes @ 0x3
+   626   000005                     	ds	1
+   627   000006                     ___lmul@multiplicand:
    628                           	callstack 0
-   629   00000A                     ___lldiv@quotient:
+   629   000006                     ___lldiv@divisor:
    630                           	callstack 0
-   631   00000A                     
-   632                           ; 1 bytes @ 0x8
-   633   00000A                     	ds	4
-   634   00000E                     ___lldiv@counter:
+   631                           
+   632                           ; 4 bytes @ 0x4
+   633   000006                     	ds	4
+   634   00000A                     ___lmul@product:
    635                           	callstack 0
-   636                           
-   637                           ; 1 bytes @ 0xC
-   638   00000E                     	ds	1
-   639   00000F                     salvar_evento_eeprom@inicio:
-   640                           	callstack 0
-   641                           
-   642                           ; 7 bytes @ 0xD
-   643   00000F                     	ds	7
-   644   000016                     salvar_evento_eeprom@duracao_ms:
-   645                           	callstack 0
-   646                           
-   647                           ; 4 bytes @ 0x14
-   648   000016                     	ds	4
-   649   00001A                     salvar_evento_eeprom@duracao_sec:
-   650                           	callstack 0
-   651   00001A                     
-   652                           ; 1 bytes @ 0x18
-   653   00001A                     	ds	2
-   654   00001C                     ??_main:
-   655                           
-   656                           ; 1 bytes @ 0x1A
-   657   00001C                     	ds	20
-   658   000030                     main@momento_inicio:
-   659                           	callstack 0
-   660                           
-   661                           ; 7 bytes @ 0x2E
-   662   000030                     	ds	7
-   663   000037                     main@ms_fim_evento:
-   664                           	callstack 0
-   665                           
-   666                           ; 4 bytes @ 0x35
-   667   000037                     	ds	4
-   668   00003B                     main@duracao_total:
-   669                           	callstack 0
-   670                           
-   671                           ; 4 bytes @ 0x39
-   672   00003B                     	ds	4
-   673   00003F                     main@ms_inicio_evento:
-   674                           	callstack 0
-   675                           
-   676                           ; 4 bytes @ 0x3D
-   677   00003F                     	ds	4
-   678   000043                     main@estado_anterior:
-   679                           	callstack 0
-   680                           
-   681                           ; 1 bytes @ 0x41
-   682   000043                     	ds	1
-   683   000044                     main@estado_atual:
-   684                           	callstack 0
-   685                           
-   686                           ; 1 bytes @ 0x42
-   687   000044                     	ds	1
-   688                           
-   689 ;;
-   690 ;;Main: autosize = 0, tempsize = 20, incstack = 0, save=0
-   691 ;;
-   692 ;; *************** function _main *****************
-   693 ;; Defined at:
-   694 ;;		line 105 in file "main.c"
-   695 ;; Parameters:    Size  Location     Type
-   696 ;;		None
-   697 ;; Auto vars:     Size  Location     Type
-   698 ;;  duracao_tota    4   57[COMRAM] unsigned long 
-   699 ;;  ms_fim_event    4   53[COMRAM] unsigned long 
-   700 ;;  estado_atual    1   66[COMRAM] unsigned char 
-   701 ;;  momento_inic    7   46[COMRAM] struct .
-   702 ;;  ms_inicio_ev    4   61[COMRAM] unsigned long 
-   703 ;;  estado_anter    1   65[COMRAM] unsigned char 
-   704 ;; Return value:  Size  Location     Type
-   705 ;;                  1    wreg      void 
-   706 ;; Registers used:
-   707 ;;		wreg, fsr0l, fsr0h, fsr1l, fsr1h, fsr2l, fsr2h, status,2, status,0, prodl, prodh, cstack
-   708 ;; Tracked objects:
-   709 ;;		On entry : 0/0
-   710 ;;		On exit  : 0/0
-   711 ;;		Unchanged: 0/0
-   712 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
+   636   00000A                     ___lldiv@quotient:
+   637                           	callstack 0
+   638   00000A                     
+   639                           ; 1 bytes @ 0x8
+   640   00000A                     	ds	4
+   641   00000E                     ___lldiv@counter:
+   642                           	callstack 0
+   643                           
+   644                           ; 1 bytes @ 0xC
+   645   00000E                     	ds	1
+   646   00000F                     salvar_evento_eeprom@inicio:
+   647                           	callstack 0
+   648                           
+   649                           ; 7 bytes @ 0xD
+   650   00000F                     	ds	7
+   651   000016                     salvar_evento_eeprom@duracao_ms:
+   652                           	callstack 0
+   653                           
+   654                           ; 4 bytes @ 0x14
+   655   000016                     	ds	4
+   656   00001A                     salvar_evento_eeprom@duracao_sec:
+   657                           	callstack 0
+   658   00001A                     
+   659                           ; 1 bytes @ 0x18
+   660   00001A                     	ds	2
+   661   00001C                     ??_main:
+   662                           
+   663                           ; 1 bytes @ 0x1A
+   664   00001C                     	ds	20
+   665   000030                     main@momento_inicio:
+   666                           	callstack 0
+   667                           
+   668                           ; 7 bytes @ 0x2E
+   669   000030                     	ds	7
+   670   000037                     main@ms_fim_evento:
+   671                           	callstack 0
+   672                           
+   673                           ; 4 bytes @ 0x35
+   674   000037                     	ds	4
+   675   00003B                     main@duracao_total:
+   676                           	callstack 0
+   677                           
+   678                           ; 4 bytes @ 0x39
+   679   00003B                     	ds	4
+   680   00003F                     main@ms_inicio_evento:
+   681                           	callstack 0
+   682                           
+   683                           ; 4 bytes @ 0x3D
+   684   00003F                     	ds	4
+   685   000043                     main@estado_anterior:
+   686                           	callstack 0
+   687                           
+   688                           ; 1 bytes @ 0x41
+   689   000043                     	ds	1
+   690   000044                     main@estado_atual:
+   691                           	callstack 0
+   692                           
+   693                           ; 1 bytes @ 0x42
+   694   000044                     	ds	1
+   695                           
+   696 ;;
+   697 ;;Main: autosize = 0, tempsize = 20, incstack = 0, save=0
+   698 ;;
+   699 ;; *************** function _main *****************
+   700 ;; Defined at:
+   701 ;;		line 111 in file "main.c"
+   702 ;; Parameters:    Size  Location     Type
+   703 ;;		None
+   704 ;; Auto vars:     Size  Location     Type
+   705 ;;  duracao_tota    4   57[COMRAM] unsigned long 
+   706 ;;  ms_fim_event    4   53[COMRAM] unsigned long 
+   707 ;;  estado_atual    1   66[COMRAM] unsigned char 
+   708 ;;  momento_inic    7   46[COMRAM] struct .
+   709 ;;  ms_inicio_ev    4   61[COMRAM] unsigned long 
+   710 ;;  estado_anter    1   65[COMRAM] unsigned char 
+   711 ;; Return value:  Size  Location     Type
+   712 ;;                  1    wreg      void 
+   713 ;; Registers used:
+   714 ;;		wreg, fsr0l, fsr0h, fsr1l, fsr1h, fsr2l, fsr2h, status,2, status,0, prodl, prodh, cstack
+   715 ;; Tracked objects:
+   716 ;;		On entry : 0/0
+   717 ;;		On exit  : 0/0
+   718 ;;		Unchanged: 0/0
+   719 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
       +1  BANK12
-   713 ;;      Params:         0       0       0       0       0       0       0       0       0       0       0       0       
+   720 ;;      Params:         0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-   714 ;;      Locals:        21       0       0       0       0       0       0       0       0       0       0       0       
+   721 ;;      Locals:        21       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-   715 ;;      Temps:         20       0       0       0       0       0       0       0       0       0       0       0       
+   722 ;;      Temps:         20       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-   716 ;;      Totals:        41       0       0       0       0       0       0       0       0       0       0       0       
+   723 ;;      Totals:        41       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-   717 ;;Total ram usage:       41 bytes
-   718 ;; Hardware stack levels required when called: 3
-   719 ;; This function calls:
-   720 ;;		___lmul
-   721 ;;		_salvar_evento_eeprom
-   722 ;; This function is called by:
-   723 ;;		Startup code after reset
-   724 ;; This function uses a non-reentrant model
-   725 ;;
-   726                           
-   727                           	psect	text0
-   728   001002                     __ptext0:
-   729                           	callstack 0
-   730   001002                     _main:
-   731                           	callstack 28
-   732   001002                     
-   733                           ;main.c: 106:     INTCONbits.GIE = 1;
-   734   001002  0E0F               	movlw	15
-   735   001004  6EC1               	movwf	193,c	;volatile
-   736   001006                     
-   737                           ;main.c: 107: 
-   738   001006  8093               	bsf	147,0,c	;volatile
-   739                           
-   740                           ;main.c: 110:     uint32_t ms_inicio_evento = 0;
-   741   001008  0E88               	movlw	136
-   742   00100A  6ED5               	movwf	213,c	;volatile
-   743                           
-   744                           ;main.c: 111: 
-   745   00100C  0EEC               	movlw	236
-   746   00100E  6ED7               	movwf	215,c	;volatile
-   747                           
-   748                           ;main.c: 112:     while(1) {
-   749   001010  0E78               	movlw	120
-   750   001012  6ED6               	movwf	214,c	;volatile
-   751   001014                     
-   752                           ;main.c: 114: 
-   753   001014  94F2               	bcf	242,2,c	;volatile
-   754   001016                     
-   755                           ;main.c: 115: 
-   756   001016  8AF2               	bsf	242,5,c	;volatile
-   757   001018                     
-   758                           ;main.c: 116:         if (estado_atual == 1 && estado_anterior == 0) {
-   759   001018  8EF2               	bsf	242,7,c	;volatile
-   760   00101A                     
-   761                           ;main.c: 118:             if (PORTBbits.RB0 == 1) {
-   762   00101A  6A43               	clrf	main@estado_anterior^0,c
-   763                           
-   764                           ;main.c: 119:                 momento_inicio = rtc;;main.c: 120: 
-   765   00101C  0E00               	movlw	0
-   766   00101E  6E3F               	movwf	main@ms_inicio_evento^0,c
-   767   001020  0E00               	movlw	0
-   768   001022  6E40               	movwf	(main@ms_inicio_evento+1)^0,c
-   769   001024  0E00               	movlw	0
-   770   001026  6E41               	movwf	(main@ms_inicio_evento+2)^0,c
-   771   001028  0E00               	movlw	0
-   772   00102A  6E42               	movwf	(main@ms_inicio_evento+3)^0,c
-   773   00102C                     l1115:
-   774                           
-   775                           ;main.c: 123:         }
-   776   00102C  0E00               	movlw	0
-   777   00102E  B081               	btfsc	129,0,c	;volatile
-   778   001030  0E01               	movlw	1
-   779   001032  6E44               	movwf	main@estado_atual^0,c
-   780   001034                     
-   781                           ;main.c: 126:         else if (estado_atual == 0 && estado_anterior == 1) {
-   782   001034  0444               	decf	main@estado_atual^0,w,c
-   783   001036  A4D8               	btfss	status,2,c
-   784   001038  EF20  F008         	goto	u321
-   785   00103C  EF22  F008         	goto	u320
-   786   001040                     u321:
-   787   001040  EFA6  F008         	goto	l1129
-   788   001044                     u320:
-   789   001044  5043               	movf	main@estado_anterior^0,w,c
-   790   001046  A4D8               	btfss	status,2,c
-   791   001048  EF28  F008         	goto	u331
-   792   00104C  EF2A  F008         	goto	u330
-   793   001050                     u331:
-   794   001050  EFA6  F008         	goto	l1129
-   795   001054                     u330:
-   796   001054                     
-   797                           ;main.c: 127:             _delay((unsigned long)((20)*(20000000/4000.0)));
-   798   001054  0E82               	movlw	130
-   799   001056  6E1C               	movwf	??_main^0,c
-   800   001058  0EDE               	movlw	222
-   801   00105A                     u407:
-   802   00105A  2EE8               	decfsz	wreg,f,c
-   803   00105C  D7FE               	bra	u407
-   804   00105E  2E1C               	decfsz	??_main^0,f,c
-   805   001060  D7FC               	bra	u407
-   806   001062                     
-   807                           ;main.c: 128:             if (PORTBbits.RB0 == 0) {
-   808   001062  A081               	btfss	129,0,c	;volatile
-   809   001064  EF36  F008         	goto	u341
-   810   001068  EF38  F008         	goto	u340
-   811   00106C                     u341:
-   812   00106C  EF46  F009         	goto	l1143
-   813   001070                     u340:
-   814   001070                     
-   815                           ;main.c: 129:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + 
+   724 ;;Total ram usage:       41 bytes
+   725 ;; Hardware stack levels required when called: 3
+   726 ;; This function calls:
+   727 ;;		___lmul
+   728 ;;		_salvar_evento_eeprom
+   729 ;; This function is called by:
+   730 ;;		Startup code after reset
+   731 ;; This function uses a non-reentrant model
+   732 ;;
+   733                           
+   734                           	psect	text0
+   735   001002                     __ptext0:
+   736                           	callstack 0
+   737   001002                     _main:
+   738                           	callstack 28
+   739   001002                     
+   740                           ;main.c: 112:     INTCONbits.GIE = 1;
+   741   001002  0E0F               	movlw	15
+   742   001004  6EC1               	movwf	193,c	;volatile
+   743   001006                     
+   744                           ;main.c: 113: 
+   745   001006  8093               	bsf	147,0,c	;volatile
+   746   001008                     
+   747                           ;main.c: 114:     uint8_t estado_anterior = 0;
+   748   001008  9092               	bcf	146,0,c	;volatile
+   749   00100A                     
+   750                           ;main.c: 116:     uint32_t ms_inicio_evento = 0;
+   751   00100A  9089               	bcf	137,0,c	;volatile
+   752                           
+   753                           ;main.c: 119: 
+   754   00100C  0E88               	movlw	136
+   755   00100E  6ED5               	movwf	213,c	;volatile
+   756                           
+   757                           ;main.c: 120:     while(1) {
+   758   001010  0EEC               	movlw	236
+   759   001012  6ED7               	movwf	215,c	;volatile
+   760                           
+   761                           ;main.c: 121:         uint8_t estado_atual = PORTBbits.RB0;
+   762   001014  0E78               	movlw	120
+   763   001016  6ED6               	movwf	214,c	;volatile
+   764   001018                     
+   765                           ;main.c: 123: 
+   766   001018  94F2               	bcf	242,2,c	;volatile
+   767   00101A                     
+   768                           ;main.c: 124:         if (estado_atual == 1 && estado_anterior == 0) {
+   769   00101A  8AF2               	bsf	242,5,c	;volatile
+   770   00101C                     
+   771                           ;main.c: 125:             _delay((unsigned long)((20)*(20000000/4000.0)));
+   772   00101C  8EF2               	bsf	242,7,c	;volatile
+   773   00101E                     
+   774                           ;main.c: 127:                 momento_inicio = rtc;
+   775   00101E  6A43               	clrf	main@estado_anterior^0,c
+   776                           
+   777                           ;main.c: 128: ;main.c: 129:                 ms_inicio_evento = ((uint32_t)rtc.hora * 360
+      +                          0000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+   778   001020  0E00               	movlw	0
+   779   001022  6E3F               	movwf	main@ms_inicio_evento^0,c
+   780   001024  0E00               	movlw	0
+   781   001026  6E40               	movwf	(main@ms_inicio_evento+1)^0,c
+   782   001028  0E00               	movlw	0
+   783   00102A  6E41               	movwf	(main@ms_inicio_evento+2)^0,c
+   784   00102C  0E00               	movlw	0
+   785   00102E  6E42               	movwf	(main@ms_inicio_evento+3)^0,c
+   786   001030                     l1135:
+   787                           
+   788                           ;main.c: 134: 
+   789   001030  0E00               	movlw	0
+   790   001032  B081               	btfsc	129,0,c	;volatile
+   791   001034  0E01               	movlw	1
+   792   001036  6E44               	movwf	main@estado_atual^0,c
+   793   001038                     
+   794                           ;main.c: 137:             if (PORTBbits.RB0 == 0) {
+   795   001038  0444               	decf	main@estado_atual^0,w,c
+   796   00103A  A4D8               	btfss	status,2,c
+   797   00103C  EF22  F008         	goto	u321
+   798   001040  EF24  F008         	goto	u320
+   799   001044                     u321:
+   800   001044  EFA9  F008         	goto	l1151
+   801   001048                     u320:
+   802   001048  5043               	movf	main@estado_anterior^0,w,c
+   803   00104A  A4D8               	btfss	status,2,c
+   804   00104C  EF2A  F008         	goto	u331
+   805   001050  EF2C  F008         	goto	u330
+   806   001054                     u331:
+   807   001054  EFA9  F008         	goto	l1151
+   808   001058                     u330:
+   809   001058                     
+   810                           ;main.c: 138:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + 
       +                          ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
-   816   001070  EE20  F045         	lfsr	2,_rtc	;volatile
-   817   001074  EE10  F030         	lfsr	1,main@momento_inicio
-   818   001078  0E06               	movlw	6
-   819   00107A                     u351:
-   820   00107A  CFDB FFE3          	movff	plusw2,plusw1
-   821   00107E  06E8               	decf	wreg,f,c
-   822   001080  E2FC               	bc	u351
-   823   001082                     
-   824                           ;main.c: 131: 
-   825   001082  5045               	movf	_rtc^0,w,c	;volatile
-   826   001084  6E1C               	movwf	??_main^0,c
-   827   001086  6A1D               	clrf	(??_main+1)^0,c
-   828   001088  0EE8               	movlw	232
-   829   00108A  021C               	mulwf	??_main^0,c
-   830   00108C  CFF3 F01E          	movff	prodl,??_main+2
-   831   001090  CFF4 F01F          	movff	prodh,??_main+3
-   832   001094  021D               	mulwf	(??_main+1)^0,c
-   833   001096  50F3               	movf	prodl,w,c
-   834   001098  261F               	addwf	(??_main+3)^0,f,c
-   835   00109A  0E03               	movlw	3
-   836   00109C  021C               	mulwf	??_main^0,c
-   837   00109E  50F3               	movf	prodl,w,c
-   838   0010A0  261F               	addwf	(??_main+3)^0,f,c
-   839   0010A2  C01E  F020         	movff	??_main+2,??_main+4
-   840   0010A6  C01F  F021         	movff	??_main+3,??_main+5
-   841   0010AA  0E00               	movlw	0
-   842   0010AC  BE21               	btfsc	(??_main+5)^0,7,c
-   843   0010AE  0EFF               	movlw	255
-   844   0010B0  6E22               	movwf	(??_main+6)^0,c
-   845   0010B2  6E23               	movwf	(??_main+7)^0,c
-   846   0010B4  5047               	movf	(_rtc+2)^0,w,c	;volatile
-   847   0010B6  6E02               	movwf	___lmul@multiplier^0,c
-   848   0010B8  6A03               	clrf	(___lmul@multiplier+1)^0,c
-   849   0010BA  6A04               	clrf	(___lmul@multiplier+2)^0,c
-   850   0010BC  6A05               	clrf	(___lmul@multiplier+3)^0,c
-   851   0010BE  0E80               	movlw	128
-   852   0010C0  6E06               	movwf	___lmul@multiplicand^0,c
-   853   0010C2  0EEE               	movlw	238
-   854   0010C4  6E07               	movwf	(___lmul@multiplicand+1)^0,c
-   855   0010C6  0E36               	movlw	54
-   856   0010C8  6E08               	movwf	(___lmul@multiplicand+2)^0,c
-   857   0010CA  0E00               	movlw	0
-   858   0010CC  6E09               	movwf	(___lmul@multiplicand+3)^0,c
-   859   0010CE  EC13  F00A         	call	___lmul	;wreg free
-   860   0010D2  C002  F024         	movff	?___lmul,??_main+8
-   861   0010D6  C003  F025         	movff	?___lmul+1,??_main+9
-   862   0010DA  C004  F026         	movff	?___lmul+2,??_main+10
-   863   0010DE  C005  F027         	movff	?___lmul+3,??_main+11
-   864   0010E2  5046               	movf	(_rtc+1)^0,w,c	;volatile
-   865   0010E4  6E02               	movwf	___lmul@multiplier^0,c
-   866   0010E6  6A03               	clrf	(___lmul@multiplier+1)^0,c
-   867   0010E8  6A04               	clrf	(___lmul@multiplier+2)^0,c
-   868   0010EA  6A05               	clrf	(___lmul@multiplier+3)^0,c
-   869   0010EC  0E60               	movlw	96
-   870   0010EE  6E06               	movwf	___lmul@multiplicand^0,c
-   871   0010F0  0EEA               	movlw	234
-   872   0010F2  6E07               	movwf	(___lmul@multiplicand+1)^0,c
-   873   0010F4  0E00               	movlw	0
-   874   0010F6  6E08               	movwf	(___lmul@multiplicand+2)^0,c
-   875   0010F8  0E00               	movlw	0
-   876   0010FA  6E09               	movwf	(___lmul@multiplicand+3)^0,c
-   877   0010FC  EC13  F00A         	call	___lmul	;wreg free
-   878   001100  5002               	movf	?___lmul^0,w,c
-   879   001102  2424               	addwf	(??_main+8)^0,w,c
-   880   001104  6E28               	movwf	(??_main+12)^0,c
-   881   001106  5003               	movf	(?___lmul+1)^0,w,c
-   882   001108  2025               	addwfc	(??_main+9)^0,w,c
-   883   00110A  6E29               	movwf	(??_main+13)^0,c
-   884   00110C  5004               	movf	(?___lmul+2)^0,w,c
-   885   00110E  2026               	addwfc	(??_main+10)^0,w,c
-   886   001110  6E2A               	movwf	(??_main+14)^0,c
-   887   001112  5005               	movf	(?___lmul+3)^0,w,c
-   888   001114  2027               	addwfc	(??_main+11)^0,w,c
-   889   001116  6E2B               	movwf	(??_main+15)^0,c
-   890   001118  5020               	movf	(??_main+4)^0,w,c
-   891   00111A  2428               	addwf	(??_main+12)^0,w,c
-   892   00111C  6E2C               	movwf	(??_main+16)^0,c
-   893   00111E  5021               	movf	(??_main+5)^0,w,c
-   894   001120  2029               	addwfc	(??_main+13)^0,w,c
-   895   001122  6E2D               	movwf	(??_main+17)^0,c
-   896   001124  5022               	movf	(??_main+6)^0,w,c
-   897   001126  202A               	addwfc	(??_main+14)^0,w,c
-   898   001128  6E2E               	movwf	(??_main+18)^0,c
-   899   00112A  5023               	movf	(??_main+7)^0,w,c
-   900   00112C  202B               	addwfc	(??_main+15)^0,w,c
-   901   00112E  6E2F               	movwf	(??_main+19)^0,c
-   902   001130  504E               	movf	_ms_contador^0,w,c	;volatile
-   903   001132  242C               	addwf	(??_main+16)^0,w,c
-   904   001134  6E3F               	movwf	main@ms_inicio_evento^0,c
-   905   001136  504F               	movf	(_ms_contador+1)^0,w,c	;volatile
-   906   001138  202D               	addwfc	(??_main+17)^0,w,c
-   907   00113A  6E40               	movwf	(main@ms_inicio_evento+1)^0,c
-   908   00113C  0E00               	movlw	0
-   909   00113E  202E               	addwfc	(??_main+18)^0,w,c
-   910   001140  6E41               	movwf	(main@ms_inicio_evento+2)^0,c
-   911   001142  0E00               	movlw	0
-   912   001144  202F               	addwfc	(??_main+19)^0,w,c
-   913   001146  6E42               	movwf	(main@ms_inicio_evento+3)^0,c
-   914   001148  EF46  F009         	goto	l1143
-   915   00114C                     l1129:
-   916   00114C  5044               	movf	main@estado_atual^0,w,c
-   917   00114E  A4D8               	btfss	status,2,c
-   918   001150  EFAC  F008         	goto	u361
-   919   001154  EFAE  F008         	goto	u360
-   920   001158                     u361:
-   921   001158  EF46  F009         	goto	l1143
-   922   00115C                     u360:
-   923   00115C  0443               	decf	main@estado_anterior^0,w,c
-   924   00115E  A4D8               	btfss	status,2,c
-   925   001160  EFB4  F008         	goto	u371
-   926   001164  EFB6  F008         	goto	u370
-   927   001168                     u371:
-   928   001168  EF46  F009         	goto	l1143
-   929   00116C                     u370:
-   930   00116C                     
-   931                           ;main.c: 137:         estado_anterior = estado_atual;
-   932   00116C  0E82               	movlw	130
-   933   00116E  6E1C               	movwf	??_main^0,c
-   934   001170  0EDE               	movlw	222
-   935   001172                     u417:
-   936   001172  2EE8               	decfsz	wreg,f,c
-   937   001174  D7FE               	bra	u417
-   938   001176  2E1C               	decfsz	??_main^0,f,c
-   939   001178  D7FC               	bra	u417
-   940   00117A                     
-   941                           ;main.c: 138:     }
-   942   00117A  B081               	btfsc	129,0,c	;volatile
-   943   00117C  EFC2  F008         	goto	u381
-   944   001180  EFC4  F008         	goto	u380
-   945   001184                     u381:
-   946   001184  EF46  F009         	goto	l1143
-   947   001188                     u380:
-   948   001188                     
-   949                           ;main.c: 139: }
-   950   001188  5045               	movf	_rtc^0,w,c	;volatile
-   951   00118A  6E1C               	movwf	??_main^0,c
-   952   00118C  6A1D               	clrf	(??_main+1)^0,c
-   953   00118E  0EE8               	movlw	232
-   954   001190  021C               	mulwf	??_main^0,c
-   955   001192  CFF3 F01E          	movff	prodl,??_main+2
-   956   001196  CFF4 F01F          	movff	prodh,??_main+3
-   957   00119A  021D               	mulwf	(??_main+1)^0,c
-   958   00119C  50F3               	movf	prodl,w,c
-   959   00119E  261F               	addwf	(??_main+3)^0,f,c
-   960   0011A0  0E03               	movlw	3
-   961   0011A2  021C               	mulwf	??_main^0,c
-   962   0011A4  50F3               	movf	prodl,w,c
-   963   0011A6  261F               	addwf	(??_main+3)^0,f,c
-   964   0011A8  C01E  F020         	movff	??_main+2,??_main+4
-   965   0011AC  C01F  F021         	movff	??_main+3,??_main+5
-   966   0011B0  0E00               	movlw	0
-   967   0011B2  BE21               	btfsc	(??_main+5)^0,7,c
-   968   0011B4  0EFF               	movlw	255
-   969   0011B6  6E22               	movwf	(??_main+6)^0,c
-   970   0011B8  6E23               	movwf	(??_main+7)^0,c
-   971   0011BA  5047               	movf	(_rtc+2)^0,w,c	;volatile
-   972   0011BC  6E02               	movwf	___lmul@multiplier^0,c
-   973   0011BE  6A03               	clrf	(___lmul@multiplier+1)^0,c
-   974   0011C0  6A04               	clrf	(___lmul@multiplier+2)^0,c
-   975   0011C2  6A05               	clrf	(___lmul@multiplier+3)^0,c
-   976   0011C4  0E80               	movlw	128
-   977   0011C6  6E06               	movwf	___lmul@multiplicand^0,c
-   978   0011C8  0EEE               	movlw	238
-   979   0011CA  6E07               	movwf	(___lmul@multiplicand+1)^0,c
-   980   0011CC  0E36               	movlw	54
-   981   0011CE  6E08               	movwf	(___lmul@multiplicand+2)^0,c
-   982   0011D0  0E00               	movlw	0
-   983   0011D2  6E09               	movwf	(___lmul@multiplicand+3)^0,c
-   984   0011D4  EC13  F00A         	call	___lmul	;wreg free
-   985   0011D8  C002  F024         	movff	?___lmul,??_main+8
-   986   0011DC  C003  F025         	movff	?___lmul+1,??_main+9
-   987   0011E0  C004  F026         	movff	?___lmul+2,??_main+10
-   988   0011E4  C005  F027         	movff	?___lmul+3,??_main+11
-   989   0011E8  5046               	movf	(_rtc+1)^0,w,c	;volatile
-   990   0011EA  6E02               	movwf	___lmul@multiplier^0,c
-   991   0011EC  6A03               	clrf	(___lmul@multiplier+1)^0,c
-   992   0011EE  6A04               	clrf	(___lmul@multiplier+2)^0,c
-   993   0011F0  6A05               	clrf	(___lmul@multiplier+3)^0,c
-   994   0011F2  0E60               	movlw	96
-   995   0011F4  6E06               	movwf	___lmul@multiplicand^0,c
-   996   0011F6  0EEA               	movlw	234
-   997   0011F8  6E07               	movwf	(___lmul@multiplicand+1)^0,c
-   998   0011FA  0E00               	movlw	0
-   999   0011FC  6E08               	movwf	(___lmul@multiplicand+2)^0,c
-  1000   0011FE  0E00               	movlw	0
-  1001   001200  6E09               	movwf	(___lmul@multiplicand+3)^0,c
-  1002   001202  EC13  F00A         	call	___lmul	;wreg free
-  1003   001206  5002               	movf	?___lmul^0,w,c
-  1004   001208  2424               	addwf	(??_main+8)^0,w,c
-  1005   00120A  6E28               	movwf	(??_main+12)^0,c
-  1006   00120C  5003               	movf	(?___lmul+1)^0,w,c
-  1007   00120E  2025               	addwfc	(??_main+9)^0,w,c
-  1008   001210  6E29               	movwf	(??_main+13)^0,c
-  1009   001212  5004               	movf	(?___lmul+2)^0,w,c
-  1010   001214  2026               	addwfc	(??_main+10)^0,w,c
-  1011   001216  6E2A               	movwf	(??_main+14)^0,c
-  1012   001218  5005               	movf	(?___lmul+3)^0,w,c
-  1013   00121A  2027               	addwfc	(??_main+11)^0,w,c
-  1014   00121C  6E2B               	movwf	(??_main+15)^0,c
-  1015   00121E  5020               	movf	(??_main+4)^0,w,c
-  1016   001220  2428               	addwf	(??_main+12)^0,w,c
-  1017   001222  6E2C               	movwf	(??_main+16)^0,c
-  1018   001224  5021               	movf	(??_main+5)^0,w,c
-  1019   001226  2029               	addwfc	(??_main+13)^0,w,c
-  1020   001228  6E2D               	movwf	(??_main+17)^0,c
-  1021   00122A  5022               	movf	(??_main+6)^0,w,c
-  1022   00122C  202A               	addwfc	(??_main+14)^0,w,c
-  1023   00122E  6E2E               	movwf	(??_main+18)^0,c
-  1024   001230  5023               	movf	(??_main+7)^0,w,c
-  1025   001232  202B               	addwfc	(??_main+15)^0,w,c
-  1026   001234  6E2F               	movwf	(??_main+19)^0,c
-  1027   001236  504E               	movf	_ms_contador^0,w,c	;volatile
-  1028   001238  242C               	addwf	(??_main+16)^0,w,c
-  1029   00123A  6E37               	movwf	main@ms_fim_evento^0,c
-  1030   00123C  504F               	movf	(_ms_contador+1)^0,w,c	;volatile
-  1031   00123E  202D               	addwfc	(??_main+17)^0,w,c
-  1032   001240  6E38               	movwf	(main@ms_fim_evento+1)^0,c
-  1033   001242  0E00               	movlw	0
-  1034   001244  202E               	addwfc	(??_main+18)^0,w,c
-  1035   001246  6E39               	movwf	(main@ms_fim_evento+2)^0,c
-  1036   001248  0E00               	movlw	0
-  1037   00124A  202F               	addwfc	(??_main+19)^0,w,c
-  1038   00124C  6E3A               	movwf	(main@ms_fim_evento+3)^0,c
-  1039   00124E  503F               	movf	main@ms_inicio_evento^0,w,c
-  1040   001250  5C37               	subwf	main@ms_fim_evento^0,w,c
-  1041   001252  6E3B               	movwf	main@duracao_total^0,c
-  1042   001254  5040               	movf	(main@ms_inicio_evento+1)^0,w,c
-  1043   001256  5838               	subwfb	(main@ms_fim_evento+1)^0,w,c
-  1044   001258  6E3C               	movwf	(main@duracao_total+1)^0,c
-  1045   00125A  5041               	movf	(main@ms_inicio_evento+2)^0,w,c
-  1046   00125C  5839               	subwfb	(main@ms_fim_evento+2)^0,w,c
-  1047   00125E  6E3D               	movwf	(main@duracao_total+2)^0,c
-  1048   001260  5042               	movf	(main@ms_inicio_evento+3)^0,w,c
-  1049   001262  583A               	subwfb	(main@ms_fim_evento+3)^0,w,c
-  1050   001264  6E3E               	movwf	(main@duracao_total+3)^0,c
-  1051   001266  EE20  F030         	lfsr	2,main@momento_inicio
-  1052   00126A  EE00  F00F         	lfsr	0,salvar_evento_eeprom@inicio
-  1053   00126E  0E06               	movlw	6
-  1054   001270                     u391:
-  1055   001270  CFDB FFEB          	movff	plusw2,plusw0
-  1056   001274  06E8               	decf	wreg,f,c
-  1057   001276  E2FC               	bc	u391
-  1058   001278  C03B  F016         	movff	main@duracao_total,salvar_evento_eeprom@duracao_ms
-  1059   00127C  C03C  F017         	movff	main@duracao_total+1,salvar_evento_eeprom@duracao_ms+1
-  1060   001280  C03D  F018         	movff	main@duracao_total+2,salvar_evento_eeprom@duracao_ms+2
-  1061   001284  C03E  F019         	movff	main@duracao_total+3,salvar_evento_eeprom@duracao_ms+3
-  1062   001288  EC4C  F009         	call	_salvar_evento_eeprom	;wreg free
-  1063   00128C                     l1143:
-  1064   00128C  C044  F043         	movff	main@estado_atual,main@estado_anterior
-  1065   001290  EF16  F008         	goto	l1115
-  1066   001294  EF59  F000         	goto	start
-  1067   001298                     __end_of_main:
-  1068                           	callstack 0
-  1069                           
-  1070 ;; *************** function _salvar_evento_eeprom *****************
-  1071 ;; Defined at:
-  1072 ;;		line 89 in file "main.c"
-  1073 ;; Parameters:    Size  Location     Type
-  1074 ;;  inicio          7   13[COMRAM] struct .
-  1075 ;;  duracao_ms      4   20[COMRAM] unsigned long 
-  1076 ;; Auto vars:     Size  Location     Type
-  1077 ;;  duracao_sec     2   24[COMRAM] unsigned short 
-  1078 ;; Return value:  Size  Location     Type
-  1079 ;;                  1    wreg      void 
-  1080 ;; Registers used:
-  1081 ;;		wreg, status,2, status,0, cstack
-  1082 ;; Tracked objects:
-  1083 ;;		On entry : 0/0
-  1084 ;;		On exit  : 0/0
-  1085 ;;		Unchanged: 0/0
-  1086 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
+   811   001058  0E82               	movlw	130
+   812   00105A  6E1C               	movwf	??_main^0,c
+   813   00105C  0EDE               	movlw	222
+   814   00105E                     u407:
+   815   00105E  2EE8               	decfsz	wreg,f,c
+   816   001060  D7FE               	bra	u407
+   817   001062  2E1C               	decfsz	??_main^0,f,c
+   818   001064  D7FC               	bra	u407
+   819   001066                     
+   820                           ;main.c: 139:                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
+   821   001066  A081               	btfss	129,0,c	;volatile
+   822   001068  EF38  F008         	goto	u341
+   823   00106C  EF3A  F008         	goto	u340
+   824   001070                     u341:
+   825   001070  EF4A  F009         	goto	l1167
+   826   001074                     u340:
+   827   001074                     
+   828                           ;main.c: 140:                 LATAbits.LATA0 = 0;
+   829   001074  EE20  F04D         	lfsr	2,_rtc	;volatile
+   830   001078  EE10  F030         	lfsr	1,main@momento_inicio
+   831   00107C  0E06               	movlw	6
+   832   00107E                     u351:
+   833   00107E  CFDB FFE3          	movff	plusw2,plusw1
+   834   001082  06E8               	decf	wreg,f,c
+   835   001084  E2FC               	bc	u351
+   836   001086                     
+   837                           ;main.c: 142: 
+   838   001086  504D               	movf	_rtc^0,w,c	;volatile
+   839   001088  6E1C               	movwf	??_main^0,c
+   840   00108A  6A1D               	clrf	(??_main+1)^0,c
+   841   00108C  0EE8               	movlw	232
+   842   00108E  021C               	mulwf	??_main^0,c
+   843   001090  CFF3 F01E          	movff	prodl,??_main+2
+   844   001094  CFF4 F01F          	movff	prodh,??_main+3
+   845   001098  021D               	mulwf	(??_main+1)^0,c
+   846   00109A  50F3               	movf	prodl,w,c
+   847   00109C  261F               	addwf	(??_main+3)^0,f,c
+   848   00109E  0E03               	movlw	3
+   849   0010A0  021C               	mulwf	??_main^0,c
+   850   0010A2  50F3               	movf	prodl,w,c
+   851   0010A4  261F               	addwf	(??_main+3)^0,f,c
+   852   0010A6  C01E  F020         	movff	??_main+2,??_main+4
+   853   0010AA  C01F  F021         	movff	??_main+3,??_main+5
+   854   0010AE  0E00               	movlw	0
+   855   0010B0  BE21               	btfsc	(??_main+5)^0,7,c
+   856   0010B2  0EFF               	movlw	255
+   857   0010B4  6E22               	movwf	(??_main+6)^0,c
+   858   0010B6  6E23               	movwf	(??_main+7)^0,c
+   859   0010B8  504F               	movf	(_rtc+2)^0,w,c	;volatile
+   860   0010BA  6E02               	movwf	___lmul@multiplier^0,c
+   861   0010BC  6A03               	clrf	(___lmul@multiplier+1)^0,c
+   862   0010BE  6A04               	clrf	(___lmul@multiplier+2)^0,c
+   863   0010C0  6A05               	clrf	(___lmul@multiplier+3)^0,c
+   864   0010C2  0E80               	movlw	128
+   865   0010C4  6E06               	movwf	___lmul@multiplicand^0,c
+   866   0010C6  0EEE               	movlw	238
+   867   0010C8  6E07               	movwf	(___lmul@multiplicand+1)^0,c
+   868   0010CA  0E36               	movlw	54
+   869   0010CC  6E08               	movwf	(___lmul@multiplicand+2)^0,c
+   870   0010CE  0E00               	movlw	0
+   871   0010D0  6E09               	movwf	(___lmul@multiplicand+3)^0,c
+   872   0010D2  EC17  F00A         	call	___lmul	;wreg free
+   873   0010D6  C002  F024         	movff	?___lmul,??_main+8
+   874   0010DA  C003  F025         	movff	?___lmul+1,??_main+9
+   875   0010DE  C004  F026         	movff	?___lmul+2,??_main+10
+   876   0010E2  C005  F027         	movff	?___lmul+3,??_main+11
+   877   0010E6  504E               	movf	(_rtc+1)^0,w,c	;volatile
+   878   0010E8  6E02               	movwf	___lmul@multiplier^0,c
+   879   0010EA  6A03               	clrf	(___lmul@multiplier+1)^0,c
+   880   0010EC  6A04               	clrf	(___lmul@multiplier+2)^0,c
+   881   0010EE  6A05               	clrf	(___lmul@multiplier+3)^0,c
+   882   0010F0  0E60               	movlw	96
+   883   0010F2  6E06               	movwf	___lmul@multiplicand^0,c
+   884   0010F4  0EEA               	movlw	234
+   885   0010F6  6E07               	movwf	(___lmul@multiplicand+1)^0,c
+   886   0010F8  0E00               	movlw	0
+   887   0010FA  6E08               	movwf	(___lmul@multiplicand+2)^0,c
+   888   0010FC  0E00               	movlw	0
+   889   0010FE  6E09               	movwf	(___lmul@multiplicand+3)^0,c
+   890   001100  EC17  F00A         	call	___lmul	;wreg free
+   891   001104  5002               	movf	?___lmul^0,w,c
+   892   001106  2424               	addwf	(??_main+8)^0,w,c
+   893   001108  6E28               	movwf	(??_main+12)^0,c
+   894   00110A  5003               	movf	(?___lmul+1)^0,w,c
+   895   00110C  2025               	addwfc	(??_main+9)^0,w,c
+   896   00110E  6E29               	movwf	(??_main+13)^0,c
+   897   001110  5004               	movf	(?___lmul+2)^0,w,c
+   898   001112  2026               	addwfc	(??_main+10)^0,w,c
+   899   001114  6E2A               	movwf	(??_main+14)^0,c
+   900   001116  5005               	movf	(?___lmul+3)^0,w,c
+   901   001118  2027               	addwfc	(??_main+11)^0,w,c
+   902   00111A  6E2B               	movwf	(??_main+15)^0,c
+   903   00111C  5020               	movf	(??_main+4)^0,w,c
+   904   00111E  2428               	addwf	(??_main+12)^0,w,c
+   905   001120  6E2C               	movwf	(??_main+16)^0,c
+   906   001122  5021               	movf	(??_main+5)^0,w,c
+   907   001124  2029               	addwfc	(??_main+13)^0,w,c
+   908   001126  6E2D               	movwf	(??_main+17)^0,c
+   909   001128  5022               	movf	(??_main+6)^0,w,c
+   910   00112A  202A               	addwfc	(??_main+14)^0,w,c
+   911   00112C  6E2E               	movwf	(??_main+18)^0,c
+   912   00112E  5023               	movf	(??_main+7)^0,w,c
+   913   001130  202B               	addwfc	(??_main+15)^0,w,c
+   914   001132  6E2F               	movwf	(??_main+19)^0,c
+   915   001134  504B               	movf	_ms_contador^0,w,c	;volatile
+   916   001136  242C               	addwf	(??_main+16)^0,w,c
+   917   001138  6E3F               	movwf	main@ms_inicio_evento^0,c
+   918   00113A  504C               	movf	(_ms_contador+1)^0,w,c	;volatile
+   919   00113C  202D               	addwfc	(??_main+17)^0,w,c
+   920   00113E  6E40               	movwf	(main@ms_inicio_evento+1)^0,c
+   921   001140  0E00               	movlw	0
+   922   001142  202E               	addwfc	(??_main+18)^0,w,c
+   923   001144  6E41               	movwf	(main@ms_inicio_evento+2)^0,c
+   924   001146  0E00               	movlw	0
+   925   001148  202F               	addwfc	(??_main+19)^0,w,c
+   926   00114A  6E42               	movwf	(main@ms_inicio_evento+3)^0,c
+   927   00114C                     
+   928                           ;main.c: 143:                 salvar_evento_eeprom(momento_inicio, duracao_total);
+   929   00114C  8089               	bsf	137,0,c	;volatile
+   930   00114E  EF4A  F009         	goto	l1167
+   931   001152                     l1151:
+   932   001152  5044               	movf	main@estado_atual^0,w,c
+   933   001154  A4D8               	btfss	status,2,c
+   934   001156  EFAF  F008         	goto	u361
+   935   00115A  EFB1  F008         	goto	u360
+   936   00115E                     u361:
+   937   00115E  EF4A  F009         	goto	l1167
+   938   001162                     u360:
+   939   001162  0443               	decf	main@estado_anterior^0,w,c
+   940   001164  A4D8               	btfss	status,2,c
+   941   001166  EFB7  F008         	goto	u371
+   942   00116A  EFB9  F008         	goto	u370
+   943   00116E                     u371:
+   944   00116E  EF4A  F009         	goto	l1167
+   945   001172                     u370:
+   946   001172                     
+   947                           ;main.c: 149: }
+   948   001172  0E82               	movlw	130
+   949   001174  6E1C               	movwf	??_main^0,c
+   950   001176  0EDE               	movlw	222
+   951   001178                     u417:
+   952   001178  2EE8               	decfsz	wreg,f,c
+   953   00117A  D7FE               	bra	u417
+   954   00117C  2E1C               	decfsz	??_main^0,f,c
+   955   00117E  D7FC               	bra	u417
+   956   001180  B081               	btfsc	129,0,c	;volatile
+   957   001182  EFC5  F008         	goto	u381
+   958   001186  EFC7  F008         	goto	u380
+   959   00118A                     u381:
+   960   00118A  EF4A  F009         	goto	l1167
+   961   00118E                     u380:
+   962   00118E  504D               	movf	_rtc^0,w,c	;volatile
+   963   001190  6E1C               	movwf	??_main^0,c
+   964   001192  6A1D               	clrf	(??_main+1)^0,c
+   965   001194  0EE8               	movlw	232
+   966   001196  021C               	mulwf	??_main^0,c
+   967   001198  CFF3 F01E          	movff	prodl,??_main+2
+   968   00119C  CFF4 F01F          	movff	prodh,??_main+3
+   969   0011A0  021D               	mulwf	(??_main+1)^0,c
+   970   0011A2  50F3               	movf	prodl,w,c
+   971   0011A4  261F               	addwf	(??_main+3)^0,f,c
+   972   0011A6  0E03               	movlw	3
+   973   0011A8  021C               	mulwf	??_main^0,c
+   974   0011AA  50F3               	movf	prodl,w,c
+   975   0011AC  261F               	addwf	(??_main+3)^0,f,c
+   976   0011AE  C01E  F020         	movff	??_main+2,??_main+4
+   977   0011B2  C01F  F021         	movff	??_main+3,??_main+5
+   978   0011B6  0E00               	movlw	0
+   979   0011B8  BE21               	btfsc	(??_main+5)^0,7,c
+   980   0011BA  0EFF               	movlw	255
+   981   0011BC  6E22               	movwf	(??_main+6)^0,c
+   982   0011BE  6E23               	movwf	(??_main+7)^0,c
+   983   0011C0  504F               	movf	(_rtc+2)^0,w,c	;volatile
+   984   0011C2  6E02               	movwf	___lmul@multiplier^0,c
+   985   0011C4  6A03               	clrf	(___lmul@multiplier+1)^0,c
+   986   0011C6  6A04               	clrf	(___lmul@multiplier+2)^0,c
+   987   0011C8  6A05               	clrf	(___lmul@multiplier+3)^0,c
+   988   0011CA  0E80               	movlw	128
+   989   0011CC  6E06               	movwf	___lmul@multiplicand^0,c
+   990   0011CE  0EEE               	movlw	238
+   991   0011D0  6E07               	movwf	(___lmul@multiplicand+1)^0,c
+   992   0011D2  0E36               	movlw	54
+   993   0011D4  6E08               	movwf	(___lmul@multiplicand+2)^0,c
+   994   0011D6  0E00               	movlw	0
+   995   0011D8  6E09               	movwf	(___lmul@multiplicand+3)^0,c
+   996   0011DA  EC17  F00A         	call	___lmul	;wreg free
+   997   0011DE  C002  F024         	movff	?___lmul,??_main+8
+   998   0011E2  C003  F025         	movff	?___lmul+1,??_main+9
+   999   0011E6  C004  F026         	movff	?___lmul+2,??_main+10
+  1000   0011EA  C005  F027         	movff	?___lmul+3,??_main+11
+  1001   0011EE  504E               	movf	(_rtc+1)^0,w,c	;volatile
+  1002   0011F0  6E02               	movwf	___lmul@multiplier^0,c
+  1003   0011F2  6A03               	clrf	(___lmul@multiplier+1)^0,c
+  1004   0011F4  6A04               	clrf	(___lmul@multiplier+2)^0,c
+  1005   0011F6  6A05               	clrf	(___lmul@multiplier+3)^0,c
+  1006   0011F8  0E60               	movlw	96
+  1007   0011FA  6E06               	movwf	___lmul@multiplicand^0,c
+  1008   0011FC  0EEA               	movlw	234
+  1009   0011FE  6E07               	movwf	(___lmul@multiplicand+1)^0,c
+  1010   001200  0E00               	movlw	0
+  1011   001202  6E08               	movwf	(___lmul@multiplicand+2)^0,c
+  1012   001204  0E00               	movlw	0
+  1013   001206  6E09               	movwf	(___lmul@multiplicand+3)^0,c
+  1014   001208  EC17  F00A         	call	___lmul	;wreg free
+  1015   00120C  5002               	movf	?___lmul^0,w,c
+  1016   00120E  2424               	addwf	(??_main+8)^0,w,c
+  1017   001210  6E28               	movwf	(??_main+12)^0,c
+  1018   001212  5003               	movf	(?___lmul+1)^0,w,c
+  1019   001214  2025               	addwfc	(??_main+9)^0,w,c
+  1020   001216  6E29               	movwf	(??_main+13)^0,c
+  1021   001218  5004               	movf	(?___lmul+2)^0,w,c
+  1022   00121A  2026               	addwfc	(??_main+10)^0,w,c
+  1023   00121C  6E2A               	movwf	(??_main+14)^0,c
+  1024   00121E  5005               	movf	(?___lmul+3)^0,w,c
+  1025   001220  2027               	addwfc	(??_main+11)^0,w,c
+  1026   001222  6E2B               	movwf	(??_main+15)^0,c
+  1027   001224  5020               	movf	(??_main+4)^0,w,c
+  1028   001226  2428               	addwf	(??_main+12)^0,w,c
+  1029   001228  6E2C               	movwf	(??_main+16)^0,c
+  1030   00122A  5021               	movf	(??_main+5)^0,w,c
+  1031   00122C  2029               	addwfc	(??_main+13)^0,w,c
+  1032   00122E  6E2D               	movwf	(??_main+17)^0,c
+  1033   001230  5022               	movf	(??_main+6)^0,w,c
+  1034   001232  202A               	addwfc	(??_main+14)^0,w,c
+  1035   001234  6E2E               	movwf	(??_main+18)^0,c
+  1036   001236  5023               	movf	(??_main+7)^0,w,c
+  1037   001238  202B               	addwfc	(??_main+15)^0,w,c
+  1038   00123A  6E2F               	movwf	(??_main+19)^0,c
+  1039   00123C  504B               	movf	_ms_contador^0,w,c	;volatile
+  1040   00123E  242C               	addwf	(??_main+16)^0,w,c
+  1041   001240  6E37               	movwf	main@ms_fim_evento^0,c
+  1042   001242  504C               	movf	(_ms_contador+1)^0,w,c	;volatile
+  1043   001244  202D               	addwfc	(??_main+17)^0,w,c
+  1044   001246  6E38               	movwf	(main@ms_fim_evento+1)^0,c
+  1045   001248  0E00               	movlw	0
+  1046   00124A  202E               	addwfc	(??_main+18)^0,w,c
+  1047   00124C  6E39               	movwf	(main@ms_fim_evento+2)^0,c
+  1048   00124E  0E00               	movlw	0
+  1049   001250  202F               	addwfc	(??_main+19)^0,w,c
+  1050   001252  6E3A               	movwf	(main@ms_fim_evento+3)^0,c
+  1051   001254  503F               	movf	main@ms_inicio_evento^0,w,c
+  1052   001256  5C37               	subwf	main@ms_fim_evento^0,w,c
+  1053   001258  6E3B               	movwf	main@duracao_total^0,c
+  1054   00125A  5040               	movf	(main@ms_inicio_evento+1)^0,w,c
+  1055   00125C  5838               	subwfb	(main@ms_fim_evento+1)^0,w,c
+  1056   00125E  6E3C               	movwf	(main@duracao_total+1)^0,c
+  1057   001260  5041               	movf	(main@ms_inicio_evento+2)^0,w,c
+  1058   001262  5839               	subwfb	(main@ms_fim_evento+2)^0,w,c
+  1059   001264  6E3D               	movwf	(main@duracao_total+2)^0,c
+  1060   001266  5042               	movf	(main@ms_inicio_evento+3)^0,w,c
+  1061   001268  583A               	subwfb	(main@ms_fim_evento+3)^0,w,c
+  1062   00126A  6E3E               	movwf	(main@duracao_total+3)^0,c
+  1063   00126C  9089               	bcf	137,0,c	;volatile
+  1064   00126E  EE20  F030         	lfsr	2,main@momento_inicio
+  1065   001272  EE00  F00F         	lfsr	0,salvar_evento_eeprom@inicio
+  1066   001276  0E06               	movlw	6
+  1067   001278                     u391:
+  1068   001278  CFDB FFEB          	movff	plusw2,plusw0
+  1069   00127C  06E8               	decf	wreg,f,c
+  1070   00127E  E2FC               	bc	u391
+  1071   001280  C03B  F016         	movff	main@duracao_total,salvar_evento_eeprom@duracao_ms
+  1072   001284  C03C  F017         	movff	main@duracao_total+1,salvar_evento_eeprom@duracao_ms+1
+  1073   001288  C03D  F018         	movff	main@duracao_total+2,salvar_evento_eeprom@duracao_ms+2
+  1074   00128C  C03E  F019         	movff	main@duracao_total+3,salvar_evento_eeprom@duracao_ms+3
+  1075   001290  EC50  F009         	call	_salvar_evento_eeprom	;wreg free
+  1076   001294                     l1167:
+  1077   001294  C044  F043         	movff	main@estado_atual,main@estado_anterior
+  1078   001298  EF18  F008         	goto	l1135
+  1079   00129C  EF5F  F000         	goto	start
+  1080   0012A0                     __end_of_main:
+  1081                           	callstack 0
+  1082                           
+  1083 ;; *************** function _salvar_evento_eeprom *****************
+  1084 ;; Defined at:
+  1085 ;;		line 95 in file "main.c"
+  1086 ;; Parameters:    Size  Location     Type
+  1087 ;;  inicio          7   13[COMRAM] struct .
+  1088 ;;  duracao_ms      4   20[COMRAM] unsigned long 
+  1089 ;; Auto vars:     Size  Location     Type
+  1090 ;;  duracao_sec     2   24[COMRAM] unsigned short 
+  1091 ;; Return value:  Size  Location     Type
+  1092 ;;                  1    wreg      void 
+  1093 ;; Registers used:
+  1094 ;;		wreg, status,2, status,0, cstack
+  1095 ;; Tracked objects:
+  1096 ;;		On entry : 0/0
+  1097 ;;		On exit  : 0/0
+  1098 ;;		Unchanged: 0/0
+  1099 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
       +1  BANK12
-  1087 ;;      Params:        11       0       0       0       0       0       0       0       0       0       0       0       
+  1100 ;;      Params:        11       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1088 ;;      Locals:         2       0       0       0       0       0       0       0       0       0       0       0       
+  1101 ;;      Locals:         2       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1089 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
+  1102 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1090 ;;      Totals:        13       0       0       0       0       0       0       0       0       0       0       0       
+  1103 ;;      Totals:        13       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1091 ;;Total ram usage:       13 bytes
-  1092 ;; Hardware stack levels used: 1
-  1093 ;; Hardware stack levels required when called: 2
-  1094 ;; This function calls:
-  1095 ;;		_EEPROM_WriteByte
-  1096 ;;		___lldiv
-  1097 ;; This function is called by:
-  1098 ;;		_main
-  1099 ;; This function uses a non-reentrant model
-  1100 ;;
-  1101                           
-  1102                           	psect	text1
-  1103   001298                     __ptext1:
-  1104                           	callstack 0
-  1105   001298                     _salvar_evento_eeprom:
-  1106                           	callstack 28
-  1107   001298                     
-  1108                           ;main.c: 90:     uint16_t duracao_sec = (uint16_t)(duracao_ms / 1000);
-  1109   001298  0EF9               	movlw	249
-  1110   00129A  5C4C               	subwf	_endereco_eeprom^0,w,c
-  1111   00129C  0E03               	movlw	3
-  1112   00129E  584D               	subwfb	(_endereco_eeprom+1)^0,w,c
-  1113   0012A0  A0D8               	btfss	status,0,c
-  1114   0012A2  EF55  F009         	goto	u291
-  1115   0012A6  EF57  F009         	goto	u290
-  1116   0012AA                     u291:
-  1117   0012AA  EF59  F009         	goto	l1071
-  1118   0012AE                     u290:
-  1119   0012AE  EFC0  F009         	goto	l54
-  1120   0012B2                     l1071:
-  1121                           
-  1122                           ;main.c: 92:     EEPROM_WriteByte(endereco_eeprom++, duracao_sec & 0xFF);
-  1123   0012B2  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1124   0012B6  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1125   0012BA  C012  F004         	movff	salvar_evento_eeprom@inicio+3,EEPROM_WriteByte@dado
-  1126   0012BE  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1127   0012C2  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1128   0012C4  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1129   0012C6                     
-  1130                           ;main.c: 93: }
-  1131   0012C6  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1132   0012CA  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1133   0012CE  C013  F004         	movff	salvar_evento_eeprom@inicio+4,EEPROM_WriteByte@dado
-  1134   0012D2  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1135   0012D6  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1136   0012D8  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1137   0012DA                     
-  1138                           ;main.c: 94: 
-  1139   0012DA  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1140   0012DE  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1141   0012E2  5014               	movf	(salvar_evento_eeprom@inicio+5)^0,w,c
-  1142   0012E4  0F30               	addlw	48
-  1143   0012E6  6E04               	movwf	EEPROM_WriteByte@dado^0,c
-  1144   0012E8  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1145   0012EC  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1146   0012EE  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1147                           
-  1148                           ;main.c: 95: void main(void) {
-  1149   0012F0  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1150   0012F4  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1151   0012F8  C011  F004         	movff	salvar_evento_eeprom@inicio+2,EEPROM_WriteByte@dado
-  1152   0012FC  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1153   001300  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1154   001302  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1155   001304                     
-  1156                           ;main.c: 96:     ADCON1 = 0x0F;
-  1157   001304  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1158   001308  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1159   00130C  C010  F004         	movff	salvar_evento_eeprom@inicio+1,EEPROM_WriteByte@dado
-  1160   001310  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1161   001314  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1162   001316  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1163   001318                     
-  1164                           ;main.c: 97:     TRISBbits.TRISB0 = 1;
-  1165   001318  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1166   00131C  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1167   001320  C00F  F004         	movff	salvar_evento_eeprom@inicio,EEPROM_WriteByte@dado
-  1168   001324  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1169   001328  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1170   00132A  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1171                           
-  1172                           ;main.c: 100:     T0CON = 0b10001000;
-  1173   00132C  C016  F002         	movff	salvar_evento_eeprom@duracao_ms,___lldiv@dividend
-  1174   001330  C017  F003         	movff	salvar_evento_eeprom@duracao_ms+1,___lldiv@dividend+1
-  1175   001334  C018  F004         	movff	salvar_evento_eeprom@duracao_ms+2,___lldiv@dividend+2
-  1176   001338  C019  F005         	movff	salvar_evento_eeprom@duracao_ms+3,___lldiv@dividend+3
-  1177   00133C  0EE8               	movlw	232
-  1178   00133E  6E06               	movwf	___lldiv@divisor^0,c
-  1179   001340  0E03               	movlw	3
-  1180   001342  6E07               	movwf	(___lldiv@divisor+1)^0,c
-  1181   001344  0E00               	movlw	0
-  1182   001346  6E08               	movwf	(___lldiv@divisor+2)^0,c
-  1183   001348  0E00               	movlw	0
-  1184   00134A  6E09               	movwf	(___lldiv@divisor+3)^0,c
-  1185   00134C  ECC1  F009         	call	___lldiv	;wreg free
-  1186   001350  C002  F01A         	movff	?___lldiv,salvar_evento_eeprom@duracao_sec
-  1187   001354  C003  F01B         	movff	?___lldiv+1,salvar_evento_eeprom@duracao_sec+1
-  1188                           
-  1189                           ;main.c: 101:     TMR0H = 0xEC;
-  1190   001358  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1191   00135C  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1192   001360  501B               	movf	(salvar_evento_eeprom@duracao_sec+1)^0,w,c
-  1193   001362  6E04               	movwf	EEPROM_WriteByte@dado^0,c
-  1194   001364  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1195   001368  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1196   00136A  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1197   00136C                     
-  1198                           ;main.c: 102:     TMR0L = 0x78;
-  1199   00136C  C04C  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
-  1200   001370  C04D  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
-  1201   001374  C01A  F004         	movff	salvar_evento_eeprom@duracao_sec,EEPROM_WriteByte@dado
-  1202   001378  EC48  F00A         	call	_EEPROM_WriteByte	;wreg free
-  1203   00137C  4A4C               	infsnz	_endereco_eeprom^0,f,c
-  1204   00137E  2A4D               	incf	(_endereco_eeprom+1)^0,f,c
-  1205   001380                     l54:
-  1206   001380  0012               	return		;funcret
-  1207   001382                     __end_of_salvar_evento_eeprom:
-  1208                           	callstack 0
-  1209                           
-  1210 ;; *************** function ___lldiv *****************
-  1211 ;; Defined at:
-  1212 ;;		line 7 in file "C:\Program Files\Microchip\xc8\v3.10\pic\sources\c99\common\__lldiv.c"
-  1213 ;; Parameters:    Size  Location     Type
-  1214 ;;  dividend        4    0[COMRAM] unsigned long 
-  1215 ;;  divisor         4    4[COMRAM] unsigned long 
-  1216 ;; Auto vars:     Size  Location     Type
-  1217 ;;  quotient        4    8[COMRAM] unsigned long 
-  1218 ;;  counter         1   12[COMRAM] unsigned char 
-  1219 ;; Return value:  Size  Location     Type
-  1220 ;;                  4    0[COMRAM] unsigned long 
-  1221 ;; Registers used:
-  1222 ;;		wreg, status,2, status,0
-  1223 ;; Tracked objects:
-  1224 ;;		On entry : 0/0
-  1225 ;;		On exit  : 0/0
-  1226 ;;		Unchanged: 0/0
-  1227 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
+  1104 ;;Total ram usage:       13 bytes
+  1105 ;; Hardware stack levels used: 1
+  1106 ;; Hardware stack levels required when called: 2
+  1107 ;; This function calls:
+  1108 ;;		_EEPROM_WriteByte
+  1109 ;;		___lldiv
+  1110 ;; This function is called by:
+  1111 ;;		_main
+  1112 ;; This function uses a non-reentrant model
+  1113 ;;
+  1114                           
+  1115                           	psect	text1
+  1116   0012A0                     __ptext1:
+  1117                           	callstack 0
+  1118   0012A0                     _salvar_evento_eeprom:
+  1119                           	callstack 28
+  1120   0012A0                     
+  1121                           ;main.c: 96: }
+  1122   0012A0  0EF9               	movlw	249
+  1123   0012A2  5C49               	subwf	_endereco_eeprom^0,w,c
+  1124   0012A4  0E03               	movlw	3
+  1125   0012A6  584A               	subwfb	(_endereco_eeprom+1)^0,w,c
+  1126   0012A8  A0D8               	btfss	status,0,c
+  1127   0012AA  EF59  F009         	goto	u291
+  1128   0012AE  EF5B  F009         	goto	u290
+  1129   0012B2                     u291:
+  1130   0012B2  EF5D  F009         	goto	l1087
+  1131   0012B6                     u290:
+  1132   0012B6  EFC4  F009         	goto	l60
+  1133   0012BA                     l1087:
+  1134                           
+  1135                           ;main.c: 98: void main(void) {
+  1136   0012BA  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1137   0012BE  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1138   0012C2  C012  F004         	movff	salvar_evento_eeprom@inicio+3,EEPROM_WriteByte@dado
+  1139   0012C6  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1140   0012CA  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1141   0012CC  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1142   0012CE                     
+  1143                           ;main.c: 99:     ADCON1 = 0x0F;
+  1144   0012CE  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1145   0012D2  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1146   0012D6  C013  F004         	movff	salvar_evento_eeprom@inicio+4,EEPROM_WriteByte@dado
+  1147   0012DA  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1148   0012DE  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1149   0012E0  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1150   0012E2                     
+  1151                           ;main.c: 100:     TRISBbits.TRISB0 = 1;
+  1152   0012E2  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1153   0012E6  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1154   0012EA  5014               	movf	(salvar_evento_eeprom@inicio+5)^0,w,c
+  1155   0012EC  0F30               	addlw	48
+  1156   0012EE  6E04               	movwf	EEPROM_WriteByte@dado^0,c
+  1157   0012F0  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1158   0012F4  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1159   0012F6  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1160                           
+  1161                           ;main.c: 101:     TRISAbits.TRISA0 = 0;
+  1162   0012F8  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1163   0012FC  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1164   001300  C011  F004         	movff	salvar_evento_eeprom@inicio+2,EEPROM_WriteByte@dado
+  1165   001304  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1166   001308  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1167   00130A  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1168   00130C                     
+  1169                           ;main.c: 102: 
+  1170   00130C  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1171   001310  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1172   001314  C010  F004         	movff	salvar_evento_eeprom@inicio+1,EEPROM_WriteByte@dado
+  1173   001318  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1174   00131C  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1175   00131E  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1176   001320                     
+  1177                           ;main.c: 103:         LATAbits.LATA0 = 0;
+  1178   001320  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1179   001324  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1180   001328  C00F  F004         	movff	salvar_evento_eeprom@inicio,EEPROM_WriteByte@dado
+  1181   00132C  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1182   001330  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1183   001332  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1184                           
+  1185                           ;main.c: 106:     T0CON = 0b10001000;
+  1186   001334  C016  F002         	movff	salvar_evento_eeprom@duracao_ms,___lldiv@dividend
+  1187   001338  C017  F003         	movff	salvar_evento_eeprom@duracao_ms+1,___lldiv@dividend+1
+  1188   00133C  C018  F004         	movff	salvar_evento_eeprom@duracao_ms+2,___lldiv@dividend+2
+  1189   001340  C019  F005         	movff	salvar_evento_eeprom@duracao_ms+3,___lldiv@dividend+3
+  1190   001344  0EE8               	movlw	232
+  1191   001346  6E06               	movwf	___lldiv@divisor^0,c
+  1192   001348  0E03               	movlw	3
+  1193   00134A  6E07               	movwf	(___lldiv@divisor+1)^0,c
+  1194   00134C  0E00               	movlw	0
+  1195   00134E  6E08               	movwf	(___lldiv@divisor+2)^0,c
+  1196   001350  0E00               	movlw	0
+  1197   001352  6E09               	movwf	(___lldiv@divisor+3)^0,c
+  1198   001354  ECC5  F009         	call	___lldiv	;wreg free
+  1199   001358  C002  F01A         	movff	?___lldiv,salvar_evento_eeprom@duracao_sec
+  1200   00135C  C003  F01B         	movff	?___lldiv+1,salvar_evento_eeprom@duracao_sec+1
+  1201                           
+  1202                           ;main.c: 107:     TMR0H = 0xEC;
+  1203   001360  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1204   001364  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1205   001368  501B               	movf	(salvar_evento_eeprom@duracao_sec+1)^0,w,c
+  1206   00136A  6E04               	movwf	EEPROM_WriteByte@dado^0,c
+  1207   00136C  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1208   001370  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1209   001372  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1210   001374                     
+  1211                           ;main.c: 108:     TMR0L = 0x78;
+  1212   001374  C049  F002         	movff	_endereco_eeprom,EEPROM_WriteByte@endereco
+  1213   001378  C04A  F003         	movff	_endereco_eeprom+1,EEPROM_WriteByte@endereco+1
+  1214   00137C  C01A  F004         	movff	salvar_evento_eeprom@duracao_sec,EEPROM_WriteByte@dado
+  1215   001380  EC4C  F00A         	call	_EEPROM_WriteByte	;wreg free
+  1216   001384  4A49               	infsnz	_endereco_eeprom^0,f,c
+  1217   001386  2A4A               	incf	(_endereco_eeprom+1)^0,f,c
+  1218   001388                     l60:
+  1219   001388  0012               	return		;funcret
+  1220   00138A                     __end_of_salvar_evento_eeprom:
+  1221                           	callstack 0
+  1222                           
+  1223 ;; *************** function ___lldiv *****************
+  1224 ;; Defined at:
+  1225 ;;		line 7 in file "C:\Program Files\Microchip\xc8\v3.10\pic\sources\c99\common\__lldiv.c"
+  1226 ;; Parameters:    Size  Location     Type
+  1227 ;;  dividend        4    0[COMRAM] unsigned long 
+  1228 ;;  divisor         4    4[COMRAM] unsigned long 
+  1229 ;; Auto vars:     Size  Location     Type
+  1230 ;;  quotient        4    8[COMRAM] unsigned long 
+  1231 ;;  counter         1   12[COMRAM] unsigned char 
+  1232 ;; Return value:  Size  Location     Type
+  1233 ;;                  4    0[COMRAM] unsigned long 
+  1234 ;; Registers used:
+  1235 ;;		wreg, status,2, status,0
+  1236 ;; Tracked objects:
+  1237 ;;		On entry : 0/0
+  1238 ;;		On exit  : 0/0
+  1239 ;;		Unchanged: 0/0
+  1240 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
       +1  BANK12
-  1228 ;;      Params:         8       0       0       0       0       0       0       0       0       0       0       0       
+  1241 ;;      Params:         8       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1229 ;;      Locals:         5       0       0       0       0       0       0       0       0       0       0       0       
+  1242 ;;      Locals:         5       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1230 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
+  1243 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1231 ;;      Totals:        13       0       0       0       0       0       0       0       0       0       0       0       
+  1244 ;;      Totals:        13       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1232 ;;Total ram usage:       13 bytes
-  1233 ;; Hardware stack levels used: 1
-  1234 ;; Hardware stack levels required when called: 1
-  1235 ;; This function calls:
-  1236 ;;		Nothing
-  1237 ;; This function is called by:
-  1238 ;;		_salvar_evento_eeprom
-  1239 ;; This function uses a non-reentrant model
-  1240 ;;
-  1241                           
-  1242                           	psect	text2
-  1243   001382                     __ptext2:
-  1244                           	callstack 0
-  1245   001382                     ___lldiv:
-  1246                           	callstack 28
-  1247   001382  0E00               	movlw	0
-  1248   001384  6E0A               	movwf	___lldiv@quotient^0,c
-  1249   001386  0E00               	movlw	0
-  1250   001388  6E0B               	movwf	(___lldiv@quotient+1)^0,c
-  1251   00138A  0E00               	movlw	0
-  1252   00138C  6E0C               	movwf	(___lldiv@quotient+2)^0,c
-  1253   00138E  0E00               	movlw	0
-  1254   001390  6E0D               	movwf	(___lldiv@quotient+3)^0,c
-  1255   001392  5006               	movf	___lldiv@divisor^0,w,c
-  1256   001394  1007               	iorwf	(___lldiv@divisor+1)^0,w,c
-  1257   001396  1008               	iorwf	(___lldiv@divisor+2)^0,w,c
-  1258   001398  1009               	iorwf	(___lldiv@divisor+3)^0,w,c
-  1259   00139A  B4D8               	btfsc	status,2,c
-  1260   00139C  EFD2  F009         	goto	u261
-  1261   0013A0  EFD4  F009         	goto	u260
-  1262   0013A4                     u261:
-  1263   0013A4  EF0A  F00A         	goto	l97
-  1264   0013A8                     u260:
-  1265   0013A8  0E01               	movlw	1
-  1266   0013AA  6E0E               	movwf	___lldiv@counter^0,c
-  1267   0013AC  EFDE  F009         	goto	l1053
-  1268   0013B0                     l1051:
-  1269   0013B0  90D8               	bcf	status,0,c
-  1270   0013B2  3606               	rlcf	___lldiv@divisor^0,f,c
-  1271   0013B4  3607               	rlcf	(___lldiv@divisor+1)^0,f,c
-  1272   0013B6  3608               	rlcf	(___lldiv@divisor+2)^0,f,c
-  1273   0013B8  3609               	rlcf	(___lldiv@divisor+3)^0,f,c
-  1274   0013BA  2A0E               	incf	___lldiv@counter^0,f,c
-  1275   0013BC                     l1053:
-  1276   0013BC  AE09               	btfss	(___lldiv@divisor+3)^0,7,c
-  1277   0013BE  EFE3  F009         	goto	u271
-  1278   0013C2  EFE5  F009         	goto	u270
-  1279   0013C6                     u271:
-  1280   0013C6  EFD8  F009         	goto	l1051
-  1281   0013CA                     u270:
-  1282   0013CA                     l1055:
-  1283   0013CA  90D8               	bcf	status,0,c
-  1284   0013CC  360A               	rlcf	___lldiv@quotient^0,f,c
-  1285   0013CE  360B               	rlcf	(___lldiv@quotient+1)^0,f,c
-  1286   0013D0  360C               	rlcf	(___lldiv@quotient+2)^0,f,c
-  1287   0013D2  360D               	rlcf	(___lldiv@quotient+3)^0,f,c
-  1288   0013D4  5006               	movf	___lldiv@divisor^0,w,c
-  1289   0013D6  5C02               	subwf	___lldiv@dividend^0,w,c
-  1290   0013D8  5007               	movf	(___lldiv@divisor+1)^0,w,c
-  1291   0013DA  5803               	subwfb	(___lldiv@dividend+1)^0,w,c
-  1292   0013DC  5008               	movf	(___lldiv@divisor+2)^0,w,c
-  1293   0013DE  5804               	subwfb	(___lldiv@dividend+2)^0,w,c
-  1294   0013E0  5009               	movf	(___lldiv@divisor+3)^0,w,c
-  1295   0013E2  5805               	subwfb	(___lldiv@dividend+3)^0,w,c
-  1296   0013E4  A0D8               	btfss	status,0,c
-  1297   0013E6  EFF7  F009         	goto	u281
-  1298   0013EA  EFF9  F009         	goto	u280
-  1299   0013EE                     u281:
-  1300   0013EE  EF02  F00A         	goto	l1063
-  1301   0013F2                     u280:
-  1302   0013F2  5006               	movf	___lldiv@divisor^0,w,c
-  1303   0013F4  5E02               	subwf	___lldiv@dividend^0,f,c
-  1304   0013F6  5007               	movf	(___lldiv@divisor+1)^0,w,c
-  1305   0013F8  5A03               	subwfb	(___lldiv@dividend+1)^0,f,c
-  1306   0013FA  5008               	movf	(___lldiv@divisor+2)^0,w,c
-  1307   0013FC  5A04               	subwfb	(___lldiv@dividend+2)^0,f,c
-  1308   0013FE  5009               	movf	(___lldiv@divisor+3)^0,w,c
-  1309   001400  5A05               	subwfb	(___lldiv@dividend+3)^0,f,c
-  1310   001402  800A               	bsf	___lldiv@quotient^0,0,c
-  1311   001404                     l1063:
-  1312   001404  90D8               	bcf	status,0,c
-  1313   001406  3209               	rrcf	(___lldiv@divisor+3)^0,f,c
-  1314   001408  3208               	rrcf	(___lldiv@divisor+2)^0,f,c
-  1315   00140A  3207               	rrcf	(___lldiv@divisor+1)^0,f,c
-  1316   00140C  3206               	rrcf	___lldiv@divisor^0,f,c
-  1317   00140E  2E0E               	decfsz	___lldiv@counter^0,f,c
-  1318   001410  EFE5  F009         	goto	l1055
-  1319   001414                     l97:
-  1320   001414  C00A  F002         	movff	___lldiv@quotient,?___lldiv
-  1321   001418  C00B  F003         	movff	___lldiv@quotient+1,?___lldiv+1
-  1322   00141C  C00C  F004         	movff	___lldiv@quotient+2,?___lldiv+2
-  1323   001420  C00D  F005         	movff	___lldiv@quotient+3,?___lldiv+3
-  1324   001424  0012               	return		;funcret
-  1325   001426                     __end_of___lldiv:
-  1326                           	callstack 0
-  1327                           
-  1328 ;; *************** function _EEPROM_WriteByte *****************
-  1329 ;; Defined at:
-  1330 ;;		line 30 in file "main.c"
-  1331 ;; Parameters:    Size  Location     Type
-  1332 ;;  endereco        2    0[COMRAM] unsigned short 
-  1333 ;;  dado            1    2[COMRAM] unsigned char 
-  1334 ;; Auto vars:     Size  Location     Type
-  1335 ;;  gie_state       1    3[COMRAM] unsigned char 
-  1336 ;; Return value:  Size  Location     Type
-  1337 ;;                  1    wreg      void 
-  1338 ;; Registers used:
-  1339 ;;		wreg, status,2, status,0
-  1340 ;; Tracked objects:
-  1341 ;;		On entry : 0/0
-  1342 ;;		On exit  : 0/0
-  1343 ;;		Unchanged: 0/0
-  1344 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
+  1245 ;;Total ram usage:       13 bytes
+  1246 ;; Hardware stack levels used: 1
+  1247 ;; Hardware stack levels required when called: 1
+  1248 ;; This function calls:
+  1249 ;;		Nothing
+  1250 ;; This function is called by:
+  1251 ;;		_salvar_evento_eeprom
+  1252 ;; This function uses a non-reentrant model
+  1253 ;;
+  1254                           
+  1255                           	psect	text2
+  1256   00138A                     __ptext2:
+  1257                           	callstack 0
+  1258   00138A                     ___lldiv:
+  1259                           	callstack 28
+  1260   00138A  0E00               	movlw	0
+  1261   00138C  6E0A               	movwf	___lldiv@quotient^0,c
+  1262   00138E  0E00               	movlw	0
+  1263   001390  6E0B               	movwf	(___lldiv@quotient+1)^0,c
+  1264   001392  0E00               	movlw	0
+  1265   001394  6E0C               	movwf	(___lldiv@quotient+2)^0,c
+  1266   001396  0E00               	movlw	0
+  1267   001398  6E0D               	movwf	(___lldiv@quotient+3)^0,c
+  1268   00139A  5006               	movf	___lldiv@divisor^0,w,c
+  1269   00139C  1007               	iorwf	(___lldiv@divisor+1)^0,w,c
+  1270   00139E  1008               	iorwf	(___lldiv@divisor+2)^0,w,c
+  1271   0013A0  1009               	iorwf	(___lldiv@divisor+3)^0,w,c
+  1272   0013A2  B4D8               	btfsc	status,2,c
+  1273   0013A4  EFD6  F009         	goto	u261
+  1274   0013A8  EFD8  F009         	goto	u260
+  1275   0013AC                     u261:
+  1276   0013AC  EF0E  F00A         	goto	l103
+  1277   0013B0                     u260:
+  1278   0013B0  0E01               	movlw	1
+  1279   0013B2  6E0E               	movwf	___lldiv@counter^0,c
+  1280   0013B4  EFE2  F009         	goto	l1069
+  1281   0013B8                     l1067:
+  1282   0013B8  90D8               	bcf	status,0,c
+  1283   0013BA  3606               	rlcf	___lldiv@divisor^0,f,c
+  1284   0013BC  3607               	rlcf	(___lldiv@divisor+1)^0,f,c
+  1285   0013BE  3608               	rlcf	(___lldiv@divisor+2)^0,f,c
+  1286   0013C0  3609               	rlcf	(___lldiv@divisor+3)^0,f,c
+  1287   0013C2  2A0E               	incf	___lldiv@counter^0,f,c
+  1288   0013C4                     l1069:
+  1289   0013C4  AE09               	btfss	(___lldiv@divisor+3)^0,7,c
+  1290   0013C6  EFE7  F009         	goto	u271
+  1291   0013CA  EFE9  F009         	goto	u270
+  1292   0013CE                     u271:
+  1293   0013CE  EFDC  F009         	goto	l1067
+  1294   0013D2                     u270:
+  1295   0013D2                     l1071:
+  1296   0013D2  90D8               	bcf	status,0,c
+  1297   0013D4  360A               	rlcf	___lldiv@quotient^0,f,c
+  1298   0013D6  360B               	rlcf	(___lldiv@quotient+1)^0,f,c
+  1299   0013D8  360C               	rlcf	(___lldiv@quotient+2)^0,f,c
+  1300   0013DA  360D               	rlcf	(___lldiv@quotient+3)^0,f,c
+  1301   0013DC  5006               	movf	___lldiv@divisor^0,w,c
+  1302   0013DE  5C02               	subwf	___lldiv@dividend^0,w,c
+  1303   0013E0  5007               	movf	(___lldiv@divisor+1)^0,w,c
+  1304   0013E2  5803               	subwfb	(___lldiv@dividend+1)^0,w,c
+  1305   0013E4  5008               	movf	(___lldiv@divisor+2)^0,w,c
+  1306   0013E6  5804               	subwfb	(___lldiv@dividend+2)^0,w,c
+  1307   0013E8  5009               	movf	(___lldiv@divisor+3)^0,w,c
+  1308   0013EA  5805               	subwfb	(___lldiv@dividend+3)^0,w,c
+  1309   0013EC  A0D8               	btfss	status,0,c
+  1310   0013EE  EFFB  F009         	goto	u281
+  1311   0013F2  EFFD  F009         	goto	u280
+  1312   0013F6                     u281:
+  1313   0013F6  EF06  F00A         	goto	l1079
+  1314   0013FA                     u280:
+  1315   0013FA  5006               	movf	___lldiv@divisor^0,w,c
+  1316   0013FC  5E02               	subwf	___lldiv@dividend^0,f,c
+  1317   0013FE  5007               	movf	(___lldiv@divisor+1)^0,w,c
+  1318   001400  5A03               	subwfb	(___lldiv@dividend+1)^0,f,c
+  1319   001402  5008               	movf	(___lldiv@divisor+2)^0,w,c
+  1320   001404  5A04               	subwfb	(___lldiv@dividend+2)^0,f,c
+  1321   001406  5009               	movf	(___lldiv@divisor+3)^0,w,c
+  1322   001408  5A05               	subwfb	(___lldiv@dividend+3)^0,f,c
+  1323   00140A  800A               	bsf	___lldiv@quotient^0,0,c
+  1324   00140C                     l1079:
+  1325   00140C  90D8               	bcf	status,0,c
+  1326   00140E  3209               	rrcf	(___lldiv@divisor+3)^0,f,c
+  1327   001410  3208               	rrcf	(___lldiv@divisor+2)^0,f,c
+  1328   001412  3207               	rrcf	(___lldiv@divisor+1)^0,f,c
+  1329   001414  3206               	rrcf	___lldiv@divisor^0,f,c
+  1330   001416  2E0E               	decfsz	___lldiv@counter^0,f,c
+  1331   001418  EFE9  F009         	goto	l1071
+  1332   00141C                     l103:
+  1333   00141C  C00A  F002         	movff	___lldiv@quotient,?___lldiv
+  1334   001420  C00B  F003         	movff	___lldiv@quotient+1,?___lldiv+1
+  1335   001424  C00C  F004         	movff	___lldiv@quotient+2,?___lldiv+2
+  1336   001428  C00D  F005         	movff	___lldiv@quotient+3,?___lldiv+3
+  1337   00142C  0012               	return		;funcret
+  1338   00142E                     __end_of___lldiv:
+  1339                           	callstack 0
+  1340                           
+  1341 ;; *************** function _EEPROM_WriteByte *****************
+  1342 ;; Defined at:
+  1343 ;;		line 35 in file "main.c"
+  1344 ;; Parameters:    Size  Location     Type
+  1345 ;;  endereco        2    0[COMRAM] unsigned short 
+  1346 ;;  dado            1    2[COMRAM] unsigned char 
+  1347 ;; Auto vars:     Size  Location     Type
+  1348 ;;  gie_state       1    3[COMRAM] unsigned char 
+  1349 ;; Return value:  Size  Location     Type
+  1350 ;;                  1    wreg      void 
+  1351 ;; Registers used:
+  1352 ;;		wreg, status,2, status,0
+  1353 ;; Tracked objects:
+  1354 ;;		On entry : 0/0
+  1355 ;;		On exit  : 0/0
+  1356 ;;		Unchanged: 0/0
+  1357 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
       +1  BANK12
-  1345 ;;      Params:         3       0       0       0       0       0       0       0       0       0       0       0       
+  1358 ;;      Params:         3       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1346 ;;      Locals:         1       0       0       0       0       0       0       0       0       0       0       0       
+  1359 ;;      Locals:         1       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1347 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
+  1360 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1348 ;;      Totals:         4       0       0       0       0       0       0       0       0       0       0       0       
+  1361 ;;      Totals:         4       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1349 ;;Total ram usage:        4 bytes
-  1350 ;; Hardware stack levels used: 1
-  1351 ;; Hardware stack levels required when called: 1
-  1352 ;; This function calls:
-  1353 ;;		Nothing
-  1354 ;; This function is called by:
-  1355 ;;		_salvar_evento_eeprom
-  1356 ;; This function uses a non-reentrant model
-  1357 ;;
-  1358                           
-  1359                           	psect	text3
-  1360   001490                     __ptext3:
-  1361                           	callstack 0
-  1362   001490                     _EEPROM_WriteByte:
-  1363                           	callstack 28
-  1364   001490                     
-  1365                           ;main.c: 31: 
-  1366   001490  5003               	movf	(EEPROM_WriteByte@endereco+1)^0,w,c
-  1367   001492  0B03               	andlw	3
-  1368   001494  6EAA               	movwf	170,c	;volatile
-  1369   001496                     
-  1370                           ;main.c: 32:     EECON2 = 0x55;
-  1371   001496  C002  FFA9         	movff	EEPROM_WriteByte@endereco,4009	;volatile
-  1372   00149A                     
-  1373                           ;main.c: 33:     EECON2 = 0xAA;
-  1374   00149A  C004  FFA8         	movff	EEPROM_WriteByte@dado,4008	;volatile
-  1375   00149E                     
-  1376                           ;main.c: 35: 
-  1377   00149E  9EA6               	bcf	166,7,c	;volsfr
-  1378   0014A0                     
-  1379                           ;main.c: 36:     INTCONbits.GIE = gie_state;
-  1380   0014A0  9CA6               	bcf	166,6,c	;volsfr
-  1381   0014A2                     
-  1382                           ;main.c: 37: 
-  1383   0014A2  84A6               	bsf	166,2,c	;volsfr
-  1384   0014A4                     
-  1385                           ;main.c: 39:     EECON1bits.WREN = 0;
-  1386   0014A4  0E00               	movlw	0
-  1387   0014A6  BEF2               	btfsc	242,7,c	;volatile
-  1388   0014A8  0E01               	movlw	1
-  1389   0014AA  6E05               	movwf	EEPROM_WriteByte@gie_state^0,c
-  1390   0014AC                     
-  1391                           ;main.c: 40: }
-  1392   0014AC  9EF2               	bcf	242,7,c	;volatile
-  1393   0014AE                     
-  1394                           ;main.c: 42: 
-  1395   0014AE  0E55               	movlw	85
-  1396   0014B0  6EA7               	movwf	167,c	;volsfr
-  1397   0014B2                     
-  1398                           ;main.c: 43: void __attribute__((picinterrupt(("")))) ISR(void) {
-  1399   0014B2  0EAA               	movlw	170
-  1400   0014B4  6EA7               	movwf	167,c	;volsfr
-  1401   0014B6                     
-  1402                           ;main.c: 44:     if (INTCONbits.TMR0IF) {
-  1403   0014B6  82A6               	bsf	166,1,c	;volsfr
-  1404   0014B8                     
-  1405                           ;main.c: 46: 
-  1406   0014B8  B005               	btfsc	EEPROM_WriteByte@gie_state^0,0,c
-  1407   0014BA  D002               	bra	u245
-  1408   0014BC  9EF2               	bcf	242,7,c	;volatile
-  1409   0014BE  D001               	bra	u246
-  1410   0014C0                     u245:
-  1411   0014C0  8EF2               	bsf	242,7,c	;volatile
-  1412   0014C2                     u246:
-  1413   0014C2                     l35:
-  1414   0014C2  B2A6               	btfsc	166,1,c	;volsfr
-  1415   0014C4  EF66  F00A         	goto	u251
-  1416   0014C8  EF68  F00A         	goto	u250
-  1417   0014CC                     u251:
-  1418   0014CC  EF61  F00A         	goto	l35
-  1419   0014D0                     u250:
-  1420   0014D0                     
-  1421                           ;main.c: 49: 
-  1422   0014D0  94A6               	bcf	166,2,c	;volsfr
-  1423   0014D2  0012               	return		;funcret
-  1424   0014D4                     __end_of_EEPROM_WriteByte:
-  1425                           	callstack 0
-  1426                           
-  1427 ;; *************** function ___lmul *****************
-  1428 ;; Defined at:
-  1429 ;;		line 15 in file "C:\Program Files\Microchip\xc8\v3.10\pic\sources\c99\common\Umul32.c"
-  1430 ;; Parameters:    Size  Location     Type
-  1431 ;;  multiplier      4    0[COMRAM] unsigned long 
-  1432 ;;  multiplicand    4    4[COMRAM] unsigned long 
-  1433 ;; Auto vars:     Size  Location     Type
-  1434 ;;  product         4    8[COMRAM] unsigned long 
-  1435 ;; Return value:  Size  Location     Type
-  1436 ;;                  4    0[COMRAM] unsigned long 
-  1437 ;; Registers used:
-  1438 ;;		wreg, status,2, status,0
-  1439 ;; Tracked objects:
-  1440 ;;		On entry : 0/0
-  1441 ;;		On exit  : 0/0
-  1442 ;;		Unchanged: 0/0
-  1443 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
+  1362 ;;Total ram usage:        4 bytes
+  1363 ;; Hardware stack levels used: 1
+  1364 ;; Hardware stack levels required when called: 1
+  1365 ;; This function calls:
+  1366 ;;		Nothing
+  1367 ;; This function is called by:
+  1368 ;;		_salvar_evento_eeprom
+  1369 ;; This function uses a non-reentrant model
+  1370 ;;
+  1371                           
+  1372                           	psect	text3
+  1373   001498                     __ptext3:
+  1374                           	callstack 0
+  1375   001498                     _EEPROM_WriteByte:
+  1376                           	callstack 28
+  1377   001498                     
+  1378                           ;main.c: 36:     EECON1bits.WR = 1;
+  1379   001498  5003               	movf	(EEPROM_WriteByte@endereco+1)^0,w,c
+  1380   00149A  0B03               	andlw	3
+  1381   00149C  6EAA               	movwf	170,c	;volatile
+  1382   00149E                     
+  1383                           ;main.c: 37: 
+  1384   00149E  C002  FFA9         	movff	EEPROM_WriteByte@endereco,4009	;volatile
+  1385   0014A2                     
+  1386                           ;main.c: 38:     INTCONbits.GIE = gie_state;
+  1387   0014A2  C004  FFA8         	movff	EEPROM_WriteByte@dado,4008	;volatile
+  1388   0014A6                     
+  1389                           ;main.c: 40:     while(EECON1bits.WR);
+  1390   0014A6  9EA6               	bcf	166,7,c	;volsfr
+  1391   0014A8                     
+  1392                           ;main.c: 41:     EECON1bits.WREN = 0;
+  1393   0014A8  9CA6               	bcf	166,6,c	;volsfr
+  1394   0014AA                     
+  1395                           ;main.c: 42: }
+  1396   0014AA  84A6               	bsf	166,2,c	;volsfr
+  1397   0014AC                     
+  1398                           ;main.c: 44: 
+  1399   0014AC  0E00               	movlw	0
+  1400   0014AE  BEF2               	btfsc	242,7,c	;volatile
+  1401   0014B0  0E01               	movlw	1
+  1402   0014B2  6E05               	movwf	EEPROM_WriteByte@gie_state^0,c
+  1403   0014B4                     
+  1404                           ;main.c: 45: void __attribute__((picinterrupt(("")))) ISR(void) {
+  1405   0014B4  9EF2               	bcf	242,7,c	;volatile
+  1406   0014B6                     
+  1407                           ;main.c: 47:         INTCONbits.TMR0IF = 0;
+  1408   0014B6  0E55               	movlw	85
+  1409   0014B8  6EA7               	movwf	167,c	;volsfr
+  1410   0014BA                     
+  1411                           ;main.c: 48: 
+  1412   0014BA  0EAA               	movlw	170
+  1413   0014BC  6EA7               	movwf	167,c	;volsfr
+  1414   0014BE                     
+  1415                           ;main.c: 49:         TMR0H = 0xEC;
+  1416   0014BE  82A6               	bsf	166,1,c	;volsfr
+  1417   0014C0                     
+  1418                           ;main.c: 51: 
+  1419   0014C0  B005               	btfsc	EEPROM_WriteByte@gie_state^0,0,c
+  1420   0014C2  D002               	bra	u245
+  1421   0014C4  9EF2               	bcf	242,7,c	;volatile
+  1422   0014C6  D001               	bra	u246
+  1423   0014C8                     u245:
+  1424   0014C8  8EF2               	bsf	242,7,c	;volatile
+  1425   0014CA                     u246:
+  1426   0014CA                     l41:
+  1427   0014CA  B2A6               	btfsc	166,1,c	;volsfr
+  1428   0014CC  EF6A  F00A         	goto	u251
+  1429   0014D0  EF6C  F00A         	goto	u250
+  1430   0014D4                     u251:
+  1431   0014D4  EF65  F00A         	goto	l41
+  1432   0014D8                     u250:
+  1433   0014D8                     
+  1434                           ;main.c: 54:         if (ms_contador >= 1000) {
+  1435   0014D8  94A6               	bcf	166,2,c	;volsfr
+  1436   0014DA  0012               	return		;funcret
+  1437   0014DC                     __end_of_EEPROM_WriteByte:
+  1438                           	callstack 0
+  1439                           
+  1440 ;; *************** function ___lmul *****************
+  1441 ;; Defined at:
+  1442 ;;		line 15 in file "C:\Program Files\Microchip\xc8\v3.10\pic\sources\c99\common\Umul32.c"
+  1443 ;; Parameters:    Size  Location     Type
+  1444 ;;  multiplier      4    0[COMRAM] unsigned long 
+  1445 ;;  multiplicand    4    4[COMRAM] unsigned long 
+  1446 ;; Auto vars:     Size  Location     Type
+  1447 ;;  product         4    8[COMRAM] unsigned long 
+  1448 ;; Return value:  Size  Location     Type
+  1449 ;;                  4    0[COMRAM] unsigned long 
+  1450 ;; Registers used:
+  1451 ;;		wreg, status,2, status,0
+  1452 ;; Tracked objects:
+  1453 ;;		On entry : 0/0
+  1454 ;;		On exit  : 0/0
+  1455 ;;		Unchanged: 0/0
+  1456 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
       +1  BANK12
-  1444 ;;      Params:         8       0       0       0       0       0       0       0       0       0       0       0       
+  1457 ;;      Params:         8       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1445 ;;      Locals:         4       0       0       0       0       0       0       0       0       0       0       0       
+  1458 ;;      Locals:         4       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1446 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
+  1459 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1447 ;;      Totals:        12       0       0       0       0       0       0       0       0       0       0       0       
+  1460 ;;      Totals:        12       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1448 ;;Total ram usage:       12 bytes
-  1449 ;; Hardware stack levels used: 1
-  1450 ;; Hardware stack levels required when called: 1
-  1451 ;; This function calls:
-  1452 ;;		Nothing
-  1453 ;; This function is called by:
-  1454 ;;		_main
-  1455 ;; This function uses a non-reentrant model
-  1456 ;;
-  1457                           
-  1458                           	psect	text4
-  1459   001426                     __ptext4:
-  1460                           	callstack 0
-  1461   001426                     ___lmul:
-  1462                           	callstack 29
-  1463   001426  0E00               	movlw	0
-  1464   001428  6E0A               	movwf	___lmul@product^0,c
-  1465   00142A  0E00               	movlw	0
-  1466   00142C  6E0B               	movwf	(___lmul@product+1)^0,c
-  1467   00142E  0E00               	movlw	0
-  1468   001430  6E0C               	movwf	(___lmul@product+2)^0,c
-  1469   001432  0E00               	movlw	0
-  1470   001434  6E0D               	movwf	(___lmul@product+3)^0,c
-  1471   001436                     l1095:
-  1472   001436  A002               	btfss	___lmul@multiplier^0,0,c
-  1473   001438  EF20  F00A         	goto	u301
-  1474   00143C  EF22  F00A         	goto	u300
-  1475   001440                     u301:
-  1476   001440  EF2A  F00A         	goto	l1099
-  1477   001444                     u300:
-  1478   001444  5006               	movf	___lmul@multiplicand^0,w,c
-  1479   001446  260A               	addwf	___lmul@product^0,f,c
-  1480   001448  5007               	movf	(___lmul@multiplicand+1)^0,w,c
-  1481   00144A  220B               	addwfc	(___lmul@product+1)^0,f,c
-  1482   00144C  5008               	movf	(___lmul@multiplicand+2)^0,w,c
-  1483   00144E  220C               	addwfc	(___lmul@product+2)^0,f,c
-  1484   001450  5009               	movf	(___lmul@multiplicand+3)^0,w,c
-  1485   001452  220D               	addwfc	(___lmul@product+3)^0,f,c
-  1486   001454                     l1099:
-  1487   001454  90D8               	bcf	status,0,c
-  1488   001456  3606               	rlcf	___lmul@multiplicand^0,f,c
-  1489   001458  3607               	rlcf	(___lmul@multiplicand+1)^0,f,c
-  1490   00145A  3608               	rlcf	(___lmul@multiplicand+2)^0,f,c
-  1491   00145C  3609               	rlcf	(___lmul@multiplicand+3)^0,f,c
-  1492   00145E  90D8               	bcf	status,0,c
-  1493   001460  3205               	rrcf	(___lmul@multiplier+3)^0,f,c
-  1494   001462  3204               	rrcf	(___lmul@multiplier+2)^0,f,c
-  1495   001464  3203               	rrcf	(___lmul@multiplier+1)^0,f,c
-  1496   001466  3202               	rrcf	___lmul@multiplier^0,f,c
-  1497   001468  5002               	movf	___lmul@multiplier^0,w,c
-  1498   00146A  1003               	iorwf	(___lmul@multiplier+1)^0,w,c
-  1499   00146C  1004               	iorwf	(___lmul@multiplier+2)^0,w,c
-  1500   00146E  1005               	iorwf	(___lmul@multiplier+3)^0,w,c
-  1501   001470  A4D8               	btfss	status,2,c
-  1502   001472  EF3D  F00A         	goto	u311
-  1503   001476  EF3F  F00A         	goto	u310
-  1504   00147A                     u311:
-  1505   00147A  EF1B  F00A         	goto	l1095
-  1506   00147E                     u310:
-  1507   00147E  C00A  F002         	movff	___lmul@product,?___lmul
-  1508   001482  C00B  F003         	movff	___lmul@product+1,?___lmul+1
-  1509   001486  C00C  F004         	movff	___lmul@product+2,?___lmul+2
-  1510   00148A  C00D  F005         	movff	___lmul@product+3,?___lmul+3
-  1511   00148E  0012               	return		;funcret
-  1512   001490                     __end_of___lmul:
-  1513                           	callstack 0
-  1514                           
-  1515 ;; *************** function _ISR *****************
-  1516 ;; Defined at:
-  1517 ;;		line 53 in file "main.c"
-  1518 ;; Parameters:    Size  Location     Type
-  1519 ;;		None
-  1520 ;; Auto vars:     Size  Location     Type
-  1521 ;;		None
-  1522 ;; Return value:  Size  Location     Type
-  1523 ;;                  1    wreg      void 
-  1524 ;; Registers used:
-  1525 ;;		wreg, status,2, status,0
-  1526 ;; Tracked objects:
-  1527 ;;		On entry : 0/0
-  1528 ;;		On exit  : 0/0
-  1529 ;;		Unchanged: 0/0
-  1530 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
+  1461 ;;Total ram usage:       12 bytes
+  1462 ;; Hardware stack levels used: 1
+  1463 ;; Hardware stack levels required when called: 1
+  1464 ;; This function calls:
+  1465 ;;		Nothing
+  1466 ;; This function is called by:
+  1467 ;;		_main
+  1468 ;; This function uses a non-reentrant model
+  1469 ;;
+  1470                           
+  1471                           	psect	text4
+  1472   00142E                     __ptext4:
+  1473                           	callstack 0
+  1474   00142E                     ___lmul:
+  1475                           	callstack 29
+  1476   00142E  0E00               	movlw	0
+  1477   001430  6E0A               	movwf	___lmul@product^0,c
+  1478   001432  0E00               	movlw	0
+  1479   001434  6E0B               	movwf	(___lmul@product+1)^0,c
+  1480   001436  0E00               	movlw	0
+  1481   001438  6E0C               	movwf	(___lmul@product+2)^0,c
+  1482   00143A  0E00               	movlw	0
+  1483   00143C  6E0D               	movwf	(___lmul@product+3)^0,c
+  1484   00143E                     l1111:
+  1485   00143E  A002               	btfss	___lmul@multiplier^0,0,c
+  1486   001440  EF24  F00A         	goto	u301
+  1487   001444  EF26  F00A         	goto	u300
+  1488   001448                     u301:
+  1489   001448  EF2E  F00A         	goto	l1115
+  1490   00144C                     u300:
+  1491   00144C  5006               	movf	___lmul@multiplicand^0,w,c
+  1492   00144E  260A               	addwf	___lmul@product^0,f,c
+  1493   001450  5007               	movf	(___lmul@multiplicand+1)^0,w,c
+  1494   001452  220B               	addwfc	(___lmul@product+1)^0,f,c
+  1495   001454  5008               	movf	(___lmul@multiplicand+2)^0,w,c
+  1496   001456  220C               	addwfc	(___lmul@product+2)^0,f,c
+  1497   001458  5009               	movf	(___lmul@multiplicand+3)^0,w,c
+  1498   00145A  220D               	addwfc	(___lmul@product+3)^0,f,c
+  1499   00145C                     l1115:
+  1500   00145C  90D8               	bcf	status,0,c
+  1501   00145E  3606               	rlcf	___lmul@multiplicand^0,f,c
+  1502   001460  3607               	rlcf	(___lmul@multiplicand+1)^0,f,c
+  1503   001462  3608               	rlcf	(___lmul@multiplicand+2)^0,f,c
+  1504   001464  3609               	rlcf	(___lmul@multiplicand+3)^0,f,c
+  1505   001466  90D8               	bcf	status,0,c
+  1506   001468  3205               	rrcf	(___lmul@multiplier+3)^0,f,c
+  1507   00146A  3204               	rrcf	(___lmul@multiplier+2)^0,f,c
+  1508   00146C  3203               	rrcf	(___lmul@multiplier+1)^0,f,c
+  1509   00146E  3202               	rrcf	___lmul@multiplier^0,f,c
+  1510   001470  5002               	movf	___lmul@multiplier^0,w,c
+  1511   001472  1003               	iorwf	(___lmul@multiplier+1)^0,w,c
+  1512   001474  1004               	iorwf	(___lmul@multiplier+2)^0,w,c
+  1513   001476  1005               	iorwf	(___lmul@multiplier+3)^0,w,c
+  1514   001478  A4D8               	btfss	status,2,c
+  1515   00147A  EF41  F00A         	goto	u311
+  1516   00147E  EF43  F00A         	goto	u310
+  1517   001482                     u311:
+  1518   001482  EF1F  F00A         	goto	l1111
+  1519   001486                     u310:
+  1520   001486  C00A  F002         	movff	___lmul@product,?___lmul
+  1521   00148A  C00B  F003         	movff	___lmul@product+1,?___lmul+1
+  1522   00148E  C00C  F004         	movff	___lmul@product+2,?___lmul+2
+  1523   001492  C00D  F005         	movff	___lmul@product+3,?___lmul+3
+  1524   001496  0012               	return		;funcret
+  1525   001498                     __end_of___lmul:
+  1526                           	callstack 0
+  1527                           
+  1528 ;; *************** function _ISR *****************
+  1529 ;; Defined at:
+  1530 ;;		line 58 in file "main.c"
+  1531 ;; Parameters:    Size  Location     Type
+  1532 ;;		None
+  1533 ;; Auto vars:     Size  Location     Type
+  1534 ;;		None
+  1535 ;; Return value:  Size  Location     Type
+  1536 ;;                  1    wreg      void 
+  1537 ;; Registers used:
+  1538 ;;		wreg, status,2, status,0
+  1539 ;; Tracked objects:
+  1540 ;;		On entry : 0/0
+  1541 ;;		On exit  : 0/0
+  1542 ;;		Unchanged: 0/0
+  1543 ;; Data sizes:     COMRAM   BANK0   BANK1   BANK2   BANK3   BANK4   BANK5   BANK6   BANK7   BANK8   BANK9  BANK10  BANK1
       +1  BANK12
-  1531 ;;      Params:         0       0       0       0       0       0       0       0       0       0       0       0       
+  1544 ;;      Params:         0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1532 ;;      Locals:         0       0       0       0       0       0       0       0       0       0       0       0       
+  1545 ;;      Locals:         0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1533 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
+  1546 ;;      Temps:          0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1534 ;;      Totals:         0       0       0       0       0       0       0       0       0       0       0       0       
+  1547 ;;      Totals:         0       0       0       0       0       0       0       0       0       0       0       0       
       +0       0
-  1535 ;;Total ram usage:        0 bytes
-  1536 ;; Hardware stack levels used: 1
-  1537 ;; This function calls:
-  1538 ;;		Nothing
-  1539 ;; This function is called by:
-  1540 ;;		Interrupt level 2
-  1541 ;; This function uses a non-reentrant model
-  1542 ;;
-  1543                           
-  1544                           	psect	intcode
-  1545   000008                     __pintcode:
-  1546                           	callstack 0
-  1547   000008                     _ISR:
-  1548                           	callstack 28
-  1549                           
-  1550                           ;incstack = 0
-  1551   000008  8201               	bsf	int$flags,1,c	;set compiler interrupt flag (level 2)
-  1552   00000A                     
-  1553                           ;main.c: 54:             if (rtc.segundo >= 60) {
-  1554   00000A  A4F2               	btfss	242,2,c	;volatile
-  1555   00000C  EF0A  F000         	goto	i2u9_41
-  1556   000010  EF0C  F000         	goto	i2u9_40
-  1557   000014                     i2u9_41:
-  1558   000014  EF57  F000         	goto	i2l50
-  1559   000018                     i2u9_40:
-  1560   000018                     
-  1561                           ;main.c: 55:                 rtc.segundo = 0;
-  1562   000018  94F2               	bcf	242,2,c	;volatile
-  1563   00001A                     
-  1564                           ;main.c: 57:                 if (rtc.minuto >= 60) {
-  1565   00001A  0EEC               	movlw	236
-  1566   00001C  6ED7               	movwf	215,c	;volatile
-  1567                           
-  1568                           ;main.c: 58:                     rtc.minuto = 0;
-  1569   00001E  0E78               	movlw	120
-  1570   000020  6ED6               	movwf	214,c	;volatile
-  1571   000022                     
-  1572                           ;main.c: 60:                     if (rtc.hora >= 24) {
-  1573   000022  4A4E               	infsnz	_ms_contador^0,f,c	;volatile
-  1574   000024  2A4F               	incf	(_ms_contador+1)^0,f,c	;volatile
-  1575   000026                     
-  1576                           ;main.c: 61:                         rtc.hora = 0;
-  1577   000026  0EE8               	movlw	232
-  1578   000028  5C4E               	subwf	_ms_contador^0,w,c	;volatile
-  1579   00002A  0E03               	movlw	3
-  1580   00002C  584F               	subwfb	(_ms_contador+1)^0,w,c	;volatile
-  1581   00002E  A0D8               	btfss	status,0,c
-  1582   000030  EF1C  F000         	goto	i2u10_41
-  1583   000034  EF1E  F000         	goto	i2u10_40
-  1584   000038                     i2u10_41:
-  1585   000038  EF57  F000         	goto	i2l50
-  1586   00003C                     i2u10_40:
-  1587   00003C                     
-  1588                           ;main.c: 62:                         rtc.dia++;
-  1589   00003C  6A4F               	clrf	(_ms_contador+1)^0,c	;volatile
-  1590   00003E  0E00               	movlw	0
-  1591   000040  6E4E               	movwf	_ms_contador^0,c	;volatile
-  1592   000042                     
-  1593                           ;main.c: 63:                         if (rtc.dia > 30) {
-  1594   000042  2A45               	incf	_rtc^0,f,c	;volatile
-  1595   000044                     
-  1596                           ;main.c: 64:                             rtc.dia = 1;
-  1597   000044  0E3B               	movlw	59
-  1598   000046  6445               	cpfsgt	_rtc^0,c	;volatile
-  1599   000048  EF28  F000         	goto	i2u11_41
-  1600   00004C  EF2A  F000         	goto	i2u11_40
-  1601   000050                     i2u11_41:
-  1602   000050  EF57  F000         	goto	i2l50
-  1603   000054                     i2u11_40:
-  1604   000054                     
-  1605                           ;main.c: 65:                             rtc.mes++;
-  1606   000054  6A45               	clrf	_rtc^0,c	;volatile
-  1607   000056                     
-  1608                           ;main.c: 66:                             if (rtc.mes > 12) {
-  1609   000056  2A46               	incf	(_rtc+1)^0,f,c	;volatile
-  1610   000058                     
-  1611                           ;main.c: 67:                                 rtc.mes = 1;
-  1612   000058  0E3B               	movlw	59
-  1613   00005A  6446               	cpfsgt	(_rtc+1)^0,c	;volatile
-  1614   00005C  EF32  F000         	goto	i2u12_41
-  1615   000060  EF34  F000         	goto	i2u12_40
-  1616   000064                     i2u12_41:
-  1617   000064  EF57  F000         	goto	i2l50
-  1618   000068                     i2u12_40:
-  1619   000068                     
-  1620                           ;main.c: 68:                                 rtc.ano++;
-  1621   000068  6A46               	clrf	(_rtc+1)^0,c	;volatile
-  1622   00006A                     
-  1623                           ;main.c: 69:                             }
-  1624   00006A  2A47               	incf	(_rtc+2)^0,f,c	;volatile
-  1625   00006C                     
-  1626                           ;main.c: 70:                         }
-  1627   00006C  0E17               	movlw	23
-  1628   00006E  6447               	cpfsgt	(_rtc+2)^0,c	;volatile
-  1629   000070  EF3C  F000         	goto	i2u13_41
-  1630   000074  EF3E  F000         	goto	i2u13_40
-  1631   000078                     i2u13_41:
-  1632   000078  EF57  F000         	goto	i2l50
-  1633   00007C                     i2u13_40:
-  1634   00007C                     
-  1635                           ;main.c: 71:                     }
-  1636   00007C  6A47               	clrf	(_rtc+2)^0,c	;volatile
-  1637   00007E                     
-  1638                           ;main.c: 72:                 }
-  1639   00007E  2A48               	incf	(_rtc+3)^0,f,c	;volatile
-  1640   000080                     
-  1641                           ;main.c: 73:             }
-  1642   000080  0E1E               	movlw	30
-  1643   000082  6448               	cpfsgt	(_rtc+3)^0,c	;volatile
-  1644   000084  EF46  F000         	goto	i2u14_41
-  1645   000088  EF48  F000         	goto	i2u14_40
-  1646   00008C                     i2u14_41:
-  1647   00008C  EF57  F000         	goto	i2l50
-  1648   000090                     i2u14_40:
-  1649   000090                     
-  1650                           ;main.c: 74:         }
-  1651   000090  0E01               	movlw	1
-  1652   000092  6E48               	movwf	(_rtc+3)^0,c	;volatile
-  1653   000094                     
-  1654                           ;main.c: 75:     }
-  1655   000094  2A49               	incf	(_rtc+4)^0,f,c	;volatile
-  1656   000096                     
-  1657                           ;main.c: 76: }
-  1658   000096  0E0C               	movlw	12
-  1659   000098  6449               	cpfsgt	(_rtc+4)^0,c	;volatile
-  1660   00009A  EF51  F000         	goto	i2u15_41
-  1661   00009E  EF53  F000         	goto	i2u15_40
-  1662   0000A2                     i2u15_41:
-  1663   0000A2  EF57  F000         	goto	i2l50
-  1664   0000A6                     i2u15_40:
-  1665   0000A6                     
-  1666                           ;main.c: 77: 
-  1667   0000A6  0E01               	movlw	1
-  1668   0000A8  6E49               	movwf	(_rtc+4)^0,c	;volatile
-  1669   0000AA                     
-  1670                           ;main.c: 78: 
-  1671   0000AA  4A4A               	infsnz	(_rtc+5)^0,f,c	;volatile
-  1672   0000AC  2A4B               	incf	(_rtc+6)^0,f,c	;volatile
-  1673   0000AE                     i2l50:
-  1674   0000AE  9201               	bcf	int$flags,1,c	;clear compiler interrupt flag (level 2)
-  1675   0000B0  0011               	retfie		f
-  1676   0000B2                     __end_of_ISR:
-  1677                           	callstack 0
-  1678                           
-  1679                           	psect	smallconst
-  1680   001000                     __psmallconst:
-  1681                           	callstack 0
-  1682   001000  00                 	db	0
-  1683   001001  00                 	db	0	; dummy byte at the end
-  1684   001000                     __smallconst    set	__psmallconst
-  1685   001000                     __mediumconst   set	__psmallconst
-  1686   000000                     __activetblptr  equ	0
-  1687                           
-  1688                           	psect	rparam
-  1689   000001                     ___rparam_used  equ	1
-  1690   000000                     ___param_bank   equ	0
-  1691   000000                     __Lparam        equ	__Lrparam
-  1692   000000                     __Hparam        equ	__Hrparam
-  1693   000001                     btemp           set	1	;btemp
-  1694   000001                     int$flags       set	1
-  1695   000001                     btemp0          set	1
-  1696   000002                     btemp1          set	2
-  1697                           
-  1698                           	psect	config
+  1548 ;;Total ram usage:        0 bytes
+  1549 ;; Hardware stack levels used: 1
+  1550 ;; This function calls:
+  1551 ;;		Nothing
+  1552 ;; This function is called by:
+  1553 ;;		Interrupt level 2
+  1554 ;; This function uses a non-reentrant model
+  1555 ;;
+  1556                           
+  1557                           	psect	intcode
+  1558   000008                     __pintcode:
+  1559                           	callstack 0
+  1560   000008                     _ISR:
+  1561                           	callstack 28
+  1562                           
+  1563                           ;incstack = 0
+  1564   000008  8201               	bsf	int$flags,1,c	;set compiler interrupt flag (level 2)
+  1565   00000A                     
+  1566                           ;main.c: 59:                 rtc.minuto++;
+  1567   00000A  A4F2               	btfss	242,2,c	;volatile
+  1568   00000C  EF0A  F000         	goto	i2u9_41
+  1569   000010  EF0C  F000         	goto	i2u9_40
+  1570   000014                     i2u9_41:
+  1571   000014  EF5D  F000         	goto	i2l56
+  1572   000018                     i2u9_40:
+  1573   000018                     
+  1574                           ;main.c: 60:                 if (rtc.minuto >= 60) {
+  1575   000018  94F2               	bcf	242,2,c	;volatile
+  1576   00001A                     
+  1577                           ;main.c: 62:                     rtc.hora++;
+  1578   00001A  0EEC               	movlw	236
+  1579   00001C  6ED7               	movwf	215,c	;volatile
+  1580                           
+  1581                           ;main.c: 63:                     if (rtc.hora >= 24) {
+  1582   00001E  0E78               	movlw	120
+  1583   000020  6ED6               	movwf	214,c	;volatile
+  1584   000022                     
+  1585                           ;main.c: 65:                         rtc.dia++;
+  1586   000022  4A4B               	infsnz	_ms_contador^0,f,c	;volatile
+  1587   000024  2A4C               	incf	(_ms_contador+1)^0,f,c	;volatile
+  1588   000026                     
+  1589                           ;main.c: 66:                         if (rtc.dia > 30) {
+  1590   000026  0E01               	movlw	1
+  1591   000028  2645               	addwf	_tempo_ms_total^0,f,c	;volatile
+  1592   00002A  0E00               	movlw	0
+  1593   00002C  2246               	addwfc	(_tempo_ms_total+1)^0,f,c	;volatile
+  1594   00002E  2247               	addwfc	(_tempo_ms_total+2)^0,f,c	;volatile
+  1595   000030  2248               	addwfc	(_tempo_ms_total+3)^0,f,c	;volatile
+  1596   000032                     
+  1597                           ;main.c: 67:                             rtc.dia = 1;
+  1598   000032  0EE8               	movlw	232
+  1599   000034  5C4B               	subwf	_ms_contador^0,w,c	;volatile
+  1600   000036  0E03               	movlw	3
+  1601   000038  584C               	subwfb	(_ms_contador+1)^0,w,c	;volatile
+  1602   00003A  A0D8               	btfss	status,0,c
+  1603   00003C  EF22  F000         	goto	i2u10_41
+  1604   000040  EF24  F000         	goto	i2u10_40
+  1605   000044                     i2u10_41:
+  1606   000044  EF5D  F000         	goto	i2l56
+  1607   000048                     i2u10_40:
+  1608   000048                     
+  1609                           ;main.c: 68:                             rtc.mes++;
+  1610   000048  6A4C               	clrf	(_ms_contador+1)^0,c	;volatile
+  1611   00004A  0E00               	movlw	0
+  1612   00004C  6E4B               	movwf	_ms_contador^0,c	;volatile
+  1613   00004E                     
+  1614                           ;main.c: 69:                             if (rtc.mes > 12) {
+  1615   00004E  2A4D               	incf	_rtc^0,f,c	;volatile
+  1616   000050                     
+  1617                           ;main.c: 70:                                 rtc.mes = 1;
+  1618   000050  0E3B               	movlw	59
+  1619   000052  644D               	cpfsgt	_rtc^0,c	;volatile
+  1620   000054  EF2E  F000         	goto	i2u11_41
+  1621   000058  EF30  F000         	goto	i2u11_40
+  1622   00005C                     i2u11_41:
+  1623   00005C  EF5D  F000         	goto	i2l56
+  1624   000060                     i2u11_40:
+  1625   000060                     
+  1626                           ;main.c: 71:                                 rtc.ano++;
+  1627   000060  6A4D               	clrf	_rtc^0,c	;volatile
+  1628   000062                     
+  1629                           ;main.c: 72:                             }
+  1630   000062  2A4E               	incf	(_rtc+1)^0,f,c	;volatile
+  1631   000064                     
+  1632                           ;main.c: 73:                         }
+  1633   000064  0E3B               	movlw	59
+  1634   000066  644E               	cpfsgt	(_rtc+1)^0,c	;volatile
+  1635   000068  EF38  F000         	goto	i2u12_41
+  1636   00006C  EF3A  F000         	goto	i2u12_40
+  1637   000070                     i2u12_41:
+  1638   000070  EF5D  F000         	goto	i2l56
+  1639   000074                     i2u12_40:
+  1640   000074                     
+  1641                           ;main.c: 74:                     }
+  1642   000074  6A4E               	clrf	(_rtc+1)^0,c	;volatile
+  1643   000076                     
+  1644                           ;main.c: 75:                 }
+  1645   000076  2A4F               	incf	(_rtc+2)^0,f,c	;volatile
+  1646   000078                     
+  1647                           ;main.c: 76:             }
+  1648   000078  0E17               	movlw	23
+  1649   00007A  644F               	cpfsgt	(_rtc+2)^0,c	;volatile
+  1650   00007C  EF42  F000         	goto	i2u13_41
+  1651   000080  EF44  F000         	goto	i2u13_40
+  1652   000084                     i2u13_41:
+  1653   000084  EF5D  F000         	goto	i2l56
+  1654   000088                     i2u13_40:
+  1655   000088                     
+  1656                           ;main.c: 77:         }
+  1657   000088  6A4F               	clrf	(_rtc+2)^0,c	;volatile
+  1658   00008A                     
+  1659                           ;main.c: 78:     }
+  1660   00008A  2A50               	incf	(_rtc+3)^0,f,c	;volatile
+  1661   00008C                     
+  1662                           ;main.c: 79: }
+  1663   00008C  0E1E               	movlw	30
+  1664   00008E  6450               	cpfsgt	(_rtc+3)^0,c	;volatile
+  1665   000090  EF4C  F000         	goto	i2u14_41
+  1666   000094  EF4E  F000         	goto	i2u14_40
+  1667   000098                     i2u14_41:
+  1668   000098  EF5D  F000         	goto	i2l56
+  1669   00009C                     i2u14_40:
+  1670   00009C                     
+  1671                           ;main.c: 80: 
+  1672   00009C  0E01               	movlw	1
+  1673   00009E  6E50               	movwf	(_rtc+3)^0,c	;volatile
+  1674   0000A0                     
+  1675                           ;main.c: 81: 
+  1676   0000A0  2A51               	incf	(_rtc+4)^0,f,c	;volatile
+  1677   0000A2                     
+  1678                           ;main.c: 82: void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms) {
+  1679   0000A2  0E0C               	movlw	12
+  1680   0000A4  6451               	cpfsgt	(_rtc+4)^0,c	;volatile
+  1681   0000A6  EF57  F000         	goto	i2u15_41
+  1682   0000AA  EF59  F000         	goto	i2u15_40
+  1683   0000AE                     i2u15_41:
+  1684   0000AE  EF5D  F000         	goto	i2l56
+  1685   0000B2                     i2u15_40:
+  1686   0000B2                     
+  1687                           ;main.c: 83:     if (endereco_eeprom > 1016) return;
+  1688   0000B2  0E01               	movlw	1
+  1689   0000B4  6E51               	movwf	(_rtc+4)^0,c	;volatile
+  1690   0000B6                     
+  1691                           ;main.c: 84: 
+  1692   0000B6  4A52               	infsnz	(_rtc+5)^0,f,c	;volatile
+  1693   0000B8  2A53               	incf	(_rtc+6)^0,f,c	;volatile
+  1694   0000BA                     i2l56:
+  1695   0000BA  9201               	bcf	int$flags,1,c	;clear compiler interrupt flag (level 2)
+  1696   0000BC  0011               	retfie		f
+  1697   0000BE                     __end_of_ISR:
+  1698                           	callstack 0
   1699                           
-  1700                           ; Padding undefined space
-  1701   300000                     	org	3145728
-  1702   300000  FF                 	db	255
-  1703                           
-  1704                           ;Config register CONFIG1H @ 0x300001
-  1705                           ;	Oscillator Selection bits
-  1706                           ;	OSC = HS, HS oscillator
-  1707                           ;	Fail-Safe Clock Monitor Enable bit
-  1708                           ;	FCMEN = 0x0, unprogrammed default
-  1709                           ;	Internal/External Oscillator Switchover bit
-  1710                           ;	IESO = 0x0, unprogrammed default
-  1711   300001                     	org	3145729
-  1712   300001  02                 	db	2
-  1713                           
-  1714                           ;Config register CONFIG2L @ 0x300002
-  1715                           ;	Power-up Timer Enable bit
-  1716                           ;	PWRT = 0x1, unprogrammed default
-  1717                           ;	Brown-out Reset Enable bits
-  1718                           ;	BOREN = OFF, Brown-out Reset disabled in hardware and software
-  1719                           ;	Brown-out Reset Voltage bits
-  1720                           ;	BORV = 0x3, unprogrammed default
-  1721   300002                     	org	3145730
-  1722   300002  19                 	db	25
-  1723                           
-  1724                           ;Config register CONFIG2H @ 0x300003
-  1725                           ;	Watchdog Timer Enable bit
-  1726                           ;	WDT = OFF, WDT disabled (control is placed on the SWDTEN bit)
-  1727                           ;	Watchdog Timer Postscale Select bits
-  1728                           ;	WDTPS = 0xF, unprogrammed default
-  1729   300003                     	org	3145731
-  1730   300003  1E                 	db	30
-  1731                           
-  1732                           ;Config register CONFIG4L @ 0x300006
-  1733                           ;	Stack Full/Underflow Reset Enable bit
-  1734                           ;	STVREN = 0x1, unprogrammed default
-  1735                           ;	Single-Supply ICSP Enable bit
-  1736                           ;	LVP = OFF, Single-Supply ICSP disabled
-  1737                           ;	Boot Block Size Select bits
-  1738                           ;	BBSIZ = 0x0, unprogrammed default
-  1739                           ;	Extended Instruction Set Enable bit
-  1740                           ;	XINST = 0x0, unprogrammed default
-  1741                           ;	Background Debugger Enable bit
-  1742                           ;	DEBUG = 0x1, unprogrammed default
-  1743   300006                     	org	3145734
-  1744   300006  81                 	db	129
-  1745                           
-  1746                           ; Padding undefined space
-  1747   300007                     	org	3145735
-  1748   300007  FF                 	db	255
-  1749                           tosu	equ	0xFFF
-  1750                           tosh	equ	0xFFE
-  1751                           tosl	equ	0xFFD
-  1752                           stkptr	equ	0xFFC
-  1753                           pclatu	equ	0xFFB
-  1754                           pclath	equ	0xFFA
-  1755                           pcl	equ	0xFF9
-  1756                           tblptru	equ	0xFF8
-  1757                           tblptrh	equ	0xFF7
-  1758                           tblptrl	equ	0xFF6
-  1759                           tablat	equ	0xFF5
-  1760                           prodh	equ	0xFF4
-  1761                           prodl	equ	0xFF3
-  1762                           indf0	equ	0xFEF
-  1763                           postinc0	equ	0xFEE
-  1764                           postdec0	equ	0xFED
-  1765                           preinc0	equ	0xFEC
-  1766                           plusw0	equ	0xFEB
-  1767                           fsr0h	equ	0xFEA
-  1768                           fsr0l	equ	0xFE9
-  1769                           wreg	equ	0xFE8
-  1770                           indf1	equ	0xFE7
-  1771                           postinc1	equ	0xFE6
-  1772                           postdec1	equ	0xFE5
-  1773                           preinc1	equ	0xFE4
-  1774                           plusw1	equ	0xFE3
-  1775                           fsr1h	equ	0xFE2
-  1776                           fsr1l	equ	0xFE1
-  1777                           bsr	equ	0xFE0
-  1778                           indf2	equ	0xFDF
-  1779                           postinc2	equ	0xFDE
-  1780                           postdec2	equ	0xFDD
-  1781                           preinc2	equ	0xFDC
-  1782                           plusw2	equ	0xFDB
-  1783                           fsr2h	equ	0xFDA
-  1784                           fsr2l	equ	0xFD9
-  1785                           status	equ	0xFD8
+  1700                           	psect	smallconst
+  1701   001000                     __psmallconst:
+  1702                           	callstack 0
+  1703   001000  00                 	db	0
+  1704   001001  00                 	db	0	; dummy byte at the end
+  1705   001000                     __smallconst    set	__psmallconst
+  1706   001000                     __mediumconst   set	__psmallconst
+  1707   000000                     __activetblptr  equ	0
+  1708                           
+  1709                           	psect	rparam
+  1710   000001                     ___rparam_used  equ	1
+  1711   000000                     ___param_bank   equ	0
+  1712   000000                     __Lparam        equ	__Lrparam
+  1713   000000                     __Hparam        equ	__Hrparam
+  1714   000001                     btemp           set	1	;btemp
+  1715   000001                     int$flags       set	1
+  1716   000001                     btemp0          set	1
+  1717   000002                     btemp1          set	2
+  1718                           
+  1719                           	psect	config
+  1720                           
+  1721                           ; Padding undefined space
+  1722   300000                     	org	3145728
+  1723   300000  FF                 	db	255
+  1724                           
+  1725                           ;Config register CONFIG1H @ 0x300001
+  1726                           ;	Oscillator Selection bits
+  1727                           ;	OSC = HS, HS oscillator
+  1728                           ;	Fail-Safe Clock Monitor Enable bit
+  1729                           ;	FCMEN = 0x0, unprogrammed default
+  1730                           ;	Internal/External Oscillator Switchover bit
+  1731                           ;	IESO = OFF, Oscillator Switchover mode disabled
+  1732   300001                     	org	3145729
+  1733   300001  02                 	db	2
+  1734                           
+  1735                           ;Config register CONFIG2L @ 0x300002
+  1736                           ;	Power-up Timer Enable bit
+  1737                           ;	PWRT = 0x1, unprogrammed default
+  1738                           ;	Brown-out Reset Enable bits
+  1739                           ;	BOREN = OFF, Brown-out Reset disabled in hardware and software
+  1740                           ;	Brown-out Reset Voltage bits
+  1741                           ;	BORV = 0x3, unprogrammed default
+  1742   300002                     	org	3145730
+  1743   300002  19                 	db	25
+  1744                           
+  1745                           ;Config register CONFIG2H @ 0x300003
+  1746                           ;	Watchdog Timer Enable bit
+  1747                           ;	WDT = OFF, WDT disabled (control is placed on the SWDTEN bit)
+  1748                           ;	Watchdog Timer Postscale Select bits
+  1749                           ;	WDTPS = 0xF, unprogrammed default
+  1750   300003                     	org	3145731
+  1751   300003  1E                 	db	30
+  1752                           
+  1753                           ; Padding undefined space
+  1754   300004                     	org	3145732
+  1755   300004  FF                 	db	255
+  1756                           
+  1757                           ;Config register CONFIG3H @ 0x300005
+  1758                           ;	PORTB A/D Enable bit
+  1759                           ;	PBADEN = OFF, PORTB<4:0> pins are configured as digital I/O on Reset
+  1760                           ;	Low-Power Timer 1 Oscillator Enable bit
+  1761                           ;	LPT1OSC = 0x0, unprogrammed default
+  1762                           ;	MCLR Pin Enable bit
+  1763                           ;	MCLRE = ON, MCLR pin enabled; RE3 input pin disabled
+  1764   300005                     	org	3145733
+  1765   300005  80                 	db	128
+  1766                           
+  1767                           ;Config register CONFIG4L @ 0x300006
+  1768                           ;	Stack Full/Underflow Reset Enable bit
+  1769                           ;	STVREN = 0x1, unprogrammed default
+  1770                           ;	Single-Supply ICSP Enable bit
+  1771                           ;	LVP = OFF, Single-Supply ICSP disabled
+  1772                           ;	Boot Block Size Select bits
+  1773                           ;	BBSIZ = 0x0, unprogrammed default
+  1774                           ;	Extended Instruction Set Enable bit
+  1775                           ;	XINST = 0x0, unprogrammed default
+  1776                           ;	Background Debugger Enable bit
+  1777                           ;	DEBUG = 0x1, unprogrammed default
+  1778   300006                     	org	3145734
+  1779   300006  81                 	db	129
+  1780                           
+  1781                           ; Padding undefined space
+  1782   300007                     	org	3145735
+  1783   300007  FF                 	db	255
+  1784                           tosu	equ	0xFFF
+  1785                           tosh	equ	0xFFE
+  1786                           tosl	equ	0xFFD
+  1787                           stkptr	equ	0xFFC
+  1788                           pclatu	equ	0xFFB
+  1789                           pclath	equ	0xFFA
+  1790                           pcl	equ	0xFF9
+  1791                           tblptru	equ	0xFF8
+  1792                           tblptrh	equ	0xFF7
+  1793                           tblptrl	equ	0xFF6
+  1794                           tablat	equ	0xFF5
+  1795                           prodh	equ	0xFF4
+  1796                           prodl	equ	0xFF3
+  1797                           indf0	equ	0xFEF
+  1798                           postinc0	equ	0xFEE
+  1799                           postdec0	equ	0xFED
+  1800                           preinc0	equ	0xFEC
+  1801                           plusw0	equ	0xFEB
+  1802                           fsr0h	equ	0xFEA
+  1803                           fsr0l	equ	0xFE9
+  1804                           wreg	equ	0xFE8
+  1805                           indf1	equ	0xFE7
+  1806                           postinc1	equ	0xFE6
+  1807                           postdec1	equ	0xFE5
+  1808                           preinc1	equ	0xFE4
+  1809                           plusw1	equ	0xFE3
+  1810                           fsr1h	equ	0xFE2
+  1811                           fsr1l	equ	0xFE1
+  1812                           bsr	equ	0xFE0
+  1813                           indf2	equ	0xFDF
+  1814                           postinc2	equ	0xFDE
+  1815                           postdec2	equ	0xFDD
+  1816                           preinc2	equ	0xFDC
+  1817                           plusw2	equ	0xFDB
+  1818                           fsr2h	equ	0xFDA
+  1819                           fsr2l	equ	0xFD9
+  1820                           status	equ	0xFD8
 
 Data Sizes:
     Strings     0
     Constant    0
     Data        7
-    BSS         4
+    BSS         8
     Persistent  0
     Stack       0
 
 Auto Spaces:
     Space          Size  Autos    Used
-    COMRAM           94     67      78
+    COMRAM           94     67      82
     BANK0           160      0       0
     BANK1           256      0       0
     BANK2           256      0       0
@@ -2046,93 +2082,96 @@ BITBANK0           160      0       0      0.0%
 BANK0              160      0       0      0.0%
 BITBIGSFRh         126      0       0      0.0%
 BITCOMRAM           94      0       0      0.0%
-COMRAM              94     67      78     83.0%
+COMRAM              94     67      82     87.2%
 STACK                0      0       0      0.0%
-DATA                 0      0      78      0.0%
+DATA                 0      0      82      0.0%
 
 
 Microchip Technology PIC18 Macro Assembler V3.10 build 20250813170317 
-Symbol Table                                                                                   Mon Sep  7 16:40:37 2026
+Symbol Table                                                                                   Mon Sep  7 23:47:22 2026
 
-                             l35 14C2                               l37 14D0                               l38 14D2  
-                             l54 1380                               l81 147E                               l82 148E  
-                             l97 1414                              l104 1424                              u300 1444  
-                            u301 1440                              u310 147E                              u311 147A  
-                            u320 1044                              u321 1040                              u250 14D0  
-                            u330 1054                              u251 14CC                              u331 1050  
-                            u260 13A8                              u340 1070                              u245 14C0  
-                            u261 13A4                              u341 106C                              u246 14C2  
-                            u270 13CA                              u271 13C6                              u351 107A  
-                            u407 105A                              u280 13F2                              u360 115C  
-                            u281 13EE                              u417 1172                              u361 1158  
-                            u290 12AE                              u370 116C                              u291 12AA  
-                            u371 1168                              u380 1188                              _ISR 0008  
-                            u381 1184                              u391 1270                              _rtc 0045  
-                            wreg 0FE8                             ?_ISR 0002                             l1101 145E  
-                           l1021 1490                             l1031 14A2                             l1023 1496  
-                           l1111 1018                             l1103 1002                             l1041 14B6  
-                           l1033 14A4                             l1025 149A                             l1121 1054  
-                           l1113 101A                             l1105 1006                             l1043 14B8  
-                           l1035 14AC                             l1027 149E                             l1051 13B0  
-                           l1131 115C                             l1123 1062                             l1115 102C  
-                           l1107 1014                             l1037 14AE                             l1029 14A0  
-                           l1061 1402                             l1053 13BC                             l1045 1382  
-                           l1141 1266                             l1133 116C                             l1125 1070  
-                           l1117 1034                             l1109 1016                             l1039 14B2  
-                           l1063 1404                             l1055 13CA                             l1047 1392  
-                           l1071 12B2                             l1135 117A                             l1127 1082  
-                           l1143 128C                             l1119 1044                             l1065 140E  
-                           l1057 13D4                             l1049 13A8                             l1081 1300  
-                           l1073 12C2                             l1137 1188                             l1129 114C  
-                           l1059 13F2                             l1091 136C                             l1083 1304  
-                           l1075 12C6                             l1067 1298                             l1139 124E  
-                           l1093 1426                             l1085 1318                             l1077 12DA  
-                           l1095 1436                             l1087 1328                             l1079 12EC  
-                           l1097 1444                             l1089 1368                             l1099 1454  
-                           i2l50 00AE                             _main 1002                             fsr1l 0FE1  
-                           btemp 0001             EEPROM_WriteByte@dado 0004                             prodh 0FF4  
-                           prodl 0FF3                             start 00B2                     ___param_bank 0000  
-                          ??_ISR 0002                            ?_main 0002                            _EEADR 0FA9  
-                __end_of___lldiv 1426                            _T0CON 0FD5                            i2l941 0022  
-                          i2l951 0054                            i2l943 0026                            i2l935 000A  
-                          i2l961 006C                            i2l953 0056                            i2l945 003C  
-                          i2l937 0018                            i2l971 0094                            i2l963 007C  
-                          i2l955 0058                            i2l947 0042                            i2l939 001A  
-                          i2l973 0096                            i2l965 007E                            i2l957 0068  
-                          i2l949 0044                            i2l975 00A6                            i2l967 0080  
-                          i2l959 006A                            i2l977 00AA                            i2l969 0090  
-                          _TMR0H 0FD7                            _TMR0L 0FD6              ___lmul@multiplicand 0006  
-                          btemp0 0001                            btemp1 0002                            tablat 0FF5  
-                          plusw0 0FEB                            plusw1 0FE3                            plusw2 0FDB  
-                          status 0FD8     __end_of_salvar_evento_eeprom 1382                  __initialization 14D4  
-                   __end_of_main 1298                           ??_main 001C                    __activetblptr 0000  
-           main@ms_inicio_evento 003F                           _ADCON1 0FC1                           _EEADRH 0FAA  
-                         _EEDATA 0FA8                           _EECON2 0FA7                           i2u9_40 0018  
-                         i2u9_41 0014                           ___lmul 1426                        ??___lldiv 000A  
-                         isa$std 0001         __end_of_EEPROM_WriteByte 14D4                     __pdataCOMRAM 0045  
+                             l41 14CA                               l43 14D8                               l44 14DA  
+                             l60 1388                               l87 1486                               l88 1496  
+                            l110 142C                              l103 141C                              u300 144C  
+                            u301 1448                              u310 1486                              u311 1482  
+                            u320 1048                              u321 1044                              u250 14D8  
+                            u330 1058                              u251 14D4                              u331 1054  
+                            u260 13B0                              u340 1074                              u245 14C8  
+                            u261 13AC                              u341 1070                              u246 14CA  
+                            u270 13D2                              u271 13CE                              u351 107E  
+                            u407 105E                              u280 13FA                              u360 1162  
+                            u281 13F6                              u417 1178                              u361 115E  
+                            u290 12B6                              u370 1172                              u291 12B2  
+                            u371 116E                              u380 118E                              _ISR 0008  
+                            u381 118A                              u391 1278                              _rtc 004D  
+                            wreg 0FE8                             ?_ISR 0002                             l1101 1320  
+                           l1111 143E                             l1103 1330                             l1113 144C  
+                           l1041 14A2                             l1105 1370                             l1121 1006  
+                           l1115 145C                             l1051 14B4                             l1043 14A6  
+                           l1107 1374                             l1131 101C                             l1123 1008  
+                           l1117 1466                             l1109 142E                             l1053 14B6  
+                           l1045 14A8                             l1037 1498                             l1061 138A  
+                           l1141 1058                             l1133 101E                             l1125 100A  
+                           l1055 14BA                             l1047 14AA                             l1039 149E  
+                           l1071 13D2                             l1063 139A                             l1143 1066  
+                           l1151 1152                             l1135 1030                             l1127 1018  
+                           l1119 1002                             l1057 14BE                             l1049 14AC  
+                           l1081 1416                             l1073 13DC                             l1065 13B0  
+                           l1161 1254                             l1153 1162                             l1145 1074  
+                           l1137 1038                             l1129 101A                             l1059 14C0  
+                           l1075 13FA                             l1067 13B8                             l1091 12CE  
+                           l1083 12A0                             l1163 126C                             l1155 1172  
+                           l1147 1086                             l1139 1048                             l1077 140A  
+                           l1069 13C4                             l1093 12E2                             l1165 126E  
+                           l1157 1180                             l1149 114C                             l1079 140C  
+                           l1095 12F4                             l1087 12BA                             l1159 118E  
+                           l1167 1294                             l1097 1308                             l1089 12CA  
+                           l1099 130C                             i2l56 00BA                             _main 1002  
+                           fsr1l 0FE1                             btemp 0001             EEPROM_WriteByte@dado 0004  
+                           prodh 0FF4                             prodl 0FF3                             start 00BE  
+                   ___param_bank 0000                            ??_ISR 0002                            ?_main 0002  
+                          _EEADR 0FA9                  __end_of___lldiv 142E                            _T0CON 0FD5  
+                          i2l941 000A                            i2l951 0032                            i2l943 0018  
+                          i2l961 0062                            i2l953 0048                            i2l945 001A  
+                          i2l971 0088                            i2l963 0064                            i2l955 004E  
+                          i2l947 0022                            i2l981 00A2                            i2l973 008A  
+                          i2l965 0074                            i2l957 0050                            i2l949 0026  
+                          i2l983 00B2                            i2l975 008C                            i2l967 0076  
+                          i2l959 0060                            i2l985 00B6                            i2l977 009C  
+                          i2l969 0078                            i2l979 00A0                            _TMR0H 0FD7  
+                          _TMR0L 0FD6              ___lmul@multiplicand 0006                            btemp0 0001  
+                          btemp1 0002                            tablat 0FF5                            plusw0 0FEB  
+                          plusw1 0FE3                            plusw2 0FDB                            status 0FD8  
+   __end_of_salvar_evento_eeprom 138A                  __initialization 14DC                     __end_of_main 12A0  
+                         ??_main 001C                    __activetblptr 0000             main@ms_inicio_evento 003F  
+                         _ADCON1 0FC1                           _EEADRH 0FAA                           _EEDATA 0FA8  
+                         _EECON2 0FA7                           i2u9_40 0018                           i2u9_41 0014  
+                         ___lmul 142E                        ??___lldiv 000A                           clear_0 1502  
+                         isa$std 0001         __end_of_EEPROM_WriteByte 14DC                     __pdataCOMRAM 004D  
               main@ms_fim_evento 0037                     __mediumconst 1000                           tblptrh 0FF7  
                          tblptrl 0FF6                           tblptru 0FF8                       __accesstop 0060  
-        __end_of__initialization 14FC                    ___rparam_used 0001                   __pcstackCOMRAM 0002  
-           _salvar_evento_eeprom 1298                          ?___lmul 0002                   ___lmul@product 000A  
-          ?_salvar_evento_eeprom 000F                          i2u10_40 003C                          i2u10_41 0038  
-                        i2u11_40 0054                          i2u11_41 0050                          i2u12_40 0068  
-                        i2u12_41 0064                          i2u13_40 007C                          i2u13_41 0078  
-                        i2u14_40 0090                          i2u14_41 008C                          i2u15_40 00A6  
-                        i2u15_41 00A2        EEPROM_WriteByte@gie_state 0005                          __Hparam 0000  
-                        __Lparam 0000                          ___lldiv 1382                     __psmallconst 1000  
-                        __pcinit 14D4                          __ramtop 1000                          __ptext0 1002  
-                        __ptext1 1298                          __ptext2 1382                          __ptext3 1490  
-                        __ptext4 1426             end_of_initialization 14FC                  ___lldiv@divisor 0006  
+        __end_of__initialization 1508                    ___rparam_used 0001                   __pcstackCOMRAM 0002  
+           _salvar_evento_eeprom 12A0                          ?___lmul 0002                   ___lmul@product 000A  
+          ?_salvar_evento_eeprom 000F                          i2u10_40 0048                          i2u10_41 0044  
+                        i2u11_40 0060                          i2u11_41 005C                          i2u12_40 0074  
+                        i2u12_41 0070                          i2u13_40 0088                          i2u13_41 0084  
+                        i2u14_40 009C                          i2u14_41 0098                          i2u15_40 00B2  
+                        i2u15_41 00AE        EEPROM_WriteByte@gie_state 0005                          __Hparam 0000  
+                        __Lparam 0000                          ___lldiv 138A                     __psmallconst 1000  
+                        __pcinit 14DC                          __ramtop 1000                          __ptext0 1002  
+                        __ptext1 12A0                          __ptext2 138A                          __ptext3 1498  
+                        __ptext4 142E             end_of_initialization 1508                  ___lldiv@divisor 0006  
                 ___lldiv@counter 000E                          postdec1 0FE5                          postinc0 0FEE  
                       _PORTBbits 0F81           ??_salvar_evento_eeprom 001A                ?_EEPROM_WriteByte 0002  
-               main@estado_atual 0044               ??_EEPROM_WriteByte 0005                        _TRISBbits 0F93  
- salvar_evento_eeprom@duracao_ms 0016                   __end_of___lmul 1490                    __pidataCOMRAM 1506  
-                _endereco_eeprom 004C              start_initialization 14D4                      __end_of_ISR 00B2  
-                       ??___lmul 000A                      __pbssCOMRAM 004C  salvar_evento_eeprom@duracao_sec 001A  
-                      __pintcode 0008                         ?___lldiv 0002                      __smallconst 1000  
-             main@momento_inicio 0030                ___lmul@multiplier 0002                        copy_data0 14E8  
+               main@estado_atual 0044               ??_EEPROM_WriteByte 0005                        _TRISAbits 0F92  
+                      _TRISBbits 0F93   salvar_evento_eeprom@duracao_ms 0016                   __end_of___lmul 1498  
+                  __pidataCOMRAM 1512                  _endereco_eeprom 0049              start_initialization 14DC  
+                    __end_of_ISR 00BE                         ??___lmul 000A                      __pbssCOMRAM 0045  
+salvar_evento_eeprom@duracao_sec 001A                   _tempo_ms_total 0045                        __pintcode 0008  
+                       ?___lldiv 0002                      __smallconst 1000                         _LATAbits 0F89  
+             main@momento_inicio 0030                ___lmul@multiplier 0002                        copy_data0 14F0  
                      _EECON1bits 0FA6                         __Hrparam 0000                         __Lrparam 0000  
-                       isa$xinst 0000                         int$flags 0001                      _ms_contador 004E  
+                       isa$xinst 0000                         int$flags 0001                      _ms_contador 004B  
                      _INTCONbits 0FF2         EEPROM_WriteByte@endereco 0002                         intlevel2 0000  
                ___lldiv@dividend 0002              main@estado_anterior 0043                main@duracao_total 003B  
-     salvar_evento_eeprom@inicio 000F                 ___lldiv@quotient 000A                 _EEPROM_WriteByte 1490  
+     salvar_evento_eeprom@inicio 000F                 ___lldiv@quotient 000A                 _EEPROM_WriteByte 1498  
