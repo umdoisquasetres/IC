@@ -7,6 +7,10 @@
 # 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include/language_support.h" 1 3
 # 2 "<built-in>" 2
 # 1 "main.c" 2
+# 1 "./config.h" 1
+
+
+
 # 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include/xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include/xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -18070,8 +18074,7 @@ __attribute__((__unsupported__("The " "Write_b_eep" " routine is no longer suppo
 unsigned char __t1rd16on(void);
 unsigned char __t3rd16on(void);
 # 34 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include/xc.h" 2 3
-# 2 "main.c" 2
-
+# 5 "./config.h" 2
 
 
 #pragma config OSC = HS
@@ -18081,6 +18084,9 @@ unsigned char __t3rd16on(void);
 #pragma config IESO = OFF
 #pragma config MCLRE = ON
 #pragma config PBADEN = OFF
+# 2 "main.c" 2
+# 1 "./rtc_eeprom.h" 1
+
 
 
 
@@ -18096,101 +18102,216 @@ typedef struct {
 } RealTimeClock;
 
 
-volatile RealTimeClock rtc = {0, 0, 12, 7, 9, 2026};
-
-volatile uint32_t tempo_ms_total = 0;
-volatile uint16_t ms_contador = 0;
-
-uint16_t endereco_eeprom = 0x000;
+extern volatile RealTimeClock rtc;
+extern volatile uint32_t tempo_ms_total;
+extern volatile uint16_t ms_contador;
+extern uint16_t endereco_eeprom;
 
 
-void EEPROM_WriteByte(uint16_t endereco, uint8_t dado) {
-    EEADRH = (uint8_t)((endereco >> 8) & 0x03);
-    EEADR = (uint8_t)(endereco & 0xFF);
-    EEDATA = dado;
+void EEPROM_WriteByte(uint16_t endereco, uint8_t dado);
+void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms);
+void Timer0_AtualizaRelogio(void);
+# 3 "main.c" 2
+# 1 "./uart.h" 1
 
-    EECON1bits.EEPGD = 0;
-    EECON1bits.CFGS = 0;
-    EECON1bits.WREN = 1;
 
-    uint8_t gie_state = INTCONbits.GIE;
-    INTCONbits.GIE = 0;
 
-    EECON2 = 0x55;
-    EECON2 = 0xAA;
-    EECON1bits.WR = 1;
 
-    INTCONbits.GIE = gie_state;
 
-    while(EECON1bits.WR);
-    EECON1bits.WREN = 0;
-}
+
+void UART_Init(uint32_t baud_rate);
+
+
+void UART_Write(char data);
+
+
+void UART_WriteString(const char* str);
+
+
+char UART_Read(void);
+# 4 "main.c" 2
+
+# 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stdio.h" 1 3
+# 24 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stdio.h" 3
+# 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 1 3
+# 12 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 3
+typedef void * va_list[1];
+
+
+
+
+typedef void * __isoc_va_list[1];
+# 143 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 3
+typedef __int24 ssize_t;
+# 255 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 3
+typedef long long off_t;
+# 409 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/bits/alltypes.h" 3
+typedef struct _IO_FILE FILE;
+# 25 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stdio.h" 2 3
+# 52 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stdio.h" 3
+typedef union _G_fpos64_t {
+ char __opaque[16];
+ double __align;
+} fpos_t;
+
+extern FILE *const stdin;
+extern FILE *const stdout;
+extern FILE *const stderr;
+
+
+
+
+
+FILE *fopen(const char *restrict, const char *restrict);
+FILE *freopen(const char *restrict, const char *restrict, FILE *restrict);
+int fclose(FILE *);
+
+int remove(const char *);
+int rename(const char *, const char *);
+
+int feof(FILE *);
+int ferror(FILE *);
+int fflush(FILE *);
+void clearerr(FILE *);
+
+int fseek(FILE *, long, int);
+long ftell(FILE *);
+void rewind(FILE *);
+
+int fgetpos(FILE *restrict, fpos_t *restrict);
+int fsetpos(FILE *, const fpos_t *);
+
+size_t fread(void *restrict, size_t, size_t, FILE *restrict);
+size_t fwrite(const void *restrict, size_t, size_t, FILE *restrict);
+
+int fgetc(FILE *);
+int getc(FILE *);
+int getchar(void);
+
+
+
+
+
+int ungetc(int, FILE *);
+int getch(void);
+
+int fputc(int, FILE *);
+int putc(int, FILE *);
+int putchar(int);
+
+
+
+
+
+void putch(char);
+
+char *fgets(char *restrict, int, FILE *restrict);
+
+char *gets(char *);
+
+
+int fputs(const char *restrict, FILE *restrict);
+int puts(const char *);
+
+__attribute__((__format__(__printf__, 1, 2)))
+int printf(const char *restrict, ...);
+__attribute__((__format__(__printf__, 2, 3)))
+int fprintf(FILE *restrict, const char *restrict, ...);
+__attribute__((__format__(__printf__, 2, 3)))
+int sprintf(char *restrict, const char *restrict, ...);
+__attribute__((__format__(__printf__, 3, 4)))
+int snprintf(char *restrict, size_t, const char *restrict, ...);
+
+__attribute__((__format__(__printf__, 1, 0)))
+int vprintf(const char *restrict, __isoc_va_list);
+int vfprintf(FILE *restrict, const char *restrict, __isoc_va_list);
+__attribute__((__format__(__printf__, 2, 0)))
+int vsprintf(char *restrict, const char *restrict, __isoc_va_list);
+__attribute__((__format__(__printf__, 3, 0)))
+int vsnprintf(char *restrict, size_t, const char *restrict, __isoc_va_list);
+
+__attribute__((__format__(__scanf__, 1, 2)))
+int scanf(const char *restrict, ...);
+__attribute__((__format__(__scanf__, 2, 3)))
+int fscanf(FILE *restrict, const char *restrict, ...);
+__attribute__((__format__(__scanf__, 2, 3)))
+int sscanf(const char *restrict, const char *restrict, ...);
+
+__attribute__((__format__(__scanf__, 1, 0)))
+int vscanf(const char *restrict, __isoc_va_list);
+int vfscanf(FILE *restrict, const char *restrict, __isoc_va_list);
+__attribute__((__format__(__scanf__, 2, 0)))
+int vsscanf(const char *restrict, const char *restrict, __isoc_va_list);
+
+void perror(const char *);
+
+int setvbuf(FILE *restrict, char *restrict, int, size_t);
+void setbuf(FILE *restrict, char *restrict);
+
+char *tmpnam(char *);
+FILE *tmpfile(void);
+
+
+
+
+FILE *fmemopen(void *restrict, size_t, const char *restrict);
+FILE *open_memstream(char **, size_t *);
+FILE *fdopen(int, const char *);
+FILE *popen(const char *, const char *);
+int pclose(FILE *);
+int fileno(FILE *);
+int fseeko(FILE *, off_t, int);
+off_t ftello(FILE *);
+int dprintf(int, const char *restrict, ...);
+int vdprintf(int, const char *restrict, __isoc_va_list);
+void flockfile(FILE *);
+int ftrylockfile(FILE *);
+void funlockfile(FILE *);
+int getc_unlocked(FILE *);
+int getchar_unlocked(void);
+int putc_unlocked(int, FILE *);
+int putchar_unlocked(int);
+ssize_t getdelim(char **restrict, size_t *restrict, int, FILE *restrict);
+ssize_t getline(char **restrict, size_t *restrict, FILE *restrict);
+int renameat(int, const char *, int, const char *);
+char *ctermid(char *);
+
+
+
+
+
+
+
+char *tempnam(const char *, const char *);
+# 6 "main.c" 2
+
+
+
 
 
 void __attribute__((picinterrupt(("")))) ISR(void) {
     if (INTCONbits.TMR0IF) {
         INTCONbits.TMR0IF = 0;
-
-        TMR0H = 0xEC;
-        TMR0L = 0x78;
-
-        ms_contador++;
-        tempo_ms_total++;
-        if (ms_contador >= 1000) {
-            ms_contador = 0;
-            rtc.segundo++;
-            if (rtc.segundo >= 60) {
-                rtc.segundo = 0;
-                rtc.minuto++;
-                if (rtc.minuto >= 60) {
-                    rtc.minuto = 0;
-                    rtc.hora++;
-                    if (rtc.hora >= 24) {
-                        rtc.hora = 0;
-                        rtc.dia++;
-                        if (rtc.dia > 30) {
-                            rtc.dia = 1;
-                            rtc.mes++;
-                            if (rtc.mes > 12) {
-                                rtc.mes = 1;
-                                rtc.ano++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        Timer0_AtualizaRelogio();
     }
 }
 
-
-void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms) {
-    if (endereco_eeprom > 1016) return;
-
-    EEPROM_WriteByte(endereco_eeprom++, inicio.dia);
-    EEPROM_WriteByte(endereco_eeprom++, inicio.mes);
-    EEPROM_WriteByte(endereco_eeprom++, (uint8_t)(inicio.ano - 2000));
-    EEPROM_WriteByte(endereco_eeprom++, inicio.hora);
-    EEPROM_WriteByte(endereco_eeprom++, inicio.minuto);
-    EEPROM_WriteByte(endereco_eeprom++, inicio.segundo);
-
-
-    uint16_t duracao_sec = (uint16_t)(duracao_ms / 1000);
-    EEPROM_WriteByte(endereco_eeprom++, (duracao_sec >> 8) & 0xFF);
-    EEPROM_WriteByte(endereco_eeprom++, duracao_sec & 0xFF);
-}
-
 void main(void) {
+
     ADCON1 = 0x0F;
     TRISBbits.TRISB0 = 1;
     TRISAbits.TRISA0 = 0;
+    LATAbits.LATA0 = 0;
 
-        LATAbits.LATA0 = 0;
+
+    UART_Init(9600);
+    UART_WriteString("\r\n--- Sistema de Coleta de Dados Iniciado ---\r\n");
 
 
     T0CON = 0b10001000;
     TMR0H = 0xEC;
     TMR0L = 0x78;
+
 
     INTCONbits.TMR0IF = 0;
     INTCONbits.TMR0IE = 1;
@@ -18201,6 +18322,7 @@ void main(void) {
     uint32_t ms_inicio_evento = 0;
 
 
+    char mensagem_serial[64];
 
     while(1) {
         uint8_t estado_atual = PORTBbits.RB0;
@@ -18210,9 +18332,10 @@ void main(void) {
             _delay((unsigned long)((20)*(20000000/4000.0)));
             if (PORTBbits.RB0 == 1) {
                 momento_inicio = rtc;
-
                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
                 LATAbits.LATA0 = 1;
+
+                UART_WriteString(">> Botao PRESSIONADO. Registrando inicio do evento...\r\n");
             }
         }
 
@@ -18226,6 +18349,10 @@ void main(void) {
 
 
                 salvar_evento_eeprom(momento_inicio, duracao_total);
+
+
+                sprintf(mensagem_serial, "<< Botao SOLTO. Duracao: %lu ms. Evento salvo na EEPROM.\r\n", duracao_total);
+                UART_WriteString(mensagem_serial);
             }
         }
 
