@@ -1,17 +1,51 @@
 #include "config.h"
 #include "rtc_eeprom.h"
 #include "uart.h"
+#include "modbus.h"
 #include <xc.h>
-#include <stdio.h> // Para o uso do sprintf
+#include <stdio.h> 
 
-#define BOTAO PORTBbits.RB0     
+#define BOTAO PORTBbits.RB0      
 #define LED LATAbits.LATA0  
 
-// ISR do Timer0 
+// Variáveis para o buffer Modbus
+uint8_t modbus_rx_buffer[32];
+volatile uint8_t modbus_rx_index = 0;
+volatile uint8_t modbus_idle_timer = 0;
+volatile uint8_t modbus_frame_ready = 0;
+
+// ISR (Timer0 e Interrupção Serial UART)
 void __interrupt() ISR(void) {
+    // Tratamento do Timer0
     if (INTCONbits.TMR0IF) {
         INTCONbits.TMR0IF = 0;
-        Timer0_AtualizaRelogio(); // Chama a função externa para limpar o main
+        Timer0_AtualizaRelogio(); 
+        
+        // --- Temporizador Modbus (Silêncio de Quadro) ---
+        if (modbus_idle_timer < 5) {
+            modbus_idle_timer++;
+            if (modbus_idle_timer == 4 && modbus_rx_index > 0) {
+                modbus_frame_ready = 1; 
+            }
+        }
+    }
+    
+    // Tratamento de Receção UART por Interrupção (Garante que nenhum byte se perde)
+    if (PIR1bits.RCIF) {
+        uint8_t dado = RCREG;
+        
+        // Limpa erro de Overrun da UART caso ocorra
+        if (RCSTAbits.OERR) {
+            RCSTAbits.CREN = 0;
+            RCSTAbits.CREN = 1;
+        }
+        
+        modbus_idle_timer = 0; 
+        modbus_frame_ready = 0;
+        
+        if (modbus_rx_index < sizeof(modbus_rx_buffer)) {
+            modbus_rx_buffer[modbus_rx_index++] = dado;
+        }
     }
 }
 
@@ -24,37 +58,35 @@ void main(void) {
     
     // Inicializa UART a 9600 bps
     UART_Init(9600);
-    UART_WriteString("\r\n--- Sistema de Coleta de Dados Iniciado ---\r\n");
 
     // Configuração Timer0
     T0CON = 0b10001000;     // Modo 16-bits, Fosc/4, Prescaler 1:1
     TMR0H = 0xEC;
     TMR0L = 0x78;
 
-    // Interrupções
+    // Configuração de Interrupções (Timer0 + Periféricos/UART)
     INTCONbits.TMR0IF = 0;
     INTCONbits.TMR0IE = 1;
-    INTCONbits.GIE = 1;
+    
+    PIE1bits.RCIE = 1;      // Habilita interrupção de receção da UART
+    INTCONbits.PEIE = 1;    // Habilita interrupções de periféricos
+    INTCONbits.GIE = 1;     // Habilita interrupções globais
 
     uint8_t estado_anterior = 0;
     RealTimeClock momento_inicio;
     uint32_t ms_inicio_evento = 0;
-    
-    // Buffer para armazenar as mensagens da UART
-    char mensagem_serial[64]; 
 
     while(1) {
         uint8_t estado_atual = BOTAO;
+        holding_registers[0] = estado_atual; // Reg 0: Status em tempo real
 
         // Borda de subida (Entrada foi para nível ALTO)
         if (estado_atual == 1 && estado_anterior == 0) {
             __delay_ms(20); // Debounce
             if (BOTAO == 1) {
                 momento_inicio = rtc; 
-                ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+                ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
                 LED = 1; 
-                
-                UART_WriteString(">> Botao PRESSIONADO. Registrando inicio do evento...\r\n");
             }
         }
     
@@ -62,19 +94,30 @@ void main(void) {
         else if (estado_atual == 0 && estado_anterior == 1) {
             __delay_ms(20); // Debounce
             if (BOTAO == 0) {
-                uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+                uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
+                
                 LED = 0;  
                 
                 // Grava EEPROM
                 salvar_evento_eeprom(momento_inicio, duracao_total);
                 
-                // Transmite os dados salvos pela porta serial
-                sprintf(mensagem_serial, "<< Botao SOLTO. Duracao: %lu ms. Evento salvo na EEPROM.\r\n", duracao_total);
-                UART_WriteString(mensagem_serial);
+                // Atualiza os registradores Modbus
+                holding_registers[1] = (uint16_t)(duracao_total / 1000); // Segundos
+                holding_registers[2] = momento_inicio.ano;
+                holding_registers[3] = ((uint16_t)momento_inicio.mes << 8) | momento_inicio.dia;
+                holding_registers[4] = ((uint16_t)momento_inicio.hora << 8) | momento_inicio.minuto;
+                holding_registers[5] = momento_inicio.segundo;
             }
         }
         
         estado_anterior = estado_atual;
+        
+        // --- Processamento do Pacote Modbus ---
+        if (modbus_frame_ready) {
+            Modbus_ProcessFrame(modbus_rx_buffer, modbus_rx_index);
+            modbus_rx_index = 0; 
+            modbus_frame_ready = 0;
+        }
     }
 }

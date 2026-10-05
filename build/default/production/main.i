@@ -18111,6 +18111,8 @@ extern uint16_t endereco_eeprom;
 void EEPROM_WriteByte(uint16_t endereco, uint8_t dado);
 void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms);
 void Timer0_AtualizaRelogio(void);
+uint8_t EEPROM_ReadByte(uint16_t endereco);
+void ler_e_enviar_eeprom(void);
 # 3 "main.c" 2
 # 1 "./uart.h" 1
 
@@ -18130,6 +18132,12 @@ void UART_WriteString(const char* str);
 
 char UART_Read(void);
 # 4 "main.c" 2
+# 1 "./modbus.h" 1
+# 16 "./modbus.h"
+extern uint16_t holding_registers[10];
+
+void Modbus_ProcessFrame(uint8_t *frame, uint8_t len);
+# 5 "main.c" 2
 
 # 1 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stdio.h" 1 3
 # 24 "C:\\Program Files\\Microchip\\xc8\\v3.10\\pic\\include\\c99/stdio.h" 3
@@ -18283,16 +18291,49 @@ char *ctermid(char *);
 
 
 char *tempnam(const char *, const char *);
-# 6 "main.c" 2
+# 7 "main.c" 2
 
 
 
+
+
+uint8_t modbus_rx_buffer[32];
+volatile uint8_t modbus_rx_index = 0;
+volatile uint8_t modbus_idle_timer = 0;
+volatile uint8_t modbus_frame_ready = 0;
 
 
 void __attribute__((picinterrupt(("")))) ISR(void) {
+
     if (INTCONbits.TMR0IF) {
         INTCONbits.TMR0IF = 0;
         Timer0_AtualizaRelogio();
+
+
+        if (modbus_idle_timer < 5) {
+            modbus_idle_timer++;
+            if (modbus_idle_timer == 4 && modbus_rx_index > 0) {
+                modbus_frame_ready = 1;
+            }
+        }
+    }
+
+
+    if (PIR1bits.RCIF) {
+        uint8_t dado = RCREG;
+
+
+        if (RCSTAbits.OERR) {
+            RCSTAbits.CREN = 0;
+            RCSTAbits.CREN = 1;
+        }
+
+        modbus_idle_timer = 0;
+        modbus_frame_ready = 0;
+
+        if (modbus_rx_index < sizeof(modbus_rx_buffer)) {
+            modbus_rx_buffer[modbus_rx_index++] = dado;
+        }
     }
 }
 
@@ -18305,7 +18346,6 @@ void main(void) {
 
 
     UART_Init(9600);
-    UART_WriteString("\r\n--- Sistema de Coleta de Dados Iniciado ---\r\n");
 
 
     T0CON = 0b10001000;
@@ -18315,27 +18355,26 @@ void main(void) {
 
     INTCONbits.TMR0IF = 0;
     INTCONbits.TMR0IE = 1;
+
+    PIE1bits.RCIE = 1;
+    INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
 
     uint8_t estado_anterior = 0;
     RealTimeClock momento_inicio;
     uint32_t ms_inicio_evento = 0;
 
-
-    char mensagem_serial[64];
-
     while(1) {
         uint8_t estado_atual = PORTBbits.RB0;
+        holding_registers[0] = estado_atual;
 
 
         if (estado_atual == 1 && estado_anterior == 0) {
             _delay((unsigned long)((20)*(20000000/4000.0)));
             if (PORTBbits.RB0 == 1) {
                 momento_inicio = rtc;
-                ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+                ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
                 LATAbits.LATA0 = 1;
-
-                UART_WriteString(">> Botao PRESSIONADO. Registrando inicio do evento...\r\n");
             }
         }
 
@@ -18343,19 +18382,30 @@ void main(void) {
         else if (estado_atual == 0 && estado_anterior == 1) {
             _delay((unsigned long)((20)*(20000000/4000.0)));
             if (PORTBbits.RB0 == 0) {
-                uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+                uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
+
                 LATAbits.LATA0 = 0;
 
 
                 salvar_evento_eeprom(momento_inicio, duracao_total);
 
 
-                sprintf(mensagem_serial, "<< Botao SOLTO. Duracao: %lu ms. Evento salvo na EEPROM.\r\n", duracao_total);
-                UART_WriteString(mensagem_serial);
+                holding_registers[1] = (uint16_t)(duracao_total / 1000);
+                holding_registers[2] = momento_inicio.ano;
+                holding_registers[3] = ((uint16_t)momento_inicio.mes << 8) | momento_inicio.dia;
+                holding_registers[4] = ((uint16_t)momento_inicio.hora << 8) | momento_inicio.minuto;
+                holding_registers[5] = momento_inicio.segundo;
             }
         }
 
         estado_anterior = estado_atual;
+
+
+        if (modbus_frame_ready) {
+            Modbus_ProcessFrame(modbus_rx_buffer, modbus_rx_index);
+            modbus_rx_index = 0;
+            modbus_frame_ready = 0;
+        }
     }
 }

@@ -23,8 +23,57 @@ Version 4.0 HI-TECH Software Intermediate Code
 "25 ./rtc_eeprom.h
 [; ;./rtc_eeprom.h: 25: void Timer0_AtualizaRelogio(void);
 [v _Timer0_AtualizaRelogio `(v ~T0 @X0 0 ef ]
+"28103 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28103:     struct {
+[s S901 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S901 . TMR1IF TMR2IF CCP1IF SSPIF TXIF RCIF ADIF PSPIF ]
+"28113
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28113:     struct {
+[s S902 :4 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S902 . . TX1IF RC1IF ]
+"28102
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28102: typedef union {
+[u S900 `S901 1 `S902 1 ]
+[n S900 . . . ]
+"28119
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28119: extern volatile PIR1bits_t PIR1bits __attribute__((address(0xF9E)));
+[v _PIR1bits `VS900 ~T0 @X0 0 e@3998 ]
+"29335
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 29335: extern volatile unsigned char RCREG __attribute__((address(0xFAE)));
+[v _RCREG `Vuc ~T0 @X0 0 e@4014 ]
+"28868
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28868:     struct {
+[s S933 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S933 . RX9D OERR FERR ADDEN CREN SREN RX9 SPEN ]
+"28878
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28878:     struct {
+[s S934 :3 `uc 1 :1 `uc 1 ]
+[n S934 . . ADEN ]
+"28882
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28882:     struct {
+[s S935 :5 `uc 1 :1 `uc 1 ]
+[n S935 . . SRENA ]
+"28886
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28886:     struct {
+[s S936 :6 `uc 1 :1 `uc 1 ]
+[n S936 . . RC8_9 ]
+"28890
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28890:     struct {
+[s S937 :6 `uc 1 :1 `uc 1 ]
+[n S937 . . RC9 ]
+"28894
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28894:     struct {
+[s S938 :1 `uc 1 ]
+[n S938 . RCD8 ]
+"28867
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28867: typedef union {
+[u S932 `S933 1 `S934 1 `S935 1 `S936 1 `S937 1 `S938 1 ]
+[n S932 . . . . . . . ]
+"28898
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28898: extern volatile RCSTAbits_t RCSTAbits __attribute__((address(0xFAB)));
+[v _RCSTAbits `VS932 ~T0 @X0 0 e@4011 ]
 [p mainexit ]
-"30238 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
+"30238
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 30238: extern volatile unsigned char ADCON1 __attribute__((address(0xFC1)));
 [v _ADCON1 `Vuc ~T0 @X0 0 e@4033 ]
 "27141
@@ -75,9 +124,6 @@ Version 4.0 HI-TECH Software Intermediate Code
 "7 ./uart.h
 [; ;./uart.h: 7: void UART_Init(uint32_t baud_rate);
 [v _UART_Init `(v ~T0 @X0 0 ef1`ul ]
-"13
-[; ;./uart.h: 13: void UART_WriteString(const char* str);
-[v _UART_WriteString `(v ~T0 @X0 0 ef1`*Cuc ]
 "31686 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 31686: extern volatile unsigned char T0CON __attribute__((address(0xFD5)));
 [v _T0CON `Vuc ~T0 @X0 0 e@4053 ]
@@ -87,6 +133,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 "31769
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 31769: extern volatile unsigned char TMR0L __attribute__((address(0xFD6)));
 [v _TMR0L `Vuc ~T0 @X0 0 e@4054 ]
+"28026
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28026:     struct {
+[s S898 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S898 . TMR1IE TMR2IE CCP1IE SSPIE TXIE RCIE ADIE PSPIE ]
+"28036
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28036:     struct {
+[s S899 :4 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S899 . . TX1IE RC1IE ]
+"28025
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28025: typedef union {
+[u S897 `S898 1 `S899 1 ]
+[n S897 . . . ]
+"28042
+[; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 28042: extern volatile PIE1bits_t PIE1bits __attribute__((address(0xF9D)));
+[v _PIE1bits `VS897 ~T0 @X0 0 e@3997 ]
 "7 ./rtc_eeprom.h
 [; ;./rtc_eeprom.h: 7: typedef struct {
 [s S1092 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `us 1 ]
@@ -118,6 +179,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "25752
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 25752: extern volatile PORTBbits_t PORTBbits __attribute__((address(0xF81)));
 [v _PORTBbits `VS821 ~T0 @X0 0 e@3969 ]
+"16 ./modbus.h
+[; ;./modbus.h: 16: extern uint16_t holding_registers[10];
+[v _holding_registers `us ~T0 @X0 -> 0 `x e ]
 [v F205 `(v ~T0 @X0 1 tf1`ul ]
 "20 C:\Program Files\Microchip\xc8\v3.10\pic\include/builtins.h
 [v __delay `JF205 ~T0 @X0 0 e ]
@@ -131,9 +195,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "24
 [; ;./rtc_eeprom.h: 24: void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms);
 [v _salvar_evento_eeprom `(v ~T0 @X0 0 ef2`S1092`ul ]
-"121 C:\Program Files\Microchip\xc8\v3.10\pic\include\c99/stdio.h
-[; ;C:\Program Files\Microchip\xc8\v3.10\pic\include\c99/stdio.h: 121: int sprintf(char *restrict, const char *restrict, ...);
-[v _sprintf `(i ~T0 @X0 0 e1v`*uc`*Cuc ]
+"18 ./modbus.h
+[; ;./modbus.h: 18: void Modbus_ProcessFrame(uint8_t *frame, uint8_t len);
+[v _Modbus_ProcessFrame `(v ~T0 @X0 0 ef2`*uc`uc ]
 "54 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 54: __asm("RXF6SIDH equ 0D60h");
 [; <" RXF6SIDH equ 0D60h ;# ">
@@ -1390,182 +1454,290 @@ Version 4.0 HI-TECH Software Intermediate Code
 [p x MCLRE  =  ON        ]
 "13
 [p x PBADEN  =  OFF      ]
+"12 main.c
+[; ;main.c: 12: uint8_t modbus_rx_buffer[32];
+[v _modbus_rx_buffer `uc ~T0 @X0 -> 32 `i e ]
+"13
+[; ;main.c: 13: volatile uint8_t modbus_rx_index = 0;
+[v _modbus_rx_index `Vuc ~T0 @X0 1 e ]
+[i _modbus_rx_index
+-> -> 0 `i `uc
+]
+"14
+[; ;main.c: 14: volatile uint8_t modbus_idle_timer = 0;
+[v _modbus_idle_timer `Vuc ~T0 @X0 1 e ]
+[i _modbus_idle_timer
+-> -> 0 `i `uc
+]
+"15
+[; ;main.c: 15: volatile uint8_t modbus_frame_ready = 0;
+[v _modbus_frame_ready `Vuc ~T0 @X0 1 e ]
+[i _modbus_frame_ready
+-> -> 0 `i `uc
+]
 [v $root$_ISR `(v ~T0 @X0 0 e ]
-"11 main.c
-[; ;main.c: 11: void __attribute__((picinterrupt(("")))) ISR(void) {
+"18
+[; ;main.c: 18: void __attribute__((picinterrupt(("")))) ISR(void) {
 [v _ISR `(v ~T48 @X0 1 ef ]
 {
 [e :U _ISR ]
 [f ]
-"12
-[; ;main.c: 12:     if (INTCONbits.TMR0IF) {
+"20
+[; ;main.c: 20:     if (INTCONbits.TMR0IF) {
 [e $ ! != -> . . _INTCONbits 0 2 `i -> 0 `i 1096  ]
 {
-"13
-[; ;main.c: 13:         INTCONbits.TMR0IF = 0;
+"21
+[; ;main.c: 21:         INTCONbits.TMR0IF = 0;
 [e = . . _INTCONbits 0 2 -> -> 0 `i `uc ]
-"14
-[; ;main.c: 14:         Timer0_AtualizaRelogio();
+"22
+[; ;main.c: 22:         Timer0_AtualizaRelogio();
 [e ( _Timer0_AtualizaRelogio ..  ]
-"15
-[; ;main.c: 15:     }
+"25
+[; ;main.c: 25:         if (modbus_idle_timer < 5) {
+[e $ ! < -> _modbus_idle_timer `i -> 5 `i 1097  ]
+{
+"26
+[; ;main.c: 26:             modbus_idle_timer++;
+[e ++ _modbus_idle_timer -> -> 1 `i `Vuc ]
+"27
+[; ;main.c: 27:             if (modbus_idle_timer == 4 && modbus_rx_index > 0) {
+[e $ ! && == -> _modbus_idle_timer `i -> 4 `i > -> _modbus_rx_index `i -> 0 `i 1098  ]
+{
+"28
+[; ;main.c: 28:                 modbus_frame_ready = 1;
+[e = _modbus_frame_ready -> -> 1 `i `uc ]
+"29
+[; ;main.c: 29:             }
+}
+[e :U 1098 ]
+"30
+[; ;main.c: 30:         }
+}
+[e :U 1097 ]
+"31
+[; ;main.c: 31:     }
 }
 [e :U 1096 ]
-"16
-[; ;main.c: 16: }
+"34
+[; ;main.c: 34:     if (PIR1bits.RCIF) {
+[e $ ! != -> . . _PIR1bits 0 5 `i -> 0 `i 1099  ]
+{
+"35
+[; ;main.c: 35:         uint8_t dado = RCREG;
+[v _dado `uc ~T0 @X0 1 a ]
+[e = _dado _RCREG ]
+"38
+[; ;main.c: 38:         if (RCSTAbits.OERR) {
+[e $ ! != -> . . _RCSTAbits 0 1 `i -> 0 `i 1100  ]
+{
+"39
+[; ;main.c: 39:             RCSTAbits.CREN = 0;
+[e = . . _RCSTAbits 0 4 -> -> 0 `i `uc ]
+"40
+[; ;main.c: 40:             RCSTAbits.CREN = 1;
+[e = . . _RCSTAbits 0 4 -> -> 1 `i `uc ]
+"41
+[; ;main.c: 41:         }
+}
+[e :U 1100 ]
+"43
+[; ;main.c: 43:         modbus_idle_timer = 0;
+[e = _modbus_idle_timer -> -> 0 `i `uc ]
+"44
+[; ;main.c: 44:         modbus_frame_ready = 0;
+[e = _modbus_frame_ready -> -> 0 `i `uc ]
+"46
+[; ;main.c: 46:         if (modbus_rx_index < sizeof(modbus_rx_buffer)) {
+[e $ ! < -> _modbus_rx_index `ui -> # _modbus_rx_buffer `ui 1101  ]
+{
+"47
+[; ;main.c: 47:             modbus_rx_buffer[modbus_rx_index++] = dado;
+[e = *U + &U _modbus_rx_buffer * -> ++ _modbus_rx_index -> -> 1 `i `Vuc `ux -> -> # *U &U _modbus_rx_buffer `ui `ux _dado ]
+"48
+[; ;main.c: 48:         }
+}
+[e :U 1101 ]
+"49
+[; ;main.c: 49:     }
+}
+[e :U 1099 ]
+"50
+[; ;main.c: 50: }
 [e :UE 1095 ]
 }
 [v $root$_main `(v ~T0 @X0 0 e ]
-"18
-[; ;main.c: 18: void main(void) {
+"52
+[; ;main.c: 52: void main(void) {
 [v _main `(v ~T0 @X0 1 ef ]
 {
 [e :U _main ]
 [f ]
-"20
-[; ;main.c: 20:     ADCON1 = 0x0F;
+"54
+[; ;main.c: 54:     ADCON1 = 0x0F;
 [e = _ADCON1 -> -> 15 `i `uc ]
-"21
-[; ;main.c: 21:     TRISBbits.TRISB0 = 1;
+"55
+[; ;main.c: 55:     TRISBbits.TRISB0 = 1;
 [e = . . _TRISBbits 0 0 -> -> 1 `i `uc ]
-"22
-[; ;main.c: 22:     TRISAbits.TRISA0 = 0;
+"56
+[; ;main.c: 56:     TRISAbits.TRISA0 = 0;
 [e = . . _TRISAbits 0 0 -> -> 0 `i `uc ]
-"23
-[; ;main.c: 23:     LATAbits.LATA0 = 0;
+"57
+[; ;main.c: 57:     LATAbits.LATA0 = 0;
 [e = . . _LATAbits 0 0 -> -> 0 `i `uc ]
-"26
-[; ;main.c: 26:     UART_Init(9600);
+"60
+[; ;main.c: 60:     UART_Init(9600);
 [e ( _UART_Init (1 -> -> -> 9600 `i `l `ul ]
-"27
-[; ;main.c: 27:     UART_WriteString("\r\n--- Sistema de Coleta de Dados Iniciado ---\r\n");
-[e ( _UART_WriteString (1 :s 1C ]
-"30
-[; ;main.c: 30:     T0CON = 0b10001000;
+"63
+[; ;main.c: 63:     T0CON = 0b10001000;
 [e = _T0CON -> -> 136 `i `uc ]
-"31
-[; ;main.c: 31:     TMR0H = 0xEC;
+"64
+[; ;main.c: 64:     TMR0H = 0xEC;
 [e = _TMR0H -> -> 236 `i `uc ]
-"32
-[; ;main.c: 32:     TMR0L = 0x78;
+"65
+[; ;main.c: 65:     TMR0L = 0x78;
 [e = _TMR0L -> -> 120 `i `uc ]
-"35
-[; ;main.c: 35:     INTCONbits.TMR0IF = 0;
+"68
+[; ;main.c: 68:     INTCONbits.TMR0IF = 0;
 [e = . . _INTCONbits 0 2 -> -> 0 `i `uc ]
-"36
-[; ;main.c: 36:     INTCONbits.TMR0IE = 1;
+"69
+[; ;main.c: 69:     INTCONbits.TMR0IE = 1;
 [e = . . _INTCONbits 0 5 -> -> 1 `i `uc ]
-"37
-[; ;main.c: 37:     INTCONbits.GIE = 1;
+"71
+[; ;main.c: 71:     PIE1bits.RCIE = 1;
+[e = . . _PIE1bits 0 5 -> -> 1 `i `uc ]
+"72
+[; ;main.c: 72:     INTCONbits.PEIE = 1;
+[e = . . _INTCONbits 1 6 -> -> 1 `i `uc ]
+"73
+[; ;main.c: 73:     INTCONbits.GIE = 1;
 [e = . . _INTCONbits 1 7 -> -> 1 `i `uc ]
-"39
-[; ;main.c: 39:     uint8_t estado_anterior = 0;
+"75
+[; ;main.c: 75:     uint8_t estado_anterior = 0;
 [v _estado_anterior `uc ~T0 @X0 1 a ]
 [e = _estado_anterior -> -> 0 `i `uc ]
-"40
-[; ;main.c: 40:     RealTimeClock momento_inicio;
+"76
+[; ;main.c: 76:     RealTimeClock momento_inicio;
 [v _momento_inicio `S1092 ~T0 @X0 1 a ]
-"41
-[; ;main.c: 41:     uint32_t ms_inicio_evento = 0;
+"77
+[; ;main.c: 77:     uint32_t ms_inicio_evento = 0;
 [v _ms_inicio_evento `ul ~T0 @X0 1 a ]
 [e = _ms_inicio_evento -> -> -> 0 `i `l `ul ]
-"44
-[; ;main.c: 44:     char mensagem_serial[64];
-[v _mensagem_serial `uc ~T0 @X0 -> 64 `i a ]
-"46
-[; ;main.c: 46:     while(1) {
-[e :U 1099 ]
+"79
+[; ;main.c: 79:     while(1) {
+[e :U 1104 ]
 {
-"47
-[; ;main.c: 47:         uint8_t estado_atual = PORTBbits.RB0;
+"80
+[; ;main.c: 80:         uint8_t estado_atual = PORTBbits.RB0;
 [v _estado_atual `uc ~T0 @X0 1 a ]
 [e = _estado_atual . . _PORTBbits 0 0 ]
-"50
-[; ;main.c: 50:         if (estado_atual == 1 && estado_anterior == 0) {
-[e $ ! && == -> _estado_atual `i -> 1 `i == -> _estado_anterior `i -> 0 `i 1101  ]
+"81
+[; ;main.c: 81:         holding_registers[0] = estado_atual;
+[e = *U + &U _holding_registers * -> -> -> 0 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> _estado_atual `us ]
+"84
+[; ;main.c: 84:         if (estado_atual == 1 && estado_anterior == 0) {
+[e $ ! && == -> _estado_atual `i -> 1 `i == -> _estado_anterior `i -> 0 `i 1106  ]
 {
-"51
-[; ;main.c: 51:             _delay((unsigned long)((20)*(20000000/4000.0)));
+"85
+[; ;main.c: 85:             _delay((unsigned long)((20)*(20000000/4000.0)));
 [e ( __delay (1 -> * -> -> 20 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
-"52
-[; ;main.c: 52:             if (PORTBbits.RB0 == 1) {
-[e $ ! == -> . . _PORTBbits 0 0 `i -> 1 `i 1102  ]
+"86
+[; ;main.c: 86:             if (PORTBbits.RB0 == 1) {
+[e $ ! == -> . . _PORTBbits 0 0 `i -> 1 `i 1107  ]
 {
-"53
-[; ;main.c: 53:                 momento_inicio = rtc;
+"87
+[; ;main.c: 87:                 momento_inicio = rtc;
 [e = _momento_inicio _rtc ]
-"54
-[; ;main.c: 54:                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
-[e = _ms_inicio_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul -> -> * -> . _rtc 0 `i -> 1000 `i `l `ul -> _ms_contador `ul ]
-"55
-[; ;main.c: 55:                 LATAbits.LATA0 = 1;
+"88
+[; ;main.c: 88:                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
+[e = _ms_inicio_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul * -> . _rtc 0 `ul -> -> -> 1000 `i `l `ul -> _ms_contador `ul ]
+"89
+[; ;main.c: 89:                 LATAbits.LATA0 = 1;
 [e = . . _LATAbits 0 0 -> -> 1 `i `uc ]
-"57
-[; ;main.c: 57:                 UART_WriteString(">> Botao PRESSIONADO. Registrando inicio do evento...\r\n");
-[e ( _UART_WriteString (1 :s 2C ]
-"58
-[; ;main.c: 58:             }
+"90
+[; ;main.c: 90:             }
 }
-[e :U 1102 ]
-"59
-[; ;main.c: 59:         }
+[e :U 1107 ]
+"91
+[; ;main.c: 91:         }
 }
-[e $U 1103  ]
-"62
-[; ;main.c: 62:         else if (estado_atual == 0 && estado_anterior == 1) {
-[e :U 1101 ]
-[e $ ! && == -> _estado_atual `i -> 0 `i == -> _estado_anterior `i -> 1 `i 1104  ]
+[e $U 1108  ]
+"94
+[; ;main.c: 94:         else if (estado_atual == 0 && estado_anterior == 1) {
+[e :U 1106 ]
+[e $ ! && == -> _estado_atual `i -> 0 `i == -> _estado_anterior `i -> 1 `i 1109  ]
 {
-"63
-[; ;main.c: 63:             _delay((unsigned long)((20)*(20000000/4000.0)));
+"95
+[; ;main.c: 95:             _delay((unsigned long)((20)*(20000000/4000.0)));
 [e ( __delay (1 -> * -> -> 20 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
-"64
-[; ;main.c: 64:             if (PORTBbits.RB0 == 0) {
-[e $ ! == -> . . _PORTBbits 0 0 `i -> 0 `i 1105  ]
+"96
+[; ;main.c: 96:             if (PORTBbits.RB0 == 0) {
+[e $ ! == -> . . _PORTBbits 0 0 `i -> 0 `i 1110  ]
 {
-"65
-[; ;main.c: 65:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + (rtc.segundo * 1000) + ms_contador;
+"97
+[; ;main.c: 97:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
 [v _ms_fim_evento `ul ~T0 @X0 1 a ]
-[e = _ms_fim_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul -> -> * -> . _rtc 0 `i -> 1000 `i `l `ul -> _ms_contador `ul ]
-"66
-[; ;main.c: 66:                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
+[e = _ms_fim_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul * -> . _rtc 0 `ul -> -> -> 1000 `i `l `ul -> _ms_contador `ul ]
+"98
+[; ;main.c: 98:                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
 [v _duracao_total `ul ~T0 @X0 1 a ]
 [e = _duracao_total - _ms_fim_evento _ms_inicio_evento ]
-"67
-[; ;main.c: 67:                 LATAbits.LATA0 = 0;
+"100
+[; ;main.c: 100:                 LATAbits.LATA0 = 0;
 [e = . . _LATAbits 0 0 -> -> 0 `i `uc ]
-"70
-[; ;main.c: 70:                 salvar_evento_eeprom(momento_inicio, duracao_total);
+"103
+[; ;main.c: 103:                 salvar_evento_eeprom(momento_inicio, duracao_total);
 [e ( _salvar_evento_eeprom (2 , _momento_inicio _duracao_total ]
-"73
-[; ;main.c: 73:                 sprintf(mensagem_serial, "<< Botao SOLTO. Duracao: %lu ms. Evento salvo na EEPROM.\r\n", duracao_total);
-[e ( _sprintf (1 , (. , &U _mensagem_serial :s 3C _duracao_total ]
-"74
-[; ;main.c: 74:                 UART_WriteString(mensagem_serial);
-[e ( _UART_WriteString (1 -> &U _mensagem_serial `*Cuc ]
-"75
-[; ;main.c: 75:             }
+"106
+[; ;main.c: 106:                 holding_registers[1] = (uint16_t)(duracao_total / 1000);
+[e = *U + &U _holding_registers * -> -> -> 1 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> / _duracao_total -> -> -> 1000 `i `l `ul `us ]
+"107
+[; ;main.c: 107:                 holding_registers[2] = momento_inicio.ano;
+[e = *U + &U _holding_registers * -> -> -> 2 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux . _momento_inicio 5 ]
+"108
+[; ;main.c: 108:                 holding_registers[3] = ((uint16_t)momento_inicio.mes << 8) | momento_inicio.dia;
+[e = *U + &U _holding_registers * -> -> -> 3 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> | << -> -> . _momento_inicio 4 `us `ui -> 8 `i -> . _momento_inicio 3 `ui `us ]
+"109
+[; ;main.c: 109:                 holding_registers[4] = ((uint16_t)momento_inicio.hora << 8) | momento_inicio.minuto;
+[e = *U + &U _holding_registers * -> -> -> 4 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> | << -> -> . _momento_inicio 2 `us `ui -> 8 `i -> . _momento_inicio 1 `ui `us ]
+"110
+[; ;main.c: 110:                 holding_registers[5] = momento_inicio.segundo;
+[e = *U + &U _holding_registers * -> -> -> 5 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> . _momento_inicio 0 `us ]
+"111
+[; ;main.c: 111:             }
 }
-[e :U 1105 ]
-"76
-[; ;main.c: 76:         }
+[e :U 1110 ]
+"112
+[; ;main.c: 112:         }
 }
-[e :U 1104 ]
-[e :U 1103 ]
-"78
-[; ;main.c: 78:         estado_anterior = estado_atual;
+[e :U 1109 ]
+[e :U 1108 ]
+"114
+[; ;main.c: 114:         estado_anterior = estado_atual;
 [e = _estado_anterior _estado_atual ]
-"79
-[; ;main.c: 79:     }
+"117
+[; ;main.c: 117:         if (modbus_frame_ready) {
+[e $ ! != -> _modbus_frame_ready `i -> 0 `i 1111  ]
+{
+"118
+[; ;main.c: 118:             Modbus_ProcessFrame(modbus_rx_buffer, modbus_rx_index);
+[e ( _Modbus_ProcessFrame (2 , &U _modbus_rx_buffer _modbus_rx_index ]
+"119
+[; ;main.c: 119:             modbus_rx_index = 0;
+[e = _modbus_rx_index -> -> 0 `i `uc ]
+"120
+[; ;main.c: 120:             modbus_frame_ready = 0;
+[e = _modbus_frame_ready -> -> 0 `i `uc ]
+"121
+[; ;main.c: 121:         }
 }
-[e :U 1098 ]
-[e $U 1099  ]
-[e :U 1100 ]
-"80
-[; ;main.c: 80: }
-[e :UE 1097 ]
+[e :U 1111 ]
+"122
+[; ;main.c: 122:     }
 }
-[p f _sprintf 8389648 ]
-[a 3C 60 60 32 66 111 116 97 111 32 83 79 76 84 79 46 32 68 117 114 97 99 97 111 58 32 37 108 117 32 109 115 46 32 69 118 101 110 116 111 32 115 97 108 118 111 32 110 97 32 69 69 80 82 79 77 46 13 10 0 ]
-[a 2C 62 62 32 66 111 116 97 111 32 80 82 69 83 83 73 79 78 65 68 79 46 32 82 101 103 105 115 116 114 97 110 100 111 32 105 110 105 99 105 111 32 100 111 32 101 118 101 110 116 111 46 46 46 13 10 0 ]
-[a 1C 13 10 45 45 45 32 83 105 115 116 101 109 97 32 100 101 32 67 111 108 101 116 97 32 100 101 32 68 97 100 111 115 32 73 110 105 99 105 97 100 111 32 45 45 45 13 10 0 ]
+[e :U 1103 ]
+[e $U 1104  ]
+[e :U 1105 ]
+"123
+[; ;main.c: 123: }
+[e :UE 1102 ]
+}

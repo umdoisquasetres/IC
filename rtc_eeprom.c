@@ -1,5 +1,7 @@
-#include "rtc_eeprom.h"
 #include <xc.h>
+#include <stdio.h>
+#include "rtc_eeprom.h"
+#include "uart.h"
 
 // Instanciação das variáveis globais
 volatile RealTimeClock rtc = {0, 0, 12, 7, 9, 2026};
@@ -87,4 +89,42 @@ void Timer0_AtualizaRelogio(void) {
             }
         }
     }
+}
+// Função que varre a EEPROM e envia todos os eventos gravados via UART
+void ler_e_enviar_eeprom(void) {
+    char buffer_serial[80];
+    uint16_t end_leitura = 0; // Começa a ler do endereço 0x000
+
+    // Verifica se há algo gravado
+    if (endereco_eeprom == 0) {
+        UART_WriteString(">> A EEPROM esta vazia. Nenhum evento registrado.\r\n");
+        return;
+    }
+
+    UART_WriteString("\r\n--- INICIO DA LEITURA DA EEPROM ---\r\n");
+
+    // Lê os dados de 8 em 8 bytes até atingir o limite do que foi gravado
+    while (end_leitura < endereco_eeprom) {
+        // 1. Reconstrução da Data e Hora
+        uint8_t dia = EEPROM_ReadByte(end_leitura++);
+        uint8_t mes = EEPROM_ReadByte(end_leitura++);
+        uint16_t ano = EEPROM_ReadByte(end_leitura++) + 2000; // Restaura o ano completo
+        
+        uint8_t hora = EEPROM_ReadByte(end_leitura++);
+        uint8_t minuto = EEPROM_ReadByte(end_leitura++);
+        uint8_t segundo = EEPROM_ReadByte(end_leitura++);
+        
+        // 2. Reconstrução da duração de 16 bits (segundos)
+        uint8_t duracao_high = EEPROM_ReadByte(end_leitura++);
+        uint8_t duracao_low = EEPROM_ReadByte(end_leitura++);
+        uint16_t duracao_sec = ((uint16_t)duracao_high << 8) | duracao_low; // Junta os dois bytes
+
+        // 3. Formatação e Envio para o PC
+        sprintf(buffer_serial, "Evento no end %03X: %02d/%02d/%04d %02d:%02d:%02d | Duracao: %u seg\r\n", 
+                (end_leitura - 8), dia, mes, ano, hora, minuto, segundo, duracao_sec);
+        
+        UART_WriteString(buffer_serial);
+    }
+    
+    UART_WriteString("--- FIM DA LEITURA ---\r\n");
 }

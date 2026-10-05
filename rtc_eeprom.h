@@ -24,5 +24,6 @@ void EEPROM_WriteByte(uint16_t endereco, uint8_t dado);
 void salvar_evento_eeprom(RealTimeClock inicio, uint32_t duracao_ms);
 void Timer0_AtualizaRelogio(void);
 uint8_t EEPROM_ReadByte(uint16_t endereco); // Função para ler um único byte
+void ler_e_enviar_eeprom(void);
 
 #endif // RTC_EEPROM_H
