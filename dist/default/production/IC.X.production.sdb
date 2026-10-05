@@ -97,7 +97,7 @@
 `uc 1 RB7 1 0 :1:7 
 ]
 "25752 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
-[s S337 . 1 `uc 1 INT0 1 0 :1:0 
+[s S345 . 1 `uc 1 INT0 1 0 :1:0 
 `uc 1 INT1 1 0 :1:1 
 `uc 1 INT2 1 0 :1:2 
 `uc 1 CANRX 1 0 :1:3 
@@ -106,7 +106,7 @@
 `uc 1 KBI2 1 0 :1:6 
 `uc 1 KBI3 1 0 :1:7 
 ]
-[s S346 . 1 `uc 1 AN10 1 0 :1:0 
+[s S354 . 1 `uc 1 AN10 1 0 :1:0 
 `uc 1 AN8 1 0 :1:1 
 `uc 1 CANTX 1 0 :1:2 
 `uc 1 . 1 0 :1:3 
@@ -115,13 +115,13 @@
 `uc 1 PGC 1 0 :1:6 
 `uc 1 PGD 1 0 :1:7 
 ]
-[s S355 . 1 `uc 1 FLT0 1 0 :1:0 
+[s S363 . 1 `uc 1 FLT0 1 0 :1:0 
 ]
-[s S357 . 1 `uc 1 . 1 0 :3:0 
+[s S365 . 1 `uc 1 . 1 0 :3:0 
 `uc 1 CCP2_PA2 1 0 :1:3 
 ]
-[u S360 . 1 `S172 1 . 1 0 `S337 1 . 1 0 `S346 1 . 1 0 `S355 1 . 1 0 `S357 1 . 1 0 ]
-[v _PORTBbits PORTBbits `VES360  1 e 1 @3969 ]
+[u S368 . 1 `S172 1 . 1 0 `S345 1 . 1 0 `S354 1 . 1 0 `S363 1 . 1 0 `S365 1 . 1 0 ]
+[v _PORTBbits PORTBbits `VES368  1 e 1 @3969 ]
 [s S243 . 1 `uc 1 LATA0 1 0 :1:0 
 `uc 1 LATA1 1 0 :1:1 
 `uc 1 LATA2 1 0 :1:2 
@@ -362,7 +362,7 @@
 [u S46 . 1 `S24 1 . 1 0 `S33 1 . 1 0 `S42 1 . 1 0 ]
 [v _INTCONbits INTCONbits `VES46  1 e 1 @4082 ]
 "12 C:\Users\deoli\MPLABXProjects\IC.X\main.c
-[v _modbus_rx_buffer modbus_rx_buffer `[32]uc  1 e 32 0 ]
+[v _modbus_rx_buffer modbus_rx_buffer `[64]uc  1 e 64 0 ]
 "13
 [v _modbus_rx_index modbus_rx_index `VEuc  1 e 1 0 ]
 "14
@@ -370,7 +370,7 @@
 "15
 [v _modbus_frame_ready modbus_frame_ready `VEuc  1 e 1 0 ]
 "4 C:\Users\deoli\MPLABXProjects\IC.X\modbus.c
-[v _holding_registers holding_registers `[10]us  1 e 20 0 ]
+[v _holding_registers holding_registers `[20]us  1 e 40 0 ]
 [s S321 . 7 `uc 1 segundo 1 0 `uc 1 minuto 1 1 `uc 1 hora 1 2 `uc 1 dia 1 3 `uc 1 mes 1 4 `us 1 ano 2 5 ]
 "7 C:\Users\deoli\MPLABXProjects\IC.X\rtc_eeprom.c
 [v _rtc rtc `VES321  1 e 7 0 ]
@@ -383,20 +383,20 @@
 "52 C:\Users\deoli\MPLABXProjects\IC.X\main.c
 [v _main main `(v  1 e 1 0 ]
 {
-"98
-[v main@duracao_total duracao_total `ul  1 a 4 8 ]
-"97
-[v main@ms_fim_evento ms_fim_evento `ul  1 a 4 0 ]
-"80
-[v main@estado_atual estado_atual `uc  1 a 1 13 ]
+"118
+[v main@duracao_total duracao_total `ul  1 a 4 49 ]
+"117
+[v main@ms_fim_evento ms_fim_evento `ul  1 a 4 41 ]
+"100
+[v main@estado_atual estado_atual `uc  1 a 1 54 ]
 [s S321 . 7 `uc 1 segundo 1 0 `uc 1 minuto 1 1 `uc 1 hora 1 2 `uc 1 dia 1 3 `uc 1 mes 1 4 `us 1 ano 2 5 ]
 "76
-[v main@momento_inicio momento_inicio `S321  1 a 7 14 ]
+[v main@momento_inicio momento_inicio `S321  1 a 7 55 ]
 "77
-[v main@ms_inicio_evento ms_inicio_evento `ul  1 a 4 4 ]
+[v main@ms_inicio_evento ms_inicio_evento `ul  1 a 4 45 ]
 "75
-[v main@estado_anterior estado_anterior `uc  1 a 1 12 ]
-"123
+[v main@estado_anterior estado_anterior `uc  1 a 1 53 ]
+"143
 } 0
 "34 C:\Users\deoli\MPLABXProjects\IC.X\rtc_eeprom.c
 [v _salvar_evento_eeprom salvar_evento_eeprom `(v  1 e 1 0 ]
@@ -453,30 +453,50 @@
 "24 C:\Users\deoli\MPLABXProjects\IC.X\modbus.c
 [v _Modbus_ProcessFrame Modbus_ProcessFrame `(v  1 e 1 0 ]
 {
-"48
-[v Modbus_ProcessFrame@val val `us  1 a 2 54 ]
+"89
+[v Modbus_ProcessFrame@i_891 i `us  1 a 2 96 ]
+"49
+[v Modbus_ProcessFrame@val val `us  1 a 2 80 ]
+"108
+[v Modbus_ProcessFrame@i_894 i `uc  1 a 1 102 ]
+"88
+[v Modbus_ProcessFrame@data_idx data_idx `uc  1 a 1 99 ]
+"76
+[v Modbus_ProcessFrame@i_887 i `uc  1 a 1 98 ]
 "61
-[v Modbus_ProcessFrame@i_884 i `us  1 a 2 60 ]
-"47
-[v Modbus_ProcessFrame@i i `us  1 a 2 58 ]
-"41
-[v Modbus_ProcessFrame@tx_buffer tx_buffer `[32]uc  1 a 32 16 ]
+[v Modbus_ProcessFrame@i_884 i `us  1 a 2 94 ]
+"48
+[v Modbus_ProcessFrame@i i `us  1 a 2 92 ]
+"96
+[v Modbus_ProcessFrame@tx_buffer_892 tx_buffer `[8]uc  1 a 8 70 ]
+"104
+[v Modbus_ProcessFrame@tx_crc_893 tx_crc `us  1 a 2 90 ]
+"85
+[v Modbus_ProcessFrame@num_regs_889 num_regs `us  1 a 2 88 ]
+"84
+[v Modbus_ProcessFrame@start_addr_888 start_addr `us  1 a 2 86 ]
+"68
+[v Modbus_ProcessFrame@reg_addr reg_addr `us  1 a 2 84 ]
+"69
+[v Modbus_ProcessFrame@reg_value reg_value `us  1 a 2 68 ]
+"42
+[v Modbus_ProcessFrame@tx_buffer tx_buffer `[64]uc  1 a 64 0 ]
 "36
-[v Modbus_ProcessFrame@num_regs num_regs `us  1 a 2 62 ]
-"54
-[v Modbus_ProcessFrame@tx_crc tx_crc `us  1 a 2 56 ]
+[v Modbus_ProcessFrame@num_regs num_regs `us  1 a 2 100 ]
+"55
+[v Modbus_ProcessFrame@tx_crc tx_crc `us  1 a 2 82 ]
 "35
-[v Modbus_ProcessFrame@start_addr start_addr `us  1 a 2 52 ]
-"46
-[v Modbus_ProcessFrame@tx_idx tx_idx `uc  1 a 1 64 ]
+[v Modbus_ProcessFrame@start_addr start_addr `us  1 a 2 78 ]
+"47
+[v Modbus_ProcessFrame@tx_idx tx_idx `uc  1 a 1 103 ]
 "30
-[v Modbus_ProcessFrame@crc_calc crc_calc `us  1 a 2 50 ]
+[v Modbus_ProcessFrame@crc_calc crc_calc `us  1 a 2 66 ]
 "29
-[v Modbus_ProcessFrame@crc_rx crc_rx `us  1 a 2 48 ]
+[v Modbus_ProcessFrame@crc_rx crc_rx `us  1 a 2 64 ]
 "24
-[v Modbus_ProcessFrame@frame frame `*.30uc  1 p 1 11 ]
-[v Modbus_ProcessFrame@len len `uc  1 p 1 12 ]
-"65
+[v Modbus_ProcessFrame@frame frame `*.39uc  1 p 2 12 ]
+[v Modbus_ProcessFrame@len len `uc  1 p 1 14 ]
+"112
 } 0
 "21 C:\Users\deoli\MPLABXProjects\IC.X\uart.c
 [v _UART_Write UART_Write `(v  1 e 1 0 ]
@@ -490,14 +510,14 @@
 [v _Modbus_CRC16 Modbus_CRC16 `(us  1 e 2 0 ]
 {
 "11
-[v Modbus_CRC16@i i `i  1 a 2 6 ]
+[v Modbus_CRC16@i i `i  1 a 2 7 ]
 "9
-[v Modbus_CRC16@pos pos `uc  1 a 1 8 ]
+[v Modbus_CRC16@pos pos `uc  1 a 1 9 ]
 "8
-[v Modbus_CRC16@crc crc `us  1 a 2 9 ]
+[v Modbus_CRC16@crc crc `us  1 a 2 10 ]
 "7
-[v Modbus_CRC16@buf buf `*.30uc  1 p 1 3 ]
-[v Modbus_CRC16@len len `uc  1 p 1 4 ]
+[v Modbus_CRC16@buf buf `*.39uc  1 p 2 3 ]
+[v Modbus_CRC16@len len `uc  1 p 1 5 ]
 "21
 } 0
 "18 C:\Users\deoli\MPLABXProjects\IC.X\main.c

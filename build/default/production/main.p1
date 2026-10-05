@@ -152,6 +152,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;./rtc_eeprom.h: 7: typedef struct {
 [s S1092 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `us 1 ]
 [n S1092 . segundo minuto hora dia mes ano ]
+"16 ./modbus.h
+[; ;./modbus.h: 16: extern uint16_t holding_registers[20];
+[v _holding_registers `us ~T0 @X0 -> 0 `x e ]
+"17 ./rtc_eeprom.h
+[; ;./rtc_eeprom.h: 17: extern volatile RealTimeClock rtc;
+[v _rtc `VS1092 ~T0 @X0 0 e ]
 "25714 C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 25714:     struct {
 [s S822 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
@@ -179,17 +185,11 @@ Version 4.0 HI-TECH Software Intermediate Code
 "25752
 [; ;C:/Program Files/Microchip/MPLABX/v6.20/packs/Microchip/PIC18Fxxxx_DFP/1.6.159/xc8\pic\include\proc/pic18f4685.h: 25752: extern volatile PORTBbits_t PORTBbits __attribute__((address(0xF81)));
 [v _PORTBbits `VS821 ~T0 @X0 0 e@3969 ]
-"16 ./modbus.h
-[; ;./modbus.h: 16: extern uint16_t holding_registers[10];
-[v _holding_registers `us ~T0 @X0 -> 0 `x e ]
 [v F205 `(v ~T0 @X0 1 tf1`ul ]
 "20 C:\Program Files\Microchip\xc8\v3.10\pic\include/builtins.h
 [v __delay `JF205 ~T0 @X0 0 e ]
 [p i __delay ]
-"17 ./rtc_eeprom.h
-[; ;./rtc_eeprom.h: 17: extern volatile RealTimeClock rtc;
-[v _rtc `VS1092 ~T0 @X0 0 e ]
-"19
+"19 ./rtc_eeprom.h
 [; ;./rtc_eeprom.h: 19: extern volatile uint16_t ms_contador;
 [v _ms_contador `Vus ~T0 @X0 0 e ]
 "24
@@ -1455,8 +1455,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "13
 [p x PBADEN  =  OFF      ]
 "12 main.c
-[; ;main.c: 12: uint8_t modbus_rx_buffer[32];
-[v _modbus_rx_buffer `uc ~T0 @X0 -> 32 `i e ]
+[; ;main.c: 12: uint8_t modbus_rx_buffer[64];
+[v _modbus_rx_buffer `uc ~T0 @X0 -> 64 `i e ]
 "13
 [; ;main.c: 13: volatile uint8_t modbus_rx_index = 0;
 [v _modbus_rx_index `Vuc ~T0 @X0 1 e ]
@@ -1622,122 +1622,160 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 77:     uint32_t ms_inicio_evento = 0;
 [v _ms_inicio_evento `ul ~T0 @X0 1 a ]
 [e = _ms_inicio_evento -> -> -> 0 `i `l `ul ]
-"79
-[; ;main.c: 79:     while(1) {
+"78
+[; ;main.c: 78:     holding_registers[16] = 0;
+[e = *U + &U _holding_registers * -> -> -> 16 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> -> 0 `i `us ]
+"80
+[; ;main.c: 80:     while(1) {
 [e :U 1104 ]
 {
-"80
-[; ;main.c: 80:         uint8_t estado_atual = PORTBbits.RB0;
+"81
+[; ;main.c: 81:         if (holding_registers[16] == 1) {
+[e $ ! == -> *U + &U _holding_registers * -> -> -> 16 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux `ui -> -> 1 `i `ui 1106  ]
+{
+"83
+[; ;main.c: 83:             INTCONbits.TMR0IE = 0;
+[e = . . _INTCONbits 0 5 -> -> 0 `i `uc ]
+"86
+[; ;main.c: 86:             rtc.ano = (uint16_t)holding_registers[10];
+[e = . _rtc 5 *U + &U _holding_registers * -> -> -> 10 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux ]
+"87
+[; ;main.c: 87:             rtc.mes = (uint8_t)holding_registers[11];
+[e = . _rtc 4 -> *U + &U _holding_registers * -> -> -> 11 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux `uc ]
+"88
+[; ;main.c: 88:             rtc.dia = (uint8_t)holding_registers[12];
+[e = . _rtc 3 -> *U + &U _holding_registers * -> -> -> 12 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux `uc ]
+"89
+[; ;main.c: 89:             rtc.hora = (uint8_t)holding_registers[13];
+[e = . _rtc 2 -> *U + &U _holding_registers * -> -> -> 13 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux `uc ]
+"90
+[; ;main.c: 90:             rtc.minuto = (uint8_t)holding_registers[14];
+[e = . _rtc 1 -> *U + &U _holding_registers * -> -> -> 14 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux `uc ]
+"91
+[; ;main.c: 91:             rtc.segundo = (uint8_t)holding_registers[15];
+[e = . _rtc 0 -> *U + &U _holding_registers * -> -> -> 15 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux `uc ]
+"94
+[; ;main.c: 94:             holding_registers[16] = 0;
+[e = *U + &U _holding_registers * -> -> -> 16 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> -> 0 `i `us ]
+"97
+[; ;main.c: 97:             INTCONbits.TMR0IE = 1;
+[e = . . _INTCONbits 0 5 -> -> 1 `i `uc ]
+"98
+[; ;main.c: 98:         }
+}
+[e :U 1106 ]
+"100
+[; ;main.c: 100:         uint8_t estado_atual = PORTBbits.RB0;
 [v _estado_atual `uc ~T0 @X0 1 a ]
 [e = _estado_atual . . _PORTBbits 0 0 ]
-"81
-[; ;main.c: 81:         holding_registers[0] = estado_atual;
+"101
+[; ;main.c: 101:         holding_registers[0] = estado_atual;
 [e = *U + &U _holding_registers * -> -> -> 0 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> _estado_atual `us ]
-"84
-[; ;main.c: 84:         if (estado_atual == 1 && estado_anterior == 0) {
-[e $ ! && == -> _estado_atual `i -> 1 `i == -> _estado_anterior `i -> 0 `i 1106  ]
+"104
+[; ;main.c: 104:         if (estado_atual == 1 && estado_anterior == 0) {
+[e $ ! && == -> _estado_atual `i -> 1 `i == -> _estado_anterior `i -> 0 `i 1107  ]
 {
-"85
-[; ;main.c: 85:             _delay((unsigned long)((20)*(20000000/4000.0)));
+"105
+[; ;main.c: 105:             _delay((unsigned long)((20)*(20000000/4000.0)));
 [e ( __delay (1 -> * -> -> 20 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
-"86
-[; ;main.c: 86:             if (PORTBbits.RB0 == 1) {
-[e $ ! == -> . . _PORTBbits 0 0 `i -> 1 `i 1107  ]
+"106
+[; ;main.c: 106:             if (PORTBbits.RB0 == 1) {
+[e $ ! == -> . . _PORTBbits 0 0 `i -> 1 `i 1108  ]
 {
-"87
-[; ;main.c: 87:                 momento_inicio = rtc;
+"107
+[; ;main.c: 107:                 momento_inicio = rtc;
 [e = _momento_inicio _rtc ]
-"88
-[; ;main.c: 88:                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
+"108
+[; ;main.c: 108:                 ms_inicio_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
 [e = _ms_inicio_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul * -> . _rtc 0 `ul -> -> -> 1000 `i `l `ul -> _ms_contador `ul ]
-"89
-[; ;main.c: 89:                 LATAbits.LATA0 = 1;
+"109
+[; ;main.c: 109:                 LATAbits.LATA0 = 1;
 [e = . . _LATAbits 0 0 -> -> 1 `i `uc ]
-"90
-[; ;main.c: 90:             }
+"110
+[; ;main.c: 110:             }
 }
+[e :U 1108 ]
+"111
+[; ;main.c: 111:         }
+}
+[e $U 1109  ]
+"114
+[; ;main.c: 114:         else if (estado_atual == 0 && estado_anterior == 1) {
 [e :U 1107 ]
-"91
-[; ;main.c: 91:         }
-}
-[e $U 1108  ]
-"94
-[; ;main.c: 94:         else if (estado_atual == 0 && estado_anterior == 1) {
-[e :U 1106 ]
-[e $ ! && == -> _estado_atual `i -> 0 `i == -> _estado_anterior `i -> 1 `i 1109  ]
+[e $ ! && == -> _estado_atual `i -> 0 `i == -> _estado_anterior `i -> 1 `i 1110  ]
 {
-"95
-[; ;main.c: 95:             _delay((unsigned long)((20)*(20000000/4000.0)));
+"115
+[; ;main.c: 115:             _delay((unsigned long)((20)*(20000000/4000.0)));
 [e ( __delay (1 -> * -> -> 20 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
-"96
-[; ;main.c: 96:             if (PORTBbits.RB0 == 0) {
-[e $ ! == -> . . _PORTBbits 0 0 `i -> 0 `i 1110  ]
+"116
+[; ;main.c: 116:             if (PORTBbits.RB0 == 0) {
+[e $ ! == -> . . _PORTBbits 0 0 `i -> 0 `i 1111  ]
 {
-"97
-[; ;main.c: 97:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
+"117
+[; ;main.c: 117:                 uint32_t ms_fim_evento = ((uint32_t)rtc.hora * 3600000) + ((uint32_t)rtc.minuto * 60000) + ((uint32_t)rtc.segundo * 1000) + ms_contador;
 [v _ms_fim_evento `ul ~T0 @X0 1 a ]
 [e = _ms_fim_evento + + + * -> . _rtc 2 `ul -> -> 3600000 `l `ul * -> . _rtc 1 `ul -> -> 60000 `l `ul * -> . _rtc 0 `ul -> -> -> 1000 `i `l `ul -> _ms_contador `ul ]
-"98
-[; ;main.c: 98:                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
+"118
+[; ;main.c: 118:                 uint32_t duracao_total = ms_fim_evento - ms_inicio_evento;
 [v _duracao_total `ul ~T0 @X0 1 a ]
 [e = _duracao_total - _ms_fim_evento _ms_inicio_evento ]
-"100
-[; ;main.c: 100:                 LATAbits.LATA0 = 0;
-[e = . . _LATAbits 0 0 -> -> 0 `i `uc ]
-"103
-[; ;main.c: 103:                 salvar_evento_eeprom(momento_inicio, duracao_total);
-[e ( _salvar_evento_eeprom (2 , _momento_inicio _duracao_total ]
-"106
-[; ;main.c: 106:                 holding_registers[1] = (uint16_t)(duracao_total / 1000);
-[e = *U + &U _holding_registers * -> -> -> 1 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> / _duracao_total -> -> -> 1000 `i `l `ul `us ]
-"107
-[; ;main.c: 107:                 holding_registers[2] = momento_inicio.ano;
-[e = *U + &U _holding_registers * -> -> -> 2 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux . _momento_inicio 5 ]
-"108
-[; ;main.c: 108:                 holding_registers[3] = ((uint16_t)momento_inicio.mes << 8) | momento_inicio.dia;
-[e = *U + &U _holding_registers * -> -> -> 3 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> | << -> -> . _momento_inicio 4 `us `ui -> 8 `i -> . _momento_inicio 3 `ui `us ]
-"109
-[; ;main.c: 109:                 holding_registers[4] = ((uint16_t)momento_inicio.hora << 8) | momento_inicio.minuto;
-[e = *U + &U _holding_registers * -> -> -> 4 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> | << -> -> . _momento_inicio 2 `us `ui -> 8 `i -> . _momento_inicio 1 `ui `us ]
-"110
-[; ;main.c: 110:                 holding_registers[5] = momento_inicio.segundo;
-[e = *U + &U _holding_registers * -> -> -> 5 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> . _momento_inicio 0 `us ]
-"111
-[; ;main.c: 111:             }
-}
-[e :U 1110 ]
-"112
-[; ;main.c: 112:         }
-}
-[e :U 1109 ]
-[e :U 1108 ]
-"114
-[; ;main.c: 114:         estado_anterior = estado_atual;
-[e = _estado_anterior _estado_atual ]
-"117
-[; ;main.c: 117:         if (modbus_frame_ready) {
-[e $ ! != -> _modbus_frame_ready `i -> 0 `i 1111  ]
-{
-"118
-[; ;main.c: 118:             Modbus_ProcessFrame(modbus_rx_buffer, modbus_rx_index);
-[e ( _Modbus_ProcessFrame (2 , &U _modbus_rx_buffer _modbus_rx_index ]
-"119
-[; ;main.c: 119:             modbus_rx_index = 0;
-[e = _modbus_rx_index -> -> 0 `i `uc ]
 "120
-[; ;main.c: 120:             modbus_frame_ready = 0;
-[e = _modbus_frame_ready -> -> 0 `i `uc ]
-"121
-[; ;main.c: 121:         }
+[; ;main.c: 120:                 LATAbits.LATA0 = 0;
+[e = . . _LATAbits 0 0 -> -> 0 `i `uc ]
+"123
+[; ;main.c: 123:                 salvar_evento_eeprom(momento_inicio, duracao_total);
+[e ( _salvar_evento_eeprom (2 , _momento_inicio _duracao_total ]
+"126
+[; ;main.c: 126:                 holding_registers[1] = (uint16_t)(duracao_total / 1000);
+[e = *U + &U _holding_registers * -> -> -> 1 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> / _duracao_total -> -> -> 1000 `i `l `ul `us ]
+"127
+[; ;main.c: 127:                 holding_registers[2] = momento_inicio.ano;
+[e = *U + &U _holding_registers * -> -> -> 2 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux . _momento_inicio 5 ]
+"128
+[; ;main.c: 128:                 holding_registers[3] = ((uint16_t)momento_inicio.mes << 8) | momento_inicio.dia;
+[e = *U + &U _holding_registers * -> -> -> 3 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> | << -> -> . _momento_inicio 4 `us `ui -> 8 `i -> . _momento_inicio 3 `ui `us ]
+"129
+[; ;main.c: 129:                 holding_registers[4] = ((uint16_t)momento_inicio.hora << 8) | momento_inicio.minuto;
+[e = *U + &U _holding_registers * -> -> -> 4 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> | << -> -> . _momento_inicio 2 `us `ui -> 8 `i -> . _momento_inicio 1 `ui `us ]
+"130
+[; ;main.c: 130:                 holding_registers[5] = momento_inicio.segundo;
+[e = *U + &U _holding_registers * -> -> -> 5 `i `ui `ux -> -> # *U &U _holding_registers `ui `ux -> . _momento_inicio 0 `us ]
+"131
+[; ;main.c: 131:             }
 }
 [e :U 1111 ]
-"122
-[; ;main.c: 122:     }
+"132
+[; ;main.c: 132:         }
+}
+[e :U 1110 ]
+[e :U 1109 ]
+"134
+[; ;main.c: 134:         estado_anterior = estado_atual;
+[e = _estado_anterior _estado_atual ]
+"137
+[; ;main.c: 137:         if (modbus_frame_ready) {
+[e $ ! != -> _modbus_frame_ready `i -> 0 `i 1112  ]
+{
+"138
+[; ;main.c: 138:             Modbus_ProcessFrame(modbus_rx_buffer, modbus_rx_index);
+[e ( _Modbus_ProcessFrame (2 , &U _modbus_rx_buffer _modbus_rx_index ]
+"139
+[; ;main.c: 139:             modbus_rx_index = 0;
+[e = _modbus_rx_index -> -> 0 `i `uc ]
+"140
+[; ;main.c: 140:             modbus_frame_ready = 0;
+[e = _modbus_frame_ready -> -> 0 `i `uc ]
+"141
+[; ;main.c: 141:         }
+}
+[e :U 1112 ]
+"142
+[; ;main.c: 142:     }
 }
 [e :U 1103 ]
 [e $U 1104  ]
 [e :U 1105 ]
-"123
-[; ;main.c: 123: }
+"143
+[; ;main.c: 143: }
 [e :UE 1102 ]
 }

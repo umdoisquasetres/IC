@@ -13,7 +13,7 @@
 // 3: Mês (High Byte) / Dia (Low Byte)
 // 4: Hora (High Byte) / Minuto (Low Byte)
 // 5: Segundo do último evento
-extern uint16_t holding_registers[10];
+extern uint16_t holding_registers[20];
 
 void Modbus_ProcessFrame(uint8_t *frame, uint8_t len);
 

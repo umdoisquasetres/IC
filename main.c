@@ -9,7 +9,7 @@
 #define LED LATAbits.LATA0  
 
 // Variáveis para o buffer Modbus
-uint8_t modbus_rx_buffer[32];
+uint8_t modbus_rx_buffer[64];
 volatile uint8_t modbus_rx_index = 0;
 volatile uint8_t modbus_idle_timer = 0;
 volatile uint8_t modbus_frame_ready = 0;
@@ -75,8 +75,28 @@ void main(void) {
     uint8_t estado_anterior = 0;
     RealTimeClock momento_inicio;
     uint32_t ms_inicio_evento = 0;
+    holding_registers[16] = 0;
 
     while(1) {
+        if (holding_registers[16] == 1) {
+            // Desativa Timer0 temporariamente para evitar corrupção durante a cópia
+            INTCONbits.TMR0IE = 0; 
+            
+            // Copia os dados dos registradores Modbus para a estrutura do relógio
+            rtc.ano     = (uint16_t)holding_registers[10];
+            rtc.mes     = (uint8_t)holding_registers[11];
+            rtc.dia     = (uint8_t)holding_registers[12];
+            rtc.hora    = (uint8_t)holding_registers[13];
+            rtc.minuto  = (uint8_t)holding_registers[14];
+            rtc.segundo = (uint8_t)holding_registers[15];
+            
+            // Zera o gatilho para aguardar a próxima sincronização
+            holding_registers[16] = 0; 
+            
+            // Reativa Timer0
+            INTCONbits.TMR0IE = 1; 
+        }
+        
         uint8_t estado_atual = BOTAO;
         holding_registers[0] = estado_atual; // Reg 0: Status em tempo real
 

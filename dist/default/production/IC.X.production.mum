@@ -1,7 +1,7 @@
 
 18F4685 Memory Summary:
-    Program space        used   AAFh (  2735) of 18000h bytes   (  2.8%)
-    Data space           used    A9h (   169) of   D00h bytes   (  5.1%)
+    Program space        used   D83h (  3459) of 18000h bytes   (  3.5%)
+    Data space           used   121h (   289) of   D00h bytes   (  8.7%)
     Configuration bits   used     4h (     4) of     7h words   ( 57.1%)
     EEPROM space         used     0h (     0) of   400h bytes   (  0.0%)
     ID Location space    used     0h (     0) of     8h bytes   (  0.0%)

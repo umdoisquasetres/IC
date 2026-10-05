@@ -18134,7 +18134,7 @@ char UART_Read(void);
 # 4 "main.c" 2
 # 1 "./modbus.h" 1
 # 16 "./modbus.h"
-extern uint16_t holding_registers[10];
+extern uint16_t holding_registers[20];
 
 void Modbus_ProcessFrame(uint8_t *frame, uint8_t len);
 # 5 "main.c" 2
@@ -18297,7 +18297,7 @@ char *tempnam(const char *, const char *);
 
 
 
-uint8_t modbus_rx_buffer[32];
+uint8_t modbus_rx_buffer[64];
 volatile uint8_t modbus_rx_index = 0;
 volatile uint8_t modbus_idle_timer = 0;
 volatile uint8_t modbus_frame_ready = 0;
@@ -18363,8 +18363,28 @@ void main(void) {
     uint8_t estado_anterior = 0;
     RealTimeClock momento_inicio;
     uint32_t ms_inicio_evento = 0;
+    holding_registers[16] = 0;
 
     while(1) {
+        if (holding_registers[16] == 1) {
+
+            INTCONbits.TMR0IE = 0;
+
+
+            rtc.ano = (uint16_t)holding_registers[10];
+            rtc.mes = (uint8_t)holding_registers[11];
+            rtc.dia = (uint8_t)holding_registers[12];
+            rtc.hora = (uint8_t)holding_registers[13];
+            rtc.minuto = (uint8_t)holding_registers[14];
+            rtc.segundo = (uint8_t)holding_registers[15];
+
+
+            holding_registers[16] = 0;
+
+
+            INTCONbits.TMR0IE = 1;
+        }
+
         uint8_t estado_atual = PORTBbits.RB0;
         holding_registers[0] = estado_atual;
 
