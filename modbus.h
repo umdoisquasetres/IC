@@ -1,20 +1,14 @@
 #ifndef MODBUS_H
 #define MODBUS_H
 
-#include <xc.h>
 #include <stdint.h>
 
-#define SLAVE_ID 1
+#define MODBUS_SLAVE_ID 1U
+#define MODBUS_REGISTER_COUNT 4U
 
-// Mapa de Holding Registers (O que o ScadaBR vai ler)
-// 0: Estado atual do botão (1 = pressionado, 0 = solto)
-// 1: Duração do último evento (segundos)
-// 2: Ano do último evento
-// 3: Mês (High Byte) / Dia (Low Byte)
-// 4: Hora (High Byte) / Minuto (Low Byte)
-// 5: Segundo do último evento
-extern uint16_t holding_registers[20];
+// Holding registers: 0=X, 1=Y, 2=Z (signed raw MPU6050), 3=status (0=OK, 1=I2C error).
+extern volatile uint16_t holding_registers[MODBUS_REGISTER_COUNT];
 
-void Modbus_ProcessFrame(uint8_t *frame, uint8_t len);
+void Modbus_ProcessByte(uint8_t value);
 
 #endif
