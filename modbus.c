@@ -1,4 +1,4 @@
-#include "modbus.h"
+﻿#include "modbus.h"
 #include "uart.h"
 
 volatile uint16_t holding_registers[MODBUS_REGISTER_COUNT] = {0};
@@ -24,7 +24,7 @@ static uint16_t modbus_crc16(const uint8_t *data, uint8_t length)
 static void send_response(uint8_t *response, uint8_t length)
 {
     uint16_t crc = modbus_crc16(response, length);
-    response[length++] = (uint8_t)crc;       // RTU CRC low byte first.
+    response[length++] = (uint8_t)crc;       // Byte menos significativo do CRC RTU primeiro.
     response[length++] = (uint8_t)(crc >> 8);
 
     UART_TransmitBegin();
@@ -50,18 +50,18 @@ static void process_request(const uint8_t *frame)
 
     uint8_t function = frame[1];
     if (function != 0x03U) {
-        send_exception(function, 0x01U); // Illegal function.
+        send_exception(function, 0x01U); // Função não permitida.
         return;
     }
 
     uint16_t start = ((uint16_t)frame[2] << 8) | frame[3];
     uint16_t count = ((uint16_t)frame[4] << 8) | frame[5];
     if (count == 0U || count > MODBUS_MAX_READ_REGISTERS) {
-        send_exception(function, 0x03U); // Illegal data value.
+        send_exception(function, 0x03U); // Valor de dados inválido.
         return;
     }
     if (start >= MODBUS_REGISTER_COUNT || count > MODBUS_REGISTER_COUNT - start) {
-        send_exception(function, 0x02U); // Illegal data address.
+        send_exception(function, 0x02U); // Endereço de dados inválido.
         return;
     }
 

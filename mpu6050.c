@@ -45,7 +45,7 @@ static uint8_t i2c_stop(void)
     return wait_idle();
 }
 
-// Releases open-drain I2C pins and clocks a stuck slave out of a partial byte.
+// Libera os pinos I2C de dreno aberto e envia pulsos de clock para destravar um escravo.
 static void i2c_bus_recover(void)
 {
     SSPCON1bits.SSPEN = 0;
@@ -57,14 +57,14 @@ static void i2c_bus_recover(void)
 
     if (!PORTCbits.RC4) {
         for (uint8_t pulse = 0; pulse < 9; pulse++) {
-            TRISCbits.TRISC3 = 0; // Drive SCL low; never drive it high.
+            TRISCbits.TRISC3 = 0; // Força SCL para nível baixo; nunca força nível alto.
             __delay_us(5);
-            TRISCbits.TRISC3 = 1; // Release SCL; the pull-up raises the line.
+            TRISCbits.TRISC3 = 1; // Libera SCL; o resistor de pull-up eleva o nível da linha.
             __delay_us(5);
         }
     }
 
-    // Generate STOP: SDA rises while SCL is released high.
+    // Gera STOP: SDA sobe enquanto SCL está liberado em nível alto.
     TRISCbits.TRISC3 = 0;
     TRISCbits.TRISC4 = 0;
     __delay_us(5);
@@ -78,9 +78,9 @@ static void i2c_configure(void)
 {
     SSPCON1 = 0x00;
     SSPCON2 = 0x00;
-    SSPSTAT = 0x80; // SMP=1: slew-rate control disabled for standard mode.
-    SSPADD = 49; // Fosc/(4 * (SSPADD + 1)) = 100 kHz at 20 MHz.
-    SSPCON1 = 0x28; // Enable MSSP in I2C master mode.
+    SSPSTAT = 0x80; // SMP=1: controle de slew rate desativado para o modo padrão.
+    SSPADD = 49; // Fosc/(4 * (SSPADD + 1)) = 100 kHz com clock de 20 MHz.
+    SSPCON1 = 0x28; // Habilita o MSSP como mestre I2C.
 }
 
 static uint8_t i2c_write(uint8_t value)
@@ -132,7 +132,7 @@ uint8_t MPU6050_Init(void)
     uint8_t device_id = 0;
     init_error = 0;
 
-    // MSSP I2C master on RC3=SCL and RC4=SDA, standard mode at 100 kHz.
+    // Mestre I2C MSSP em RC3=SCL e RC4=SDA, modo padrão a 100 kHz.
     TRISCbits.TRISC3 = 1;
     TRISCbits.TRISC4 = 1;
     i2c_bus_recover();
@@ -140,43 +140,43 @@ uint8_t MPU6050_Init(void)
 
     __delay_ms(100);
     if (!read_registers(MPU6050_REG_WHO_AM_I, &device_id, 1)) {
-        // AD0 selects 0x68 or 0x69; probe both so either wiring works.
+        // AD0 seleciona 0x68 ou 0x69; testa ambos para aceitar qualquer ligação.
         device_address = MPU6050_ADDRESS_HIGH;
         if (!read_registers(MPU6050_REG_WHO_AM_I, &device_id, 1)) {
-            // A failed transaction can leave a slave mid-byte; recover and retry.
+            // Uma transação com falha pode deixar o escravo no meio de um byte; recupera e tenta novamente.
             i2c_bus_recover();
             i2c_configure();
             device_address = MPU6050_ADDRESS_LOW;
             if (!read_registers(MPU6050_REG_WHO_AM_I, &device_id, 1)) {
                 device_address = MPU6050_ADDRESS_HIGH;
                 if (!read_registers(MPU6050_REG_WHO_AM_I, &device_id, 1)) {
-                    init_error = 1; // No I2C response at either address.
+                    init_error = 1; // Sem resposta I2C em qualquer um dos endereços.
                     return 0;
                 }
             }
         }
     }
     if (device_id != 0x68) {
-        init_error = 2; // Device responded, but returned an unexpected identity.
+        init_error = 2; // O dispositivo respondeu, mas retornou uma identificação inesperada.
         return 0;
     }
     if (!write_register(MPU6050_REG_PWR_MGMT, 0x01)) {
         init_error = 3;
         return 0;
-    } // Wake, X gyro clock.
+    } // Ativa o sensor usando o clock do giroscópio X.
     __delay_ms(10);
     if (!write_register(MPU6050_REG_CONFIG, 0x02)) {
         init_error = 4;
         return 0;
-    } // Accelerometer DLPF bandwidth about 94 Hz.
+    } // Largura de banda do filtro DLPF do acelerômetro de aproximadamente 94 Hz.
     if (!write_register(MPU6050_REG_SMPLRT, 0x03)) {
         init_error = 5;
         return 0;
-    } // 1 kHz base rate / (1 + 3) = 250 Hz.
+    } // Taxa base de 1 kHz / (1 + 3) = 250 Hz.
     if (!write_register(MPU6050_REG_ACCEL_CFG, 0x00)) {
         init_error = 6;
         return 0;
-    } // +/-2 g.
+    } // Escala de ±2 g.
     return 1;
 }
 
@@ -187,7 +187,7 @@ uint8_t MPU6050_GetInitError(void)
 
 uint8_t MPU6050_GetI2CLineState(void)
 {
-    // Release MSSP ownership before sampling the physical bus levels.
+    // Libera o MSSP antes de medir os níveis físicos do barramento.
     SSPCON1bits.SSPEN = 0;
     TRISCbits.TRISC3 = 1;
     TRISCbits.TRISC4 = 1;

@@ -1,4 +1,4 @@
-#include "config.h"
+﻿#include "config.h"
 #include "uart.h"
 #include "mpu6050.h"
 #include "modbus.h"
@@ -6,6 +6,8 @@
 #include <stdint.h>
 
 static volatile uint8_t sample_due = 0;
+static volatile uint16_t sample_overruns = 0;
+static uint16_t last_overrun_snapshot = 0;
 
 static void terminal_write_string(const char *text)
 {
@@ -30,16 +32,17 @@ static void terminal_write_i16(int16_t value)
     while (count != 0) UART_Write((uint8_t)digits[--count]);
 }
 
-// Timer0 overflow every 4 ms at Fosc=20 MHz, prescaler 1:1.
+// Período do Timer2 = 250 * 3,2 us * 5 = 4 ms com Fosc=20 MHz.
 void __interrupt() ISR(void)
 {
     if (PIR1bits.RCIF && PIE1bits.RCIE) {
         UART_ReceiveISR();
     }
-    if (INTCONbits.TMR0IF) {
-        INTCONbits.TMR0IF = 0;
-        TMR0H = 0xB1;
-        TMR0L = 0xE0;
+    if (PIR1bits.TMR2IF && PIE1bits.TMR2IE) {
+        PIR1bits.TMR2IF = 0;
+        if (sample_due && sample_overruns != 0xFFFFU) {
+            sample_overruns++;
+        }
         sample_due = 1;
     }
 }
@@ -49,8 +52,8 @@ void main(void)
     int16_t ax = 0, ay = 0, az = 0;
     uint8_t sensor_ready;
     ADCON1 = 0x0F;
-    UART_Init(9600);
-    // DE permanece bajo: o texto aparece em RC6, mas não entra no barramento RS-485.
+    UART_Init(115200);
+    // DE permanece baixo: o texto aparece em RC6, mas não entra no barramento RS-485.
     terminal_write_string("BOOT\r\n");
 
     sensor_ready = MPU6050_Init();
@@ -68,17 +71,15 @@ void main(void)
         terminal_write_string("\r\n");
     }
 
-    // Timer0 16-bit, clock interno Fosc/4, prescaler 1:1.
-    T0CON = 0b10001000;
-    TMR0H = 0xB1;
-    TMR0L = 0xE0;
-    INTCONbits.TMR0IF = 0;
-    INTCONbits.TMR0IE = 1;
+    // Timer2: Fosc/4, prescaler 1:16, PR2=249, postscaler 1:5.
+    T2CON = 0x00;
+    PR2 = 249;
+    TMR2 = 0;
+    PIR1bits.TMR2IF = 0;
+    PIE1bits.TMR2IE = 1;
     INTCONbits.PEIE = 1;
+    T2CON = 0x26;
     INTCONbits.GIE = 1;
-
-    uint16_t terminal_divider = 0;
-    int16_t terminal_ax = 0, terminal_ay = 0, terminal_az = 0;
 
     while (1) {
         // O pedido 0x03 tem sempre oito bytes; só há resposta após CRC válido.
@@ -89,6 +90,7 @@ void main(void)
         if (sample_due) {
             INTCONbits.GIE = 0;
             sample_due = 0;
+            uint16_t overrun_snapshot = sample_overruns;
             INTCONbits.GIE = 1;
 
             if (sensor_ready && MPU6050_ReadAccel(&ax, &ay, &az)) {
@@ -99,17 +101,12 @@ void main(void)
             } else {
                 holding_registers[3] = 1U;
             }
-
-            terminal_ax = ax;
-            terminal_ay = ay;
-            terminal_az = az;
-            if (++terminal_divider >= 250U) {
-                terminal_divider = 0;
-                terminal_write_string("X="); terminal_write_i16(terminal_ax);
-                terminal_write_string(" Y="); terminal_write_i16(terminal_ay);
-                terminal_write_string(" Z="); terminal_write_i16(terminal_az);
-                terminal_write_string("\r\n");
-            }
+            // A sequência acompanha os ticks do temporizador de aquisição, inclusive os que
+            // se acumularam enquanto o código principal estava ocupado.
+            holding_registers[4] = (uint16_t)(holding_registers[4] + 1U +
+                                              (uint16_t)(overrun_snapshot - last_overrun_snapshot));
+            last_overrun_snapshot = overrun_snapshot;
+            holding_registers[5] = overrun_snapshot;
         }
     }
 }

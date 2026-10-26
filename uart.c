@@ -1,4 +1,4 @@
-#include "uart.h"
+﻿#include "uart.h"
 #include "config.h"
 #include <xc.h>
 
@@ -8,10 +8,11 @@
 static volatile uint8_t rx_buffer[UART_RX_BUFFER_SIZE];
 static volatile uint8_t rx_head = 0;
 static volatile uint8_t rx_tail = 0;
+static volatile uint8_t tx_in_progress = 0;
 
 void UART_Init(uint32_t baud_rate)
 {
-    // Async TX requires RC6 as output; RC7 remains the RX input.
+    // A transmissão assíncrona exige RC6 como saída; RC7 permanece como entrada de recepção.
     TRISCbits.TRISC6 = 0;
     TRISCbits.TRISC7 = 1;
 
@@ -81,7 +82,10 @@ void UART_ReceiveISR(void)
             RCSTAbits.CREN = 1;
         }
 
-        if (!framing_error) {
+        // O /RE pode ficar sempre habilitado, fazendo o transceptor ecoar a própria
+        // resposta enquanto DE está alto. Descarta esses bytes sem colocá-los
+        // na fila como uma nova solicitação Modbus.
+        if (!framing_error && !tx_in_progress) {
             uint8_t next = (uint8_t)((rx_head + 1U) & UART_RX_BUFFER_MASK);
             if (next != rx_tail) {
                 rx_buffer[rx_head] = value;
@@ -93,6 +97,7 @@ void UART_ReceiveISR(void)
 
 void UART_TransmitBegin(void)
 {
+    tx_in_progress = 1;
     LATDbits.LATD0 = 1;
 }
 
@@ -100,4 +105,8 @@ void UART_TransmitEnd(void)
 {
     UART_WaitTXComplete();
     LATDbits.LATD0 = 0;
+    // Permite que a interrupção de recepção descarte o último byte ecoado
+    // enquanto a proteção de transmissão continua ativa.
+    while (PIR1bits.RCIF) { }
+    tx_in_progress = 0;
 }

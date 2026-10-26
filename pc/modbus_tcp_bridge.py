@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Bridge the PIC's Modbus RTU registers to a Modbus TCP server."""
 
 from __future__ import annotations
@@ -15,12 +15,16 @@ from collections import deque
 import numpy as np
 import serial
 
-RTU_REGISTER_COUNT = 4
-TCP_REGISTER_COUNT = 12
+RTU_REGISTER_COUNT = 6
+TCP_REGISTER_COUNT = 16
 BRIDGE_STATUS_REGISTER = 4
 FFT_FREQUENCY_REGISTERS = (5, 6, 7)  # centi-Hz
 FFT_AMPLITUDE_REGISTERS = (8, 9, 10)  # milli-g
 FFT_STATUS_REGISTER = 11
+PIC_SEQUENCE_REGISTER = 12
+PIC_OVERRUN_REGISTER = 13
+HOST_MISSED_REGISTER = 14
+SAMPLE_RATE_REGISTER = 15  # centi-Hz
 ACCEL_LSB_PER_G = 16384.0
 
 
@@ -98,36 +102,66 @@ def read_rtu_registers(
 
 class RegisterState:
     def __init__(self, fft_window: int, expected_period: float) -> None:
-        # 0..3 mirror the PIC, 4 is bridge status, 5..10 hold FFT peaks, 11 is FFT status.
-        self._registers = [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1]
+        # 0..3 espelham o PIC, 4 indica o estado da ponte, 5..11 armazenam a FFT, 12..15 contêm diagnósticos.
+        self._registers = [0] * TCP_REGISTER_COUNT
+        self._registers[3] = 1
+        self._registers[4] = 1
+        self._registers[FFT_STATUS_REGISTER] = 1
         self._lock = threading.Lock()
         self.last_update = 0.0
         self._fft_window = fft_window
-        self._max_gap = max(expected_period * 3.0, 0.25)
+        self._max_gap = max(expected_period * 3.0, 0.05)
         self._samples: deque[tuple[float, tuple[int, int, int]]] = deque(maxlen=fft_window)
+        self._last_sequence: int | None = None
+        self._missed_samples = 0
 
     def update_from_pic(self, values: list[int]) -> None:
         now = time.monotonic()
         with self._lock:
-            self._registers[:RTU_REGISTER_COUNT] = values
+            self._registers[:4] = values[:4]
             self._registers[BRIDGE_STATUS_REGISTER] = 0
+            sequence = values[4]
+            self._registers[PIC_SEQUENCE_REGISTER] = sequence
+            self._registers[PIC_OVERRUN_REGISTER] = values[5]
             self.last_update = now
 
             if values[3] != 0:
                 self._samples.clear()
                 self._registers[FFT_STATUS_REGISTER] = 1
+                self._last_sequence = None
                 return
 
-            if self._samples and now - self._samples[-1][0] > self._max_gap:
+            sequence_gap = False
+            if self._last_sequence is not None:
+                delta = (sequence - self._last_sequence) & 0xFFFF
+                if delta == 0:
+                    return  # Consulta mais rápida que a aquisição: não duplica amostras.
+                if delta < 0x8000 and delta > 1:
+                    self._missed_samples = min(0xFFFF, self._missed_samples + delta - 1)
+                    sequence_gap = True
+            self._last_sequence = sequence
+            self._registers[HOST_MISSED_REGISTER] = self._missed_samples
+
+            if sequence_gap or (self._samples and now - self._samples[-1][0] > self._max_gap):
                 self._samples.clear()
             signed_axes = tuple(value - 0x10000 if value & 0x8000 else value for value in values[:3])
             self._samples.append((now, signed_axes))
+
+            if len(self._samples) >= 2:
+                elapsed = self._samples[-1][0] - self._samples[0][0]
+                if elapsed > 0:
+                    self._registers[SAMPLE_RATE_REGISTER] = min(
+                        0xFFFF, round((len(self._samples) - 1) / elapsed * 100.0)
+                    )
 
             if len(self._samples) < self._fft_window:
                 self._registers[FFT_STATUS_REGISTER] = 1
                 return
 
             frequencies, amplitudes = self._calculate_fft()
+            times = [item[0] for item in self._samples]
+            measured_rate = (len(times) - 1) / (times[-1] - times[0])
+            self._registers[SAMPLE_RATE_REGISTER] = min(0xFFFF, round(measured_rate * 100.0))
             for reg, frequency in zip(FFT_FREQUENCY_REGISTERS, frequencies):
                 self._registers[reg] = min(0xFFFF, max(0, round(frequency * 100.0)))
             for reg, amplitude in zip(FFT_AMPLITUDE_REGISTERS, amplitudes):
@@ -165,6 +199,7 @@ class RegisterState:
             self._registers[BRIDGE_STATUS_REGISTER] = 1
             self._registers[FFT_STATUS_REGISTER] = 1
             self._samples.clear()
+            self._last_sequence = None
 
     def read(self, start: int, count: int) -> list[int] | None:
         if count < 1 or start < 0 or start + count > TCP_REGISTER_COUNT:
@@ -282,10 +317,10 @@ def main() -> int:
     parser.add_argument("--host", default="0.0.0.0", help="IP de escuta TCP (padrão: todas as interfaces)")
     parser.add_argument("--tcp-port", type=int, default=5020, help="porta Modbus TCP (padrão: 5020)")
     parser.add_argument("--slave-id", type=int, default=1, help="endereço RTU do PIC (padrão: 1)")
-    parser.add_argument("--baud", type=int, default=9600, help="baud RTU (padrão: 9600)")
-    parser.add_argument("--poll-ms", type=int, default=40, help="intervalo RTU e amostragem da FFT (padrão: 40 ms)")
-    parser.add_argument("--fft-window", type=int, default=128, help="amostras por janela FFT (padrão: 128)")
-    parser.add_argument("--timeout", type=float, default=0.35, help="timeout por consulta RTU em segundos")
+    parser.add_argument("--baud", type=int, default=115200, help="baud RTU (padrão: 115200)")
+    parser.add_argument("--poll-ms", type=float, default=4.0, help="intervalo de consulta (padrão: 4 ms)")
+    parser.add_argument("--fft-window", type=int, default=512, help="amostras por janela FFT (padrão: 512)")
+    parser.add_argument("--timeout", type=float, default=0.05, help="timeout por consulta RTU em segundos")
     parser.add_argument("--retries", type=int, default=1, help="repetições antes de marcar falha")
     args = parser.parse_args()
 
@@ -293,8 +328,8 @@ def main() -> int:
         parser.error("--slave-id deve estar entre 1 e 247")
     if not 1 <= args.tcp_port <= 65535:
         parser.error("--tcp-port deve estar entre 1 e 65535")
-    if args.poll_ms < 25 or args.fft_window < 16 or args.retries < 0 or args.timeout <= 0:
-        parser.error("--poll-ms deve ser >= 25, --fft-window >= 16, --retries >= 0 e --timeout > 0")
+    if args.poll_ms < 3 or args.fft_window < 16 or args.retries < 0 or args.timeout <= 0:
+        parser.error("--poll-ms deve ser >= 3, --fft-window >= 16, --retries >= 0 e --timeout > 0")
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     try:
@@ -325,8 +360,8 @@ def main() -> int:
                     args.host,
                     args.tcp_port,
                 )
-                logging.info("TCP: holding registers 0..11; FFT em janela de %d amostras", args.fft_window)
-                logging.info("Nyquist nominal: %.2f Hz", 500.0 / args.poll_ms)
+                logging.info("TCP: holding registers 0..15; FFT em janela de %d amostras", args.fft_window)
+                logging.info("amostragem do PIC: 250 Hz nominal; frequência medida publicada no registrador 15")
                 server.serve_forever()
     except KeyboardInterrupt:
         logging.info("ponte encerrada")

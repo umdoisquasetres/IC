@@ -1,17 +1,17 @@
-#ifndef CONFIG_H
+﻿#ifndef CONFIG_H
 #define CONFIG_H
 
 #include <xc.h>
 
-// Configura��es de Fuse Bits para Cristal Externo de 20 MHz
-#pragma config OSC = HS         // High Speed Crystal
-#pragma config WDT = OFF        // Watchdog Timer desativado
-#pragma config LVP = OFF        // Low Voltage Programming desativado
-#pragma config BOREN = OFF      // Brown-out Reset desativado
-#pragma config IESO = OFF       // Desliga a troca autom�tica
-#pragma config MCLRE = ON       // Resetar o microchip
-#pragma config PBADEN = OFF     // RB0-RB4 iniciam como digitais
+// Configurações dos bits de configuração para cristal externo de 20 MHz
+#pragma config OSC = HS         // Cristal externo de alta velocidade
+#pragma config WDT = OFF        // Temporizador watchdog desativado
+#pragma config LVP = OFF        // Programação em baixa tensão desativada
+#pragma config BOREN = OFF      // Reset por baixa tensão desativado
+#pragma config IESO = OFF       // Desativa a troca automática de oscilador
+#pragma config MCLRE = ON       // Pino MCLR habilitado para reset
+#pragma config PBADEN = OFF     // RB0-RB4 iniciam como pinos digitais
 
-#define _XTAL_FREQ 20000000     // Frequ�ncia do oscilador (20 MHz)
+#define _XTAL_FREQ 20000000     // Frequência do oscilador (20 MHz)
 
 #endif // CONFIG_H
