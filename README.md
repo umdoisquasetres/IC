@@ -32,7 +32,7 @@ python -m pip install -r pc/requirements.txt
 python pc/modbus_tcp_bridge.py COM4
 ```
 
-Por padrão, a ponte consulta o escravo RTU `1` em 115200 8N1 a cada 4 ms, lê seis registradores e calcula a FFT com uma janela de 512 amostras. A aquisição do PIC é nominalmente 250 Hz; o PC pode observar amostras repetidas ou perdidas conforme o adaptador e o escalonamento do Windows. A ponte escuta Modbus TCP na porta `5020`. Opções como `--tcp-port`, `--host`, `--poll-ms`, `--fft-window` e `--slave-id` podem ser consultadas com `python pc/modbus_tcp_bridge.py --help`.
+Por padrão, a ponte consulta o escravo RTU `1` em 115200 8N1 a cada 4 ms, lê doze registradores e calcula a FFT com uma janela de 512 amostras. A aquisição do PIC é nominalmente 250 Hz; o PC pode observar amostras repetidas ou perdidas conforme o adaptador e o escalonamento do Windows. A ponte escuta Modbus TCP na porta `5020`. Opções como `--tcp-port`, `--host`, `--poll-ms`, `--fft-window` e `--slave-id` podem ser consultadas com `python pc/modbus_tcp_bridge.py --help`.
 
 No Scada-LTS, crie um datasource Modbus TCP com o IP do PC que executa a ponte, porta `5020` e unit ID `1`. Leia os holding registers pela função `03`, usando estes endereços zero-based:
 
@@ -50,6 +50,8 @@ No Scada-LTS, crie um datasource Modbus TCP com o IP do PC que executa a ponte, 
 | 13 | Ticks de aquisição perdidos no PIC | contador saturado de eventos do Timer2 não atendidos a tempo |
 | 14 | Amostras perdidas entre PC e PIC | contador saturado de saltos observados na sequência |
 | 15 | Taxa de amostragem medida | centi-hertz; multiplicador `0,01` para Hz |
+| 16–18 | RMS de vibração X/Y/Z | mili-g, calculado no PIC em janelas de 64 amostras após remover a média |
+| 19–21 | Vibração pico a pico X/Y/Z | mili-g, calculado no PIC em janelas de 64 amostras |
 
 Os valores de FFT são o pico dominante diferente de zero em cada eixo, calculado após remover a média e aplicar janela Hann. A janela padrão de 512 amostras leva cerca de 2,05 s à taxa nominal de 250 Hz. O limite de Nyquist depende da taxa de amostragem efetivamente medida e corresponde à metade dela. O PC só calcula a FFT com amostras de sequência diferentes; o registrador 14 conta lacunas observadas, enquanto o 13 mostra os ticks perdidos no firmware. O registrador 15 publica a taxa medida em centi-hertz.
 
@@ -67,11 +69,11 @@ Os endereços do pedido Modbus são zero-based. Alguns clientes exibem o endere�
 | 1 | 40002 | Acelerômetro Y | int16 com sinal, valor bruto |
 | 2 | 40003 | Acelerômetro Z | int16 com sinal, valor bruto |
 | 3 | 40004 | Estado | 0 = leitura válida; 1 = falha de I2C |
-| 4–15 | 40005–40016 | Estado da ponte, FFT e diagnósticos de aquisição | conforme tabela acima |
+| 4–21 | 40005–40022 | Estado da ponte, FFT, diagnósticos e métricas de vibração | conforme tabela acima |
 
 Os eixos estão em contagens do sensor. Para converter para g, divida o valor assinado por `16384`. Em cada ponto do Scada-LTS, configure interpretação de inteiro de 16 bits com sinal e escala `1/16384`, se o datasource oferecer essa opção. Alguns clientes esperam digitar `0` para o primeiro endereço; outros mostram `40001`.
 
-O PIC agenda aquisições a cada 4 ms e responde somente quando consultado pelo mestre Modbus. Leia seis registradores a partir do endereço 0 para obter os eixos, estado, sequência e contador de ticks perdidos.
+O PIC agenda aquisições a cada 4 ms e responde somente quando consultado pelo mestre Modbus. Leia doze registradores a partir do endereço 0 para obter as leituras instantâneas, estado, sequência, contador de ticks perdidos, RMS e pico a pico. O RMS e o pico a pico são atualizados a cada 64 amostras válidas consecutivas. Se houver perda de ticks ou falha I2C, a janela parcial é descartada; os últimos indicadores completos permanecem nos registradores até a próxima janela válida.
 
 ## Visualização no Virtual Terminal do Proteus
 

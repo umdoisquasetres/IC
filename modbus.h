@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 #define MODBUS_SLAVE_ID 1U
-#define MODBUS_REGISTER_COUNT 6U
+#define MODBUS_REGISTER_COUNT 12U
 
-// 0..2=eixos (valores brutos com sinal), 3=estado do sensor, 4=sequência, 5=ticks de aquisição perdidos.
+// 0..2=eixos brutos, 3=estado, 4=sequência, 5=ticks perdidos, 6..8=RMS em mg, 9..11=pico a pico em mg.
 extern volatile uint16_t holding_registers[MODBUS_REGISTER_COUNT];
 
 void Modbus_ProcessByte(uint8_t value);

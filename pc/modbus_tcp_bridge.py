@@ -15,8 +15,8 @@ from collections import deque
 import numpy as np
 import serial
 
-RTU_REGISTER_COUNT = 6
-TCP_REGISTER_COUNT = 16
+RTU_REGISTER_COUNT = 12
+TCP_REGISTER_COUNT = 22
 BRIDGE_STATUS_REGISTER = 4
 FFT_FREQUENCY_REGISTERS = (5, 6, 7)  # centi-Hz
 FFT_AMPLITUDE_REGISTERS = (8, 9, 10)  # milli-g
@@ -25,6 +25,8 @@ PIC_SEQUENCE_REGISTER = 12
 PIC_OVERRUN_REGISTER = 13
 HOST_MISSED_REGISTER = 14
 SAMPLE_RATE_REGISTER = 15  # centi-Hz
+RMS_REGISTERS = (16, 17, 18)  # mg
+PEAK_TO_PEAK_REGISTERS = (19, 20, 21)  # mg
 ACCEL_LSB_PER_G = 16384.0
 
 
@@ -123,6 +125,9 @@ class RegisterState:
             sequence = values[4]
             self._registers[PIC_SEQUENCE_REGISTER] = sequence
             self._registers[PIC_OVERRUN_REGISTER] = values[5]
+            self._registers[
+                RMS_REGISTERS[0] : PEAK_TO_PEAK_REGISTERS[-1] + 1
+            ] = values[6:12]
             self.last_update = now
 
             if values[3] != 0:
@@ -360,7 +365,7 @@ def main() -> int:
                     args.host,
                     args.tcp_port,
                 )
-                logging.info("TCP: holding registers 0..15; FFT em janela de %d amostras", args.fft_window)
+                logging.info("TCP: holding registers 0..21; FFT em janela de %d amostras", args.fft_window)
                 logging.info("amostragem do PIC: 250 Hz nominal; frequência medida publicada no registrador 15")
                 server.serve_forever()
     except KeyboardInterrupt:
