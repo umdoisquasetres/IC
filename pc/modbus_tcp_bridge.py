@@ -138,12 +138,49 @@ class SpectrumCSVWriter:
         self._file.close()
 
 
+class SamplesCSVWriter:
+    """Append received samples/events; host_received_utc is not a PIC acquisition time."""
+
+    def __init__(self, path: str) -> None:
+        output = Path(path)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        self._file = output.open("a", newline="", encoding="utf-8")
+        self._writer = csv.writer(self._file)
+        try:
+            if self._file.tell() == 0:
+                self._writer.writerow((
+                    "host_received_utc", "row_type", "sequence", "x_raw", "y_raw", "z_raw",
+                    "x_g", "y_g", "z_g", "sensor_status", "communication_status",
+                    "pic_overrun", "host_missed",
+                ))
+                self._file.flush()
+        except OSError:
+            self.close()
+            raise
+
+    def write_event(self, row_type, sequence, axes, sensor_status, communication_status,
+                    pic_overrun, host_missed) -> None:
+        raw = axes if axes is not None else ("", "", "")
+        scaled = tuple(value / ACCEL_LSB_PER_G for value in axes) if axes is not None else raw
+        self._writer.writerow((datetime.now(timezone.utc).isoformat(), row_type, sequence,
+                               *raw, *scaled, sensor_status, communication_status,
+                               pic_overrun, host_missed))
+        self._file.flush()
+
+    def close(self) -> None:
+        try:
+            self._file.close()
+        except OSError as exc:
+            logging.error("falha ao fechar CSV de amostras: %s", exc)
+
+
 class RegisterState:
     def __init__(
         self,
         fft_window: int,
         expected_period: float,
         spectrum_writer: SpectrumCSVWriter | None = None,
+        samples_writer: SamplesCSVWriter | None = None,
     ) -> None:
         # 0..3 espelham o PIC, 4 indica o estado da ponte, 5..11 armazenam a FFT, 12..15 contêm diagnósticos.
         self._registers = [0] * TCP_REGISTER_COUNT
@@ -160,6 +197,25 @@ class RegisterState:
         self._missed_samples = 0
         self._spectrum_writer = spectrum_writer
         self._samples_since_export = 0
+        self._samples_writer = samples_writer
+        self._csv_last_sequence: int | None = None
+        self._csv_error = None
+
+    def _write_sample_event(self, row_type, sequence="", axes=None) -> None:
+        if self._samples_writer is None:
+            return
+        try:
+            self._samples_writer.write_event(
+                row_type, sequence, axes,
+                "" if row_type == "communication_error" else self._registers[3],
+                self._registers[BRIDGE_STATUS_REGISTER],
+                "" if row_type == "communication_error" else self._registers[PIC_OVERRUN_REGISTER],
+                self._missed_samples,
+            )
+        except OSError as exc:
+            logging.error("exportação de amostras desativada: %s", exc)
+            self._samples_writer.close()
+            self._samples_writer = None
 
     def update_from_pic(self, values: list[int]) -> None:
         now = time.monotonic()
@@ -175,6 +231,10 @@ class RegisterState:
             self.last_update = now
 
             if values[3] != 0:
+                error = ("sensor_error", values[3])
+                if self._csv_error != error:
+                    self._write_sample_event("sensor_error", sequence)
+                self._csv_error = error
                 self._samples.clear()
                 self._registers[FFT_STATUS_REGISTER] = 1
                 self._last_sequence = None
@@ -182,6 +242,7 @@ class RegisterState:
                 self._samples_since_export = 0
                 return
 
+            self._csv_error = None
             sequence_reset = False
             if self._last_sequence is not None:
                 delta = (sequence - self._last_sequence) & 0xFFFF
@@ -211,6 +272,9 @@ class RegisterState:
                 self._samples.clear()
                 self._samples_since_export = 1
             signed_axes = tuple(value - 0x10000 if value & 0x8000 else value for value in values[:3])
+            if sequence != self._csv_last_sequence:
+                self._write_sample_event("sample", sequence, signed_axes)
+                self._csv_last_sequence = sequence
             self._samples.append((now, signed_axes))
 
             if len(self._samples) >= 2:
@@ -282,6 +346,9 @@ class RegisterState:
         with self._lock:
             self._registers[BRIDGE_STATUS_REGISTER] = 1
             self._registers[FFT_STATUS_REGISTER] = 1
+            if self._csv_error != ("communication_error",):
+                self._write_sample_event("communication_error")
+            self._csv_error = ("communication_error",)
 
     def read(self, start: int, count: int) -> list[int] | None:
         if count < 1 or start < 0 or start + count > TCP_REGISTER_COUNT:
@@ -409,8 +476,17 @@ def main() -> int:
         help="salva espectros completos em CSV, uma linha por frequência e janela",
     )
     parser.add_argument("--timeout", type=float, default=0.05, help="timeout por consulta RTU em segundos")
+    parser.add_argument("--samples-csv", metavar="ARQUIVO",
+                        help="salva amostras e erros em CSV; host_received_utc é recepção UTC no PC, não aquisição no PIC")
     parser.add_argument("--retries", type=int, default=1, help="repetições antes de marcar falha")
     args = parser.parse_args()
+    if args.samples_csv and args.spectrum_csv:
+        samples_path = Path(args.samples_csv).resolve()
+        spectrum_path = Path(args.spectrum_csv).resolve()
+        if samples_path == spectrum_path or (
+            samples_path.exists() and spectrum_path.exists() and samples_path.samefile(spectrum_path)
+        ):
+            parser.error("--samples-csv e --spectrum-csv devem usar arquivos diferentes")
 
     if not 1 <= args.slave_id <= 247:
         parser.error("--slave-id deve estar entre 1 e 247")
@@ -421,11 +497,17 @@ def main() -> int:
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     spectrum_writer = None
+    samples_writer = None
     poll_stop = threading.Event()
     poller = None
     try:
         if args.spectrum_csv:
             spectrum_writer = SpectrumCSVWriter(args.spectrum_csv)
+        if args.samples_csv:
+            try:
+                samples_writer = SamplesCSVWriter(args.samples_csv)
+            except OSError as exc:
+                logging.error("exportação de amostras desativada: %s", exc)
         with serial.Serial(
             args.port,
             baudrate=args.baud,
@@ -436,7 +518,7 @@ def main() -> int:
             write_timeout=0.5,
         ) as serial_port:
             poll_interval = args.poll_ms / 1000.0
-            state = RegisterState(args.fft_window, poll_interval, spectrum_writer)
+            state = RegisterState(args.fft_window, poll_interval, spectrum_writer, samples_writer)
             poller = threading.Thread(
                 target=poll_pic,
                 args=(
@@ -476,6 +558,8 @@ def main() -> int:
             poller.join()
         if spectrum_writer is not None:
             spectrum_writer.close()
+        if samples_writer is not None:
+            samples_writer.close()
 
 
 if __name__ == "__main__":

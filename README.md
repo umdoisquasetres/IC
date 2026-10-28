@@ -32,6 +32,20 @@ python -m pip install -r pc/requirements.txt
 python pc/modbus_tcp_bridge.py COM4
 ```
 
+### Gravar leituras reais para validação
+
+Para registrar a aquisição do PIC em `dados.csv`, use (substitua `COM4` pela porta do CH340):
+
+```powershell
+python pc/modbus_tcp_bridge.py COM4 --samples-csv dados.csv
+```
+
+O CSV registra uma linha por amostra nova observada pelo PC, com sequência, X/Y/Z em contagens com sinal e em g, estados do sensor e da comunicação e contadores de perdas. O timestamp UTC corresponde ao recebimento no PC, não ao instante exato de aquisição no sensor. Consultas repetidas da mesma amostra não geram novas linhas de medição; amostras que o PC não recebeu não são reconstruídas no arquivo.
+
+Falhas do sensor ou da comunicação geram eventos sem valores de aceleração, evitando apresentar dados antigos como novas medições. O arquivo é anexado entre execuções, com cabeçalho apenas quando vazio. Encerre com `Ctrl+C` e confira os estados e as perdas antes de interpretar as medições. Uma falha de gravação é informada no log e desativa a exportação afetada; a aquisição continua.
+
+Essa opção salva leituras no tempo, não o espectro FFT. Para registrar ambos, combine `--samples-csv dados.csv` com `--spectrum-csv dados/espectros.csv`, usando arquivos diferentes. Os testes automatizados usam dados sintéticos em arquivos temporários; somente a execução com o hardware conectado produz evidência de medições reais.
+
 Para guardar o espectro completo em CSV (uma linha por frequência e janela, com amplitudes X/Y/Z em g), inicie com `--spectrum-csv dados/espectros.csv`:
 
 ```powershell
