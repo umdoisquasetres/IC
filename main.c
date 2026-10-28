@@ -11,6 +11,7 @@ static uint16_t last_overrun_snapshot = 0;
 
 #define VIBRATION_WINDOW_SAMPLES 64U
 #define ACCEL_SCALE_DIVISOR 16L
+#define SENSOR_RETRY_PERIOD_TICKS 250U
 
 static int32_t vibration_sum[3] = {0, 0, 0};
 static uint32_t vibration_sum_squares[3] = {0, 0, 0};
@@ -18,10 +19,10 @@ static int16_t vibration_min[3];
 static int16_t vibration_max[3];
 static uint8_t vibration_window_count = 0;
 
-static uint16_t integer_sqrt(uint32_t value)
+static uint32_t integer_sqrt(uint64_t value)
 {
-    uint32_t bit = 1UL << 30;
-    uint32_t result = 0;
+    uint64_t bit = 1ULL << 62;
+    uint64_t result = 0;
 
     while (bit > value) bit >>= 2;
     while (bit != 0) {
@@ -33,7 +34,7 @@ static uint16_t integer_sqrt(uint32_t value)
         }
         bit >>= 2;
     }
-    return (uint16_t)result;
+    return (uint32_t)result;
 }
 
 static void reset_vibration_window(void)
@@ -68,11 +69,11 @@ static void update_vibration_metrics(int16_t ax, int16_t ay, int16_t az)
     vibration_window_count++;
     if (vibration_window_count >= VIBRATION_WINDOW_SAMPLES) {
         for (uint8_t axis = 0; axis < 3; axis++) {
-            int32_t mean = vibration_sum[axis] / VIBRATION_WINDOW_SAMPLES;
-            uint32_t mean_square = (uint32_t)(mean * mean);
-            uint32_t mean_of_squares = vibration_sum_squares[axis] / VIBRATION_WINDOW_SAMPLES;
-            uint32_t variance = mean_of_squares > mean_square ? mean_of_squares - mean_square : 0U;
-            uint32_t rms_scaled = integer_sqrt(variance);
+            int64_t sum = vibration_sum[axis];
+            uint64_t count = VIBRATION_WINDOW_SAMPLES;
+            uint64_t variance_numerator =
+                (uint64_t)vibration_sum_squares[axis] * count - (uint64_t)(sum * sum);
+            uint32_t rms_scaled = integer_sqrt(variance_numerator) / VIBRATION_WINDOW_SAMPLES;
             uint32_t peak_to_peak_scaled = (uint16_t)(vibration_max[axis] - vibration_min[axis]);
 
             // As amostras escaladas têm 1024 unidades por g; publica RMS e pico a pico em mg.
@@ -81,29 +82,6 @@ static void update_vibration_metrics(int16_t ax, int16_t ay, int16_t az)
         }
         reset_vibration_window();
     }
-}
-
-static void terminal_write_string(const char *text)
-{
-    UART_WriteString(text);
-    UART_WaitTXComplete();
-}
-
-static void terminal_write_i16(int16_t value)
-{
-    char digits[6];
-    uint8_t count = 0;
-    int32_t remaining = value;
-
-    if (remaining < 0) {
-        UART_Write('-');
-        remaining = -remaining;
-    }
-    do {
-        digits[count++] = (char)('0' + (remaining % 10));
-        remaining /= 10;
-    } while (remaining != 0);
-    while (count != 0) UART_Write((uint8_t)digits[--count]);
 }
 
 // Período do Timer2 = 250 * 3,2 us * 5 = 4 ms com Fosc=20 MHz.
@@ -125,25 +103,13 @@ void main(void)
 {
     int16_t ax = 0, ay = 0, az = 0;
     uint8_t sensor_ready;
+    uint8_t consecutive_read_failures = 0;
+    uint16_t sensor_retry_ticks = 0;
     ADCON1 = 0x0F;
     UART_Init(115200);
-    // DE permanece baixo: o texto aparece em RC6, mas não entra no barramento RS-485.
-    terminal_write_string("BOOT\r\n");
 
     sensor_ready = MPU6050_Init();
     holding_registers[3] = sensor_ready ? 0U : 1U;
-    if (sensor_ready) {
-        terminal_write_string("MPU OK ID=0x68\r\n");
-    } else {
-        terminal_write_string("MPU ERRO #");
-        terminal_write_i16((int16_t)MPU6050_GetInitError());
-        uint8_t i2c_lines = MPU6050_GetI2CLineState();
-        terminal_write_string(" SCL=");
-        UART_Write((uint8_t)('0' + ((i2c_lines & 0x01U) != 0U)));
-        terminal_write_string(" SDA=");
-        UART_Write((uint8_t)('0' + ((i2c_lines & 0x02U) != 0U)));
-        terminal_write_string("\r\n");
-    }
 
     // Timer2: Fosc/4, prescaler 1:16, PR2=249, postscaler 1:5.
     T2CON = 0x00;
@@ -168,6 +134,7 @@ void main(void)
             INTCONbits.GIE = 1;
 
             if (sensor_ready && MPU6050_ReadAccel(&ax, &ay, &az)) {
+                consecutive_read_failures = 0;
                 holding_registers[0] = (uint16_t)ax;
                 holding_registers[1] = (uint16_t)ay;
                 holding_registers[2] = (uint16_t)az;
@@ -181,6 +148,16 @@ void main(void)
             } else {
                 holding_registers[3] = 1U;
                 reset_vibration_window();
+                if (sensor_ready) {
+                    if (++consecutive_read_failures >= 3U) {
+                        sensor_ready = 0U;
+                        consecutive_read_failures = 0U;
+                        sensor_retry_ticks = 0U;
+                    }
+                } else if (++sensor_retry_ticks >= SENSOR_RETRY_PERIOD_TICKS) {
+                    sensor_retry_ticks = 0U;
+                    sensor_ready = MPU6050_Init();
+                }
             }
             // A sequência acompanha os ticks do temporizador de aquisição, inclusive os que
             // se acumularam enquanto o código principal estava ocupado.

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import logging
 import socket
 import socketserver
@@ -11,6 +12,8 @@ import struct
 import threading
 import time
 from collections import deque
+from datetime import datetime, timezone
+from pathlib import Path
 
 import numpy as np
 import serial
@@ -81,10 +84,10 @@ def read_rtu_registers(
         function, byte_count = header
 
         if function == (0x03 | 0x80):
-            tail = read_exact(port, 3, deadline)
+            tail = read_exact(port, 2, deadline)
             frame = first + header + tail
-            if len(tail) == 3 and crc16_modbus(frame[:-2]) == int.from_bytes(frame[-2:], "little"):
-                raise RuntimeError(f"PIC Modbus exception 0x{tail[0]:02X}")
+            if len(tail) == 2 and crc16_modbus(frame[:-2]) == int.from_bytes(frame[-2:], "little"):
+                raise RuntimeError(f"PIC Modbus exception 0x{header[1]:02X}")
             continue
 
         if function != 0x03 or byte_count != count * 2:
@@ -102,8 +105,46 @@ def read_rtu_registers(
     raise TimeoutError("sem resposta RTU válida do PIC (timeout ou CRC inválido)")
 
 
+class SpectrumCSVWriter:
+    """Append non-overlapping complete FFT spectra to a CSV file."""
+
+    def __init__(self, path: str) -> None:
+        output_path = Path(path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        self._file = output_path.open("a", newline="", encoding="utf-8")
+        self._writer = csv.writer(self._file)
+        if self._file.tell() == 0:
+            self._writer.writerow(
+                ("timestamp_utc", "sample_rate_hz", "frequency_hz", "x_g", "y_g", "z_g")
+            )
+            self._file.flush()
+
+    def write_window(
+        self, sample_rate: float, frequencies: list[float], spectra: list[list[float]]
+    ) -> None:
+        timestamp = datetime.now(timezone.utc).isoformat()
+        for index in range(1, len(frequencies)):
+            self._writer.writerow(
+                (
+                    timestamp,
+                    f"{sample_rate:.6f}",
+                    f"{frequencies[index]:.6f}",
+                    *(f"{axis[index]:.9f}" for axis in spectra),
+                )
+            )
+        self._file.flush()
+
+    def close(self) -> None:
+        self._file.close()
+
+
 class RegisterState:
-    def __init__(self, fft_window: int, expected_period: float) -> None:
+    def __init__(
+        self,
+        fft_window: int,
+        expected_period: float,
+        spectrum_writer: SpectrumCSVWriter | None = None,
+    ) -> None:
         # 0..3 espelham o PIC, 4 indica o estado da ponte, 5..11 armazenam a FFT, 12..15 contêm diagnósticos.
         self._registers = [0] * TCP_REGISTER_COUNT
         self._registers[3] = 1
@@ -115,7 +156,10 @@ class RegisterState:
         self._max_gap = max(expected_period * 3.0, 0.05)
         self._samples: deque[tuple[float, tuple[int, int, int]]] = deque(maxlen=fft_window)
         self._last_sequence: int | None = None
+        self._last_sample_at: float | None = None
         self._missed_samples = 0
+        self._spectrum_writer = spectrum_writer
+        self._samples_since_export = 0
 
     def update_from_pic(self, values: list[int]) -> None:
         now = time.monotonic()
@@ -134,21 +178,38 @@ class RegisterState:
                 self._samples.clear()
                 self._registers[FFT_STATUS_REGISTER] = 1
                 self._last_sequence = None
+                self._last_sample_at = None
+                self._samples_since_export = 0
                 return
 
-            sequence_gap = False
+            sequence_reset = False
             if self._last_sequence is not None:
                 delta = (sequence - self._last_sequence) & 0xFFFF
                 if delta == 0:
+                    if self._last_sample_at is not None and now - self._last_sample_at > self._max_gap:
+                        self._samples.clear()
+                        self._samples_since_export = 0
+                        self._registers[FFT_STATUS_REGISTER] = 1
                     return  # Consulta mais rápida que a aquisição: não duplica amostras.
-                if delta < 0x8000 and delta > 1:
+                sequence_reset = sequence < self._last_sequence and not (
+                    self._last_sequence >= 0xF000 and sequence < 0x1000
+                )
+                if sequence_reset or delta >= 0x8000:
+                    self._samples.clear()
+                    sequence_reset = True
+                elif delta > 1:
                     self._missed_samples = min(0xFFFF, self._missed_samples + delta - 1)
-                    sequence_gap = True
             self._last_sequence = sequence
+            self._last_sample_at = now
+            self._samples_since_export += 1
             self._registers[HOST_MISSED_REGISTER] = self._missed_samples
 
-            if sequence_gap or (self._samples and now - self._samples[-1][0] > self._max_gap):
+            # Keep samples across brief serial glitches or skipped sequence numbers;
+            # _calculate_fft interpolates them using their measured arrival times.
+            # A long time gap still invalidates the window below.
+            if self._samples and now - self._samples[-1][0] > self._max_gap:
                 self._samples.clear()
+                self._samples_since_export = 1
             signed_axes = tuple(value - 0x10000 if value & 0x8000 else value for value in values[:3])
             self._samples.append((now, signed_axes))
 
@@ -163,48 +224,64 @@ class RegisterState:
                 self._registers[FFT_STATUS_REGISTER] = 1
                 return
 
-            frequencies, amplitudes = self._calculate_fft()
+            frequencies, spectra = self._calculate_fft()
+            if not frequencies:
+                self._registers[FFT_STATUS_REGISTER] = 1
+                return
             times = [item[0] for item in self._samples]
             measured_rate = (len(times) - 1) / (times[-1] - times[0])
             self._registers[SAMPLE_RATE_REGISTER] = min(0xFFFF, round(measured_rate * 100.0))
-            for reg, frequency in zip(FFT_FREQUENCY_REGISTERS, frequencies):
+            peak_frequencies: list[float] = []
+            peak_amplitudes: list[float] = []
+            for spectrum in spectra:
+                peak_index = int(np.argmax(spectrum[1:]) + 1)
+                peak_amplitudes.append(float(spectrum[peak_index]))
+                peak_frequencies.append(
+                    float(frequencies[peak_index]) if spectrum[peak_index] > 0.0 else 0.0
+                )
+            for reg, frequency in zip(FFT_FREQUENCY_REGISTERS, peak_frequencies):
                 self._registers[reg] = min(0xFFFF, max(0, round(frequency * 100.0)))
-            for reg, amplitude in zip(FFT_AMPLITUDE_REGISTERS, amplitudes):
+            for reg, amplitude in zip(FFT_AMPLITUDE_REGISTERS, peak_amplitudes):
                 self._registers[reg] = min(0xFFFF, max(0, round(amplitude * 1000.0)))
             self._registers[FFT_STATUS_REGISTER] = 0
+            if self._spectrum_writer and self._samples_since_export >= self._fft_window:
+                try:
+                    self._spectrum_writer.write_window(measured_rate, frequencies, spectra)
+                except OSError as exc:
+                    logging.error("exportação do espectro desativada: %s", exc)
+                    self._spectrum_writer.close()
+                    self._spectrum_writer = None
+                self._samples_since_export = 0
 
-    def _calculate_fft(self) -> tuple[list[float], list[float]]:
+    def _calculate_fft(self) -> tuple[list[float], list[list[float]]]:
         times = np.asarray([item[0] for item in self._samples], dtype=np.float64)
         samples = np.asarray([item[1] for item in self._samples], dtype=np.float64)
         duration = times[-1] - times[0]
         if duration <= 0:
-            return [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]
+            return [], [[], [], []]
 
         sample_rate = (len(times) - 1) / duration
         uniform_times = np.linspace(times[0], times[-1], len(times))
         values_g = samples / ACCEL_LSB_PER_G
         window = np.hanning(len(values_g))
         frequencies = np.fft.rfftfreq(len(values_g), d=1.0 / sample_rate)
-        peak_frequencies: list[float] = []
-        peak_amplitudes: list[float] = []
+        spectra: list[list[float]] = []
 
         for axis in range(3):
             uniform_values = np.interp(uniform_times, times, values_g[:, axis])
             centered = uniform_values - np.mean(uniform_values)
             spectrum = np.abs(np.fft.rfft(centered * window)) * (2.0 / np.sum(window))
             spectrum[0] = 0.0
-            peak_index = int(np.argmax(spectrum[1:]) + 1)
-            peak_frequencies.append(float(frequencies[peak_index]))
-            peak_amplitudes.append(float(spectrum[peak_index]))
+            if len(values_g) % 2 == 0:
+                spectrum[-1] *= 0.5  # Nyquist bin is not doubled in a one-sided spectrum.
+            spectra.append(spectrum.tolist())
 
-        return peak_frequencies, peak_amplitudes
+        return frequencies.tolist(), spectra
 
     def mark_communication_error(self) -> None:
         with self._lock:
             self._registers[BRIDGE_STATUS_REGISTER] = 1
             self._registers[FFT_STATUS_REGISTER] = 1
-            self._samples.clear()
-            self._last_sequence = None
 
     def read(self, start: int, count: int) -> list[int] | None:
         if count < 1 or start < 0 or start + count > TCP_REGISTER_COUNT:
@@ -220,10 +297,11 @@ def poll_pic(
     poll_interval: float,
     timeout: float,
     retries: int,
+    stop_event: threading.Event,
 ) -> None:
     last_error_log = 0.0
     previous_failed = False
-    while True:
+    while not stop_event.is_set():
         started = time.monotonic()
         success = False
         error = ""
@@ -248,7 +326,7 @@ def poll_pic(
                 last_error_log = now
             previous_failed = True
 
-        time.sleep(max(0.0, poll_interval - (time.monotonic() - started)))
+        stop_event.wait(max(0.0, poll_interval - (time.monotonic() - started)))
 
 
 def recv_exact(sock: socket.socket, count: int) -> bytes:
@@ -318,13 +396,18 @@ class ModbusTCPServer(socketserver.ThreadingTCPServer):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("port", help="porta serial RS-485, por exemplo COM4 ou /dev/ttyUSB0")
+    parser.add_argument("port", help="porta serial do CH340/USB-UART, por exemplo COM4 ou /dev/ttyUSB0")
     parser.add_argument("--host", default="0.0.0.0", help="IP de escuta TCP (padrão: todas as interfaces)")
     parser.add_argument("--tcp-port", type=int, default=5020, help="porta Modbus TCP (padrão: 5020)")
     parser.add_argument("--slave-id", type=int, default=1, help="endereço RTU do PIC (padrão: 1)")
     parser.add_argument("--baud", type=int, default=115200, help="baud RTU (padrão: 115200)")
     parser.add_argument("--poll-ms", type=float, default=4.0, help="intervalo de consulta (padrão: 4 ms)")
     parser.add_argument("--fft-window", type=int, default=512, help="amostras por janela FFT (padrão: 512)")
+    parser.add_argument(
+        "--spectrum-csv",
+        metavar="ARQUIVO",
+        help="salva espectros completos em CSV, uma linha por frequência e janela",
+    )
     parser.add_argument("--timeout", type=float, default=0.05, help="timeout por consulta RTU em segundos")
     parser.add_argument("--retries", type=int, default=1, help="repetições antes de marcar falha")
     args = parser.parse_args()
@@ -337,7 +420,12 @@ def main() -> int:
         parser.error("--poll-ms deve ser >= 3, --fft-window >= 16, --retries >= 0 e --timeout > 0")
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    spectrum_writer = None
+    poll_stop = threading.Event()
+    poller = None
     try:
+        if args.spectrum_csv:
+            spectrum_writer = SpectrumCSVWriter(args.spectrum_csv)
         with serial.Serial(
             args.port,
             baudrate=args.baud,
@@ -348,10 +436,18 @@ def main() -> int:
             write_timeout=0.5,
         ) as serial_port:
             poll_interval = args.poll_ms / 1000.0
-            state = RegisterState(args.fft_window, poll_interval)
+            state = RegisterState(args.fft_window, poll_interval, spectrum_writer)
             poller = threading.Thread(
                 target=poll_pic,
-                args=(serial_port, state, args.slave_id, poll_interval, args.timeout, args.retries),
+                args=(
+                    serial_port,
+                    state,
+                    args.slave_id,
+                    poll_interval,
+                    args.timeout,
+                    args.retries,
+                    poll_stop,
+                ),
                 daemon=True,
             )
             poller.start()
@@ -374,6 +470,12 @@ def main() -> int:
     except (OSError, serial.SerialException) as exc:
         logging.error("não foi possível iniciar a ponte: %s", exc)
         return 1
+    finally:
+        poll_stop.set()
+        if poller is not None:
+            poller.join()
+        if spectrum_writer is not None:
+            spectrum_writer.close()
 
 
 if __name__ == "__main__":

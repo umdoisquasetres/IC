@@ -36,11 +36,11 @@ static void send_response(uint8_t *response, uint8_t length)
 
 static void send_exception(uint8_t function, uint8_t exception)
 {
-    uint8_t response[3];
+    uint8_t response[5]; // slave, function, exception code e CRC de 2 bytes.
     response[0] = MODBUS_SLAVE_ID;
     response[1] = function | 0x80U;
     response[2] = exception;
-    send_response(response, sizeof(response));
+    send_response(response, 3U);
 }
 
 static void process_request(const uint8_t *frame)
@@ -65,7 +65,7 @@ static void process_request(const uint8_t *frame)
         return;
     }
 
-    uint8_t response[3U + MODBUS_MAX_READ_REGISTERS * 2U];
+    uint8_t response[3U + MODBUS_MAX_READ_REGISTERS * 2U + 2U];
     response[0] = MODBUS_SLAVE_ID;
     response[1] = function;
     response[2] = (uint8_t)(count * 2U);
